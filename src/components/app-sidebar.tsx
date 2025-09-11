@@ -33,7 +33,7 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { useSidebar } from './ui/sidebar';
 
 const navItems = [
-  { href: '/', label: 'Home', icon: Home },
+  { href: '/dashboard', label: 'Home', icon: Home },
   { href: '/survey', label: 'Survey', icon: FileText },
   { href: '/chat', label: 'AI Chat', icon: Bot },
   { href: '/resources', label: 'Resources', icon: Library },
@@ -49,7 +49,7 @@ export function AppSidebar() {
     <>
       <SidebarHeader className="flex items-center justify-between p-2">
         <Link
-          href="/"
+          href="/dashboard"
           className="flex items-center gap-2 p-2 font-headline font-bold text-lg"
         >
           <AppLogo />
@@ -121,7 +121,9 @@ export function AppSidebar() {
               <BookUser className="mr-2 h-4 w-4" />
               <span>Profile</span>
             </DropdownMenuItem>
-            <DropdownMenuItem>Logout</DropdownMenuItem>
+            <DropdownMenuItem>
+              <Link href="/">Logout</Link>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarFooter>
