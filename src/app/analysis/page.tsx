@@ -13,7 +13,7 @@ export default function AnalysisPage() {
       <Card>
         <CardHeader>
           <CardTitle className="font-headline">
-            Multimodal Emotional Analysis
+            Mood to Content Mapping
           </CardTitle>
           <CardDescription>
             Understand your emotional state by providing text, voice, and a

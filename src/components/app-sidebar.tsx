@@ -43,7 +43,7 @@ import { useSidebar } from './ui/sidebar';
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: Home },
   { href: '/survey', label: 'Surveys', icon: FileText },
-  { href: '/analysis', label: 'My Analysis', icon: BarChart2 },
+  { href: '/analysis', label: 'Mood to Content Mapping', icon: BarChart2 },
   { href: '/mood', label: 'My Mood', icon: Smile },
   { href: '/booking', label: 'Booking', icon: Users },
   { href: '/resources', label: 'Resource Hub', icon: Library },
