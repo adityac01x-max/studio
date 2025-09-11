@@ -31,6 +31,7 @@ import {
   Tooltip,
   XAxis,
   YAxis,
+  Cell,
 } from 'recharts';
 import {
   ChartContainer,
@@ -148,7 +149,7 @@ const SurveyForm = ({
   schema,
   onSubmit,
 }: {
-  questions: typeof phq9Questions;
+  questions: typeof phq9Questions | typeof gad7Questions;
   schema: z.ZodObject<any>;
   onSubmit: (score: number) => void;
 }) => {
@@ -167,52 +168,43 @@ const SurveyForm = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-        <Accordion type="single" collapsible className="w-full space-y-4">
-          {questions.map((question, index) => (
-            <FormField
-              key={question.id}
-              control={form.control}
-              name={question.id}
-              render={({ field }) => (
-                <AccordionItem
-                  value={`item-${index}`}
-                  className="border bg-card rounded-lg"
-                >
-                  <AccordionTrigger className="p-4 text-base hover:no-underline">
-                    {index + 1}. {question.text}
-                  </AccordionTrigger>
-                  <AccordionContent className="p-4 pt-0">
-                    <FormItem className="space-y-3">
-                      <FormControl>
-                        <RadioGroup
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 pt-2"
-                        >
-                          {options.map((option) => (
-                            <FormItem
-                              key={option.value}
-                              className="flex items-center space-x-2 space-y-0"
-                            >
-                              <FormControl>
-                                <RadioGroupItem value={String(option.value)} />
-                              </FormControl>
-                              <FormLabel className="font-normal">
-                                {option.label}
-                              </FormLabel>
-                            </FormItem>
-                          ))}
-                        </RadioGroup>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  </AccordionContent>
-                </AccordionItem>
-              )}
-            />
-          ))}
-        </Accordion>
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+        {questions.map((question, index) => (
+          <FormField
+            key={question.id}
+            control={form.control}
+            name={question.id}
+            render={({ field }) => (
+              <FormItem className="space-y-3 rounded-lg border bg-card p-4">
+                <FormLabel>
+                  {index + 1}. {question.text}
+                </FormLabel>
+                <FormControl>
+                  <RadioGroup
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 pt-2"
+                  >
+                    {options.map((option) => (
+                      <FormItem
+                        key={option.value}
+                        className="flex items-center space-x-2 space-y-0"
+                      >
+                        <FormControl>
+                          <RadioGroupItem value={String(option.value)} />
+                        </FormControl>
+                        <FormLabel className="font-normal">
+                          {option.label}
+                        </FormLabel>
+                      </FormItem>
+                    ))}
+                  </RadioGroup>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        ))}
         <Button type="submit" size="lg" className="w-full">
           View My Results
         </Button>
@@ -303,8 +295,8 @@ export function MentalHealthSurvey() {
                           cy="50%"
                           strokeWidth={0}
                         >
-                          <z.ZodCell fill="hsl(var(--chart-2))" />
-                          <z.ZodCell fill="hsl(var(--muted))" />
+                          <Cell fill="hsl(var(--chart-2))" />
+                          <Cell fill="hsl(var(--muted))" />
                         </Pie>
                       </PieChart>
                     </ResponsiveContainer>
@@ -350,8 +342,8 @@ export function MentalHealthSurvey() {
                           cy="50%"
                           strokeWidth={0}
                         >
-                          <z.ZodCell fill="hsl(var(--chart-5))" />
-                          <z.ZodCell fill="hsl(var(--muted))" />
+                          <Cell fill="hsl(var(--chart-5))" />
+                          <Cell fill="hsl(var(--muted))" />
                         </Pie>
                       </PieChart>
                     </ResponsiveContainer>
@@ -424,3 +416,5 @@ export function MentalHealthSurvey() {
     </>
   );
 }
+
+    
