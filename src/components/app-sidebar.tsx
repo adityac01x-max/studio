@@ -15,6 +15,7 @@ import {
   Users,
   Trophy,
   Shield,
+  LogOut,
 } from 'lucide-react';
 import { AppLogo } from './icons';
 import {
@@ -249,8 +250,11 @@ export function AppSidebar() {
                 <BookUser className="mr-2 h-4 w-4" />
                 <span>Profile</span>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Link href="/">Logout</Link>
+              <DropdownMenuItem asChild>
+                <Link href="/">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Logout
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
