@@ -9,13 +9,10 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
-  Bot,
-  Users,
-  BarChart,
-  BookOpen,
   User,
   Shield,
 } from 'lucide-react';
+import { AppLogo } from '@/components/icons';
 
 export default function LandingPage() {
   return (
@@ -29,7 +26,8 @@ export default function LandingPage() {
           data-ai-hint="tricycle street"
         />
         <div className="absolute inset-0 bg-primary/80 flex flex-col justify-center items-center text-primary-foreground p-8">
-          <h1 className="font-headline text-6xl font-bold">Anubhuti</h1>
+          <AppLogo className="w-20 h-20" />
+          <h1 className="font-headline text-6xl font-bold mt-4">Anubhuti</h1>
           <p className="mt-4 text-xl text-center">
             A step towards a healthier mind. Your space for mental well-being
             and support.
@@ -38,47 +36,9 @@ export default function LandingPage() {
       </div>
       <div className="w-full md:w-1/2 flex flex-col items-center justify-center p-8 bg-background overflow-auto">
         <div className="max-w-md w-full">
-          <h2 className="font-headline text-4xl font-bold text-primary mb-4 text-center">
+          <h2 className="font-headline text-4xl font-bold text-primary mb-8 text-center">
             Welcome to Your Wellness Space
           </h2>
-          <div className="space-y-4 my-8">
-            <div className="flex items-start gap-4">
-              <Bot className="w-8 h-8 text-accent" />
-              <div>
-                <h3 className="font-semibold">AI-Powered Support</h3>
-                <p className="text-sm text-muted-foreground">
-                  Get personalized mood analysis and resource recommendations.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <Users className="w-8 h-8 text-accent" />
-              <div>
-                <h3 className="font-semibold">Connect & Consult</h3>
-                <p className="text-sm text-muted-foreground">
-                  Reach out to peers, counselors, and professionals.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <BarChart className="w-8 h-8 text-accent" />
-              <div>
-                <h3 className="font-semibold">Track Your Progress</h3>
-                <p className="text-sm text-muted-foreground">
-                  Visualize your mental wellness journey over time.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <BookOpen className="w-8 h-8 text-accent" />
-              <div>
-                <h3 className="font-semibold">Resource Hub</h3>
-                <p className="text-sm text-muted-foreground">
-                  Access curated content to support your well-being.
-                </p>
-              </div>
-            </div>
-          </div>
           <div className="space-y-6">
             <Card>
               <CardHeader className="items-center text-center">
