@@ -12,6 +12,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Phone, MessageCircle } from 'lucide-react';
+import { Button } from './ui/button';
 
 interface RiskManagementDialogProps {
   open: boolean;
