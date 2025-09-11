@@ -18,7 +18,7 @@ export default function MoodPage() {
         </CardHeader>
         <CardContent>
           <p>Content for My Mood will go here.</p>
-        </Content>
+        </CardContent>
       </Card>
     </div>
   );
