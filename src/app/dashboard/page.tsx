@@ -1,3 +1,4 @@
+
 import {
   Card,
   CardContent,
@@ -13,8 +14,6 @@ import {
   FileText,
   Bot,
   Trophy,
-  Badge,
-  Activity,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -170,22 +169,14 @@ export default function DashboardPage() {
                 <div className="text-sm text-muted-foreground">Day Streak</div>
               </div>
             </div>
-            <Link
-              href="/leaderboard"
-              passHref
-              className="flex items-center gap-2 text-sm font-medium text-primary hover:underline"
-            >
-              <Trophy className="w-5 h-5" />
-              <span>Leaderboard</span>
-            </Link>
-            <Link
-              href="/badges"
-              passHref
-              className="flex items-center gap-2 text-sm font-medium text-primary hover:underline"
-            >
-              <Badge className="w-5 h-5" />
-              <span>My Badges</span>
-            </Link>
+            <div className="col-span-2">
+              <Link href="/progress" passHref>
+                <Button className="w-full">
+                  <Trophy className="w-5 h-5 mr-2" />
+                  View My Progress
+                </Button>
+              </Link>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -277,26 +268,9 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         </div>
-        <div className="mt-6">
-          <Card>
-            <CardHeader>
-              <Activity className="w-8 h-8 text-primary mb-2" />
-              <CardTitle>My Activity</CardTitle>
-              <CardDescription>
-                Track your progress and review your recent activities on the
-                platform.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Link href="/my-activity" passHref>
-                <Button variant="ghost" className="text-primary p-0">
-                  View My Activity <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-        </div>
       </div>
     </div>
   );
 }
+
+    

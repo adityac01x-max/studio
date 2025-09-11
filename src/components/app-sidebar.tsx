@@ -14,8 +14,6 @@ import {
   Smile,
   Users,
   Trophy,
-  Badge,
-  Activity,
 } from 'lucide-react';
 import { AppLogo } from './icons';
 import {
@@ -52,9 +50,7 @@ const navItems = [
   { href: '/resources', label: 'Resource Hub', icon: Library },
   { href: '/schedule', label: 'My Schedule', icon: Calendar },
   { href: '/chat', label: 'AI First-Aid', icon: Bot },
-  { href: '/leaderboard', label: 'Leaderboard', icon: Trophy },
-  { href: '/badges', label: 'Badges', icon: Badge },
-  { href: '/my-activity', label: 'My Activity', icon: Activity },
+  { href: '/progress', label: 'My Progress', icon: Trophy },
 ];
 
 function DiamondIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -237,3 +233,5 @@ export function AppSidebar() {
     </>
   );
 }
+
+    
