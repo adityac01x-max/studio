@@ -2,7 +2,7 @@ import { MentalHealthSurvey } from '@/components/mental-health-survey';
 
 export default function SurveyPage() {
   return (
-    <div className="flex-1 p-4 md:p-8 pt-6">
+    <div>
       <h1 className="font-headline text-3xl font-bold tracking-tight mb-2">
         Mental Health Check-in
       </h1>
@@ -14,3 +14,5 @@ export default function SurveyPage() {
     </div>
   );
 }
+
+    

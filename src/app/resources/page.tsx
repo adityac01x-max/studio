@@ -97,38 +97,38 @@ export default function ResourcesPage() {
   const resourceTypes = ['All', 'Videos', 'Audio', 'Guides'];
 
   return (
-    <div className="flex-1 p-4 md:p-8 pt-6">
-      <div className="space-y-4">
-        <h1 className="font-headline text-3xl font-bold tracking-tight">
-          Resource Hub
-        </h1>
-        <p className="text-muted-foreground">
-          Explore our curated collection of psychoeducational resources to
-          support your mental wellness journey.
-        </p>
-        <Tabs defaultValue="All" className="space-y-4">
-          <TabsList>
-            {resourceTypes.map((type) => (
-              <TabsTrigger key={type} value={type}>
-                {type}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+    <div className="space-y-4">
+      <h1 className="font-headline text-3xl font-bold tracking-tight">
+        Resource Hub
+      </h1>
+      <p className="text-muted-foreground">
+        Explore our curated collection of psychoeducational resources to
+        support your mental wellness journey.
+      </p>
+      <Tabs defaultValue="All" className="space-y-4">
+        <TabsList>
           {resourceTypes.map((type) => (
-            <TabsContent key={type} value={type} className="mt-0">
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {resources
-                  .filter(
-                    (resource) => type === 'All' || resource.type === type
-                  )
-                  .map((resource) => (
-                    <ResourceCard key={resource.id} resource={resource} />
-                  ))}
-              </div>
-            </TabsContent>
+            <TabsTrigger key={type} value={type}>
+              {type}
+            </TabsTrigger>
           ))}
-        </Tabs>
-      </div>
+        </TabsList>
+        {resourceTypes.map((type) => (
+          <TabsContent key={type} value={type} className="mt-0">
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {resources
+                .filter(
+                  (resource) => type === 'All' || resource.type === type
+                )
+                .map((resource) => (
+                  <ResourceCard key={resource.id} resource={resource} />
+                ))}
+            </div>
+          </TabsContent>
+        ))}
+      </Tabs>
     </div>
   );
 }
+
+    

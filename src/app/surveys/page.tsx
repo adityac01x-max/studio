@@ -8,7 +8,7 @@ import {
 
 export default function SurveysPage() {
   return (
-    <div className="flex-1 p-4 md:p-8 pt-6">
+    <div>
       <Card>
         <CardHeader>
           <CardTitle>Surveys</CardTitle>
@@ -23,3 +23,5 @@ export default function SurveysPage() {
     </div>
   );
 }
+
+    

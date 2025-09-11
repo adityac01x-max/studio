@@ -9,7 +9,7 @@ import {
 
 export default function AnalysisPage() {
   return (
-    <div className="flex-1 p-4 md:p-8 pt-6">
+    <div>
       <Card>
         <CardHeader>
           <CardTitle className="font-headline">
@@ -27,3 +27,5 @@ export default function AnalysisPage() {
     </div>
   );
 }
+
+    

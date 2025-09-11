@@ -3,7 +3,7 @@ import { AIChatbot } from '@/components/ai-chatbot';
 export default function ChatPage() {
   return (
     <div className="flex flex-col h-full">
-      <div className="flex-1 p-4 md:p-6">
+      <div className="flex-1">
         <h1 className="font-headline text-2xl font-bold tracking-tight mb-4">
           AI First-Aid Support
         </h1>
@@ -17,3 +17,5 @@ export default function ChatPage() {
     </div>
   );
 }
+
+    

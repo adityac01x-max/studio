@@ -123,7 +123,7 @@ function MehIcon(props: React.SVGProps<SVGSVGElement>) {
 
 export default function DashboardPage() {
   return (
-    <div className="flex-1 p-6 md:p-8 space-y-6 bg-[#FEF9F6]">
+    <div className="space-y-6">
       <div className="space-y-2">
         <h1 className="font-headline text-3xl font-bold tracking-tight">
           Welcome back!

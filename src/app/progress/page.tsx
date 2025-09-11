@@ -21,6 +21,7 @@ import {
   Badge as BadgeIcon,
   Star,
   Heart,
+  ArrowLeft,
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -51,6 +52,7 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import Link from 'next/link';
 
 const recentActivities = [
   {
@@ -159,12 +161,20 @@ const activityTypeData = [
 
 export default function ProgressPage() {
   return (
-    <div className="flex-1 p-4 md:p-8 pt-6">
-      <div className="space-y-4">
+    <>
+      <div className="flex items-center gap-4 mb-6">
+        <Link href="/dashboard" passHref>
+          <Button variant="outline" size="icon">
+            <ArrowLeft />
+            <span className="sr-only">Back to Dashboard</span>
+          </Button>
+        </Link>
         <h1 className="font-headline text-3xl font-bold tracking-tight flex items-center gap-2">
           <Trophy className="w-8 h-8 text-primary" />
           My Progress
         </h1>
+      </div>
+      <div className="space-y-4">
         <p className="text-muted-foreground">
           Track your activity, earn badges, and see your rank on the
           leaderboard.
@@ -399,7 +409,7 @@ export default function ProgressPage() {
           </TabsContent>
         </Tabs>
       </div>
-    </div>
+    </>
   );
 }
 
