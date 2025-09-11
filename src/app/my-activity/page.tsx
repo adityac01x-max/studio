@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Card,
   CardContent,
@@ -17,6 +19,19 @@ import {
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
+import {
+  Bar,
+  BarChart,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+  Tooltip,
+} from 'recharts';
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@/components/ui/chart';
 
 const recentActivities = [
   {
@@ -60,6 +75,16 @@ const accomplishments = [
   },
 ];
 
+const activityData = [
+  { day: 'Mon', points: 10 },
+  { day: 'Tue', points: 0 },
+  { day: 'Wed', points: 5 },
+  { day: 'Thu', points: 15 },
+  { day: 'Fri', points: 10 },
+  { day: 'Sat', points: 0 },
+  { day: 'Sun', points: 20 },
+];
+
 export default function MyActivityPage() {
   return (
     <div className="flex-1 p-4 md:p-8 pt-6">
@@ -74,6 +99,56 @@ export default function MyActivityPage() {
             platform.
           </p>
         </header>
+
+        <section>
+          <Card>
+            <CardHeader>
+              <CardTitle>Weekly Activity Chart</CardTitle>
+              <CardDescription>
+                Here is a graphical representation of your points earned this
+                week.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer config={{}} className="h-[250px] w-full">
+                <ResponsiveContainer>
+                  <BarChart data={activityData}>
+                    <XAxis
+                      dataKey="day"
+                      stroke="hsl(var(--muted-foreground))"
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <YAxis
+                      stroke="hsl(var(--muted-foreground))"
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                      tickFormatter={(value) => `${value} pts`}
+                    />
+                    <Tooltip
+                      content={
+                        <ChartTooltipContent
+                          formatter={(value, name) => [
+                            `${value} points`,
+                            'Points',
+                          ]}
+                          cursorClassName="fill-muted"
+                        />
+                      }
+                    />
+                    <Bar
+                      dataKey="points"
+                      fill="hsl(var(--primary))"
+                      radius={[4, 4, 0, 0]}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </ChartContainer>
+            </CardContent>
+          </Card>
+        </section>
 
         <section>
           <Card>
