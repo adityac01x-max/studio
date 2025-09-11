@@ -42,13 +42,13 @@ import { useSidebar } from './ui/sidebar';
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: Home },
-  { href: '/surveys', label: 'Surveys', icon: FileText },
+  { href: '/survey', label: 'Surveys', icon: FileText },
   { href: '/analysis', label: 'My Analysis', icon: BarChart2 },
   { href: '/mood', label: 'My Mood', icon: Smile },
-  { href: '/consultation', label: 'Consultation', icon: Users },
+  { href: '/booking', label: 'Booking', icon: Users },
   { href: '/resources', label: 'Resource Hub', icon: Library },
   { href: '/schedule', label: 'My Schedule', icon: Calendar },
-  { href: '/ai-first-aid', label: 'AI First-Aid', icon: Bot },
+  { href: '/chat', label: 'AI First-Aid', icon: Bot },
 ];
 
 function DiamondIcon(props: React.SVGProps<SVGSVGElement>) {

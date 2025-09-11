@@ -1,3 +1,4 @@
+import { EmotionalAnalysisForm } from '@/components/emotional-analysis-form';
 import {
   Card,
   CardContent,
@@ -11,13 +12,16 @@ export default function AnalysisPage() {
     <div className="flex-1 p-4 md:p-8 pt-6">
       <Card>
         <CardHeader>
-          <CardTitle>My Analysis</CardTitle>
+          <CardTitle className="font-headline">
+            Multimodal Emotional Analysis
+          </CardTitle>
           <CardDescription>
-            This is a placeholder page for My Analysis.
+            Understand your emotional state by providing text, voice, and a
+            facial expression. This analysis is private and secure.
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <p>Content for My Analysis will go here.</p>
+          <EmotionalAnalysisForm />
         </CardContent>
       </Card>
     </div>
