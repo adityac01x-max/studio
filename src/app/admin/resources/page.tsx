@@ -26,6 +26,7 @@ import {
   BookOpen,
   Headphones,
   PlayCircle,
+  ArrowLeft,
 } from 'lucide-react';
 import {
   Table,
@@ -44,6 +45,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import Link from 'next/link';
 
 const initialResources = [
   {
@@ -116,8 +118,14 @@ export default function AdminResourcesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
+       <div className="flex items-center gap-4 mb-6">
+        <Link href="/admin/dashboard" passHref>
+          <Button variant="outline" size="icon">
+            <ArrowLeft />
+            <span className="sr-only">Back to Dashboard</span>
+          </Button>
+        </Link>
+        <div className='flex-1'>
           <h1 className="font-headline text-3xl font-bold tracking-tight flex items-center gap-2">
             <Library className="w-8 h-8 text-primary" />
             Manage Resources

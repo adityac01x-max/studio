@@ -19,7 +19,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { PlusCircle, Trash2, BookUser } from 'lucide-react';
+import { PlusCircle, Trash2, BookUser, ArrowLeft } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -30,6 +30,7 @@ import {
 } from '@/components/ui/table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useState } from 'react';
+import Link from 'next/link';
 
 const initialCounselors = [
   {
@@ -84,8 +85,14 @@ export default function AdminCounselorsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
+      <div className="flex items-center gap-4 mb-6">
+        <Link href="/admin/dashboard" passHref>
+          <Button variant="outline" size="icon">
+            <ArrowLeft />
+            <span className="sr-only">Back to Dashboard</span>
+          </Button>
+        </Link>
+        <div className='flex-1'>
           <h1 className="font-headline text-3xl font-bold tracking-tight flex items-center gap-2">
             <BookUser className="w-8 h-8 text-primary" />
             Manage Counselors

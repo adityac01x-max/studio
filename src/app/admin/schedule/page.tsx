@@ -20,6 +20,7 @@ import {
   Trash2,
   Edit,
   PlusCircle,
+  ArrowLeft,
 } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { Badge } from '@/components/ui/badge';
@@ -50,6 +51,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import Link from 'next/link';
 
 const allSessions = [
   {
@@ -172,9 +174,18 @@ export default function AdminSchedulePage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="font-headline text-3xl font-bold tracking-tight">
-        Manage Schedule
-      </h1>
+      <div className="flex items-center gap-4 mb-6">
+         <Link href="/admin/dashboard" passHref>
+          <Button variant="outline" size="icon">
+            <ArrowLeft />
+            <span className="sr-only">Back to Dashboard</span>
+          </Button>
+        </Link>
+        <h1 className="font-headline text-3xl font-bold tracking-tight">
+          Manage Schedule
+        </h1>
+      </div>
+
 
       <div className="grid gap-8 md:grid-cols-3">
         <div className="md:col-span-2 space-y-6">
