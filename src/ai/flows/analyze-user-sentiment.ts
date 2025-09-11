@@ -1,3 +1,4 @@
+
 // The directive tells the Next.js runtime that it should only be executed on the server.
 'use server';
 
@@ -25,6 +26,12 @@ const AnalyzeUserSentimentInputSchema = z.object({
       'The user voice recording, as a data URI that must include a MIME type and use Base64 encoding. Expected format:  data:<mimetype>;base64,<encoded_data>.'
     ),
   text: z.string().describe('A text description of the user feelings.'),
+  videoDataUri: z
+    .string()
+    .optional()
+    .describe(
+      'An optional video recording of the user, as a data URI that must include a MIME type and use Base64 encoding. Expected format: data:<mimetype>;base64,<encoded_data>.'
+    ),
 });
 export type AnalyzeUserSentimentInput = z.infer<
   typeof AnalyzeUserSentimentInputSchema
@@ -65,9 +72,12 @@ const analyzeUserSentimentPrompt = ai.definePrompt({
 
 Facial Expression: {{media url=faceDataUri}}
 Voice Tone: {{media url=voiceDataUri}}
+{{#if videoDataUri}}
+Video: {{media url=videoDataUri}}
+{{/if}}
 Text: {{{text}}}
 
-Determine the sentiment from each modality (facial expression, voice tone, and text) and provide an overall sentiment.
+Determine the sentiment from each modality (facial expression, voice tone, and text) and provide an overall sentiment. If a video is provided, use it to enhance the analysis of facial expression and voice tone.
 
 Consider all factors and use a confidence level for each one.
 
@@ -86,3 +96,5 @@ const analyzeUserSentimentFlow = ai.defineFlow(
     return output!;
   }
 );
+
+    

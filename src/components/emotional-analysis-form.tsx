@@ -1,3 +1,4 @@
+
 'use client';
 
 import { analyzeUserSentiment } from '@/ai/flows/analyze-user-sentiment';
@@ -16,6 +17,7 @@ import {
   Activity,
   Camera,
   Video,
+  Upload,
 } from 'lucide-react';
 import { Button } from './ui/button';
 import {
@@ -41,18 +43,33 @@ import { Alert, AlertTitle, AlertDescription } from './ui/alert';
 import { cn } from '@/lib/utils';
 import { Badge } from './ui/badge';
 import type { AnalyzeUserSentimentOutput } from '@/ai/flows/analyze-user-sentiment';
+import { Switch } from './ui/switch';
 
 const formSchema = z.object({
   text: z.string().min(10, {
     message: 'Please describe your feelings in at least 10 characters.',
   }),
   faceImage: z.string().optional(),
+  faceImageFile: z
+    .any()
+    .optional()
+    .refine(
+      (files) => !files || files?.[0]?.type.startsWith('image/'),
+      'Only image files are accepted.'
+    ),
   voiceRecording: z
     .any()
     .refine((files) => files?.length == 1, 'Voice recording is required.')
     .refine(
       (files) => files?.[0]?.type.startsWith('audio/'),
       'Only audio files are accepted.'
+    ),
+  videoRecording: z
+    .any()
+    .optional()
+    .refine(
+      (files) => !files || files?.[0]?.type.startsWith('video/'),
+      'Only video files are accepted.'
     ),
 });
 
@@ -82,8 +99,10 @@ export function EmotionalAnalysisForm() {
   const [hasCameraPermission, setHasCameraPermission] = useState<
     boolean | undefined
   >(undefined);
+  const [useFileUpload, setUseFileUpload] = useState(false);
 
   useEffect(() => {
+    if (useFileUpload) return;
     const getCameraPermission = async () => {
       if (!navigator.mediaDevices?.getUserMedia) {
         setHasCameraPermission(false);
@@ -91,7 +110,9 @@ export function EmotionalAnalysisForm() {
         return;
       }
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+        });
         setHasCameraPermission(true);
 
         if (videoRef.current) {
@@ -110,7 +131,7 @@ export function EmotionalAnalysisForm() {
     };
 
     getCameraPermission();
-  }, [toast]);
+  }, [toast, useFileUpload]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -141,7 +162,20 @@ export function EmotionalAnalysisForm() {
     setIsLoading(true);
     setAnalysisResult(null);
 
-    if (!values.faceImage) {
+    let faceDataUri = values.faceImage;
+
+    if (useFileUpload) {
+      if (!values.faceImageFile || values.faceImageFile.length === 0) {
+        toast({
+          variant: 'destructive',
+          title: 'Missing Image',
+          description: 'Please upload an image file before analyzing.',
+        });
+        setIsLoading(false);
+        return;
+      }
+      faceDataUri = await fileToDataUri(values.faceImageFile[0]);
+    } else if (!faceDataUri) {
       toast({
         variant: 'destructive',
         title: 'Missing Photo',
@@ -153,11 +187,16 @@ export function EmotionalAnalysisForm() {
 
     try {
       const voiceDataUri = await fileToDataUri(values.voiceRecording[0]);
+      const videoDataUri =
+        values.videoRecording && values.videoRecording.length > 0
+          ? await fileToDataUri(values.videoRecording[0])
+          : undefined;
 
       const result = await analyzeUserSentiment({
         text: values.text,
-        faceDataUri: values.faceImage,
+        faceDataUri,
         voiceDataUri,
+        videoDataUri,
       });
 
       setAnalysisResult(result);
@@ -200,62 +239,122 @@ export function EmotionalAnalysisForm() {
           />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-2">
-              <FormLabel>Facial Expression</FormLabel>
-              <div className="relative aspect-video rounded-md border bg-muted overflow-hidden">
-                <video
-                  ref={videoRef}
-                  className="w-full h-full object-cover"
-                  autoPlay
-                  muted
-                  playsInline
-                />
-                {form.getValues('faceImage') && (
-                  <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                    <p className="text-white font-bold text-lg">Photo Taken!</p>
-                  </div>
-                )}
+              <div className="flex items-center justify-between">
+                <FormLabel>Facial Expression</FormLabel>
+                <div className="flex items-center gap-2">
+                  <Camera className="w-4 h-4" />
+                  <Switch
+                    checked={useFileUpload}
+                    onCheckedChange={setUseFileUpload}
+                    aria-label="Switch between camera and file upload"
+                  />
+                  <Upload className="w-4 h-4" />
+                </div>
               </div>
-              {hasCameraPermission === false && (
-                <Alert variant="destructive">
-                  <AlertTitle>Camera Access Required</AlertTitle>
-                  <AlertDescription>
-                    Please allow camera access to use this feature.
-                  </AlertDescription>
-                </Alert>
-              )}
-              <Button
-                type="button"
-                onClick={takePicture}
-                disabled={!hasCameraPermission || isLoading}
-                className="w-full"
-              >
-                <Camera className="mr-2 h-4 w-4" />
-                Take Picture
-              </Button>
-              <FormDescription>
-                Capture a clear photo of your face.
-              </FormDescription>
-            </div>
-            <FormField
-              control={form.control}
-              name="voiceRecording"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Voice Tone</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="file"
-                      accept="audio/*"
-                      onChange={(e) => field.onChange(e.target.files)}
+              {useFileUpload ? (
+                <FormField
+                  control={form.control}
+                  name="faceImageFile"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => field.onChange(e.target.files)}
+                        />
+                      </FormControl>
+                      <FormDescription>
+                        Upload a clear photo of your face.
+                      </FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              ) : (
+                <>
+                  <div className="relative aspect-video rounded-md border bg-muted overflow-hidden">
+                    <video
+                      ref={videoRef}
+                      className="w-full h-full object-cover"
+                      autoPlay
+                      muted
+                      playsInline
                     />
-                  </FormControl>
+                    {form.getValues('faceImage') && (
+                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                        <p className="text-white font-bold text-lg">
+                          Photo Taken!
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                  {hasCameraPermission === false && (
+                    <Alert variant="destructive">
+                      <AlertTitle>Camera Access Required</AlertTitle>
+                      <AlertDescription>
+                        Please allow camera access to use this feature.
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                  <Button
+                    type="button"
+                    onClick={takePicture}
+                    disabled={!hasCameraPermission || isLoading}
+                    className="w-full"
+                  >
+                    <Camera className="mr-2 h-4 w-4" />
+                    Take Picture
+                  </Button>
                   <FormDescription>
-                    Upload a short audio recording of you describing your feelings.
+                    Capture a clear photo of your face.
                   </FormDescription>
-                  <FormMessage />
-                </FormItem>
+                </>
               )}
-            />
+            </div>
+            <div className="space-y-8">
+              <FormField
+                control={form.control}
+                name="voiceRecording"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Voice Tone</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="file"
+                        accept="audio/*"
+                        onChange={(e) => field.onChange(e.target.files)}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Upload a short audio recording of you describing your
+                      feelings.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="videoRecording"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Video Analysis (Optional)</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="file"
+                        accept="video/*"
+                        onChange={(e) => field.onChange(e.target.files)}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Upload a short video for a more comprehensive analysis.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
           </div>
           <Button type="submit" disabled={isLoading} className="w-full">
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -345,3 +444,5 @@ export function EmotionalAnalysisForm() {
     </>
   );
 }
+
+    
