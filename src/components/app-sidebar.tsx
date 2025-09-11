@@ -15,6 +15,7 @@ import {
   Users,
   Trophy,
   Badge,
+  Activity,
 } from 'lucide-react';
 import { AppLogo } from './icons';
 import {
@@ -53,6 +54,7 @@ const navItems = [
   { href: '/chat', label: 'AI First-Aid', icon: Bot },
   { href: '/leaderboard', label: 'Leaderboard', icon: Trophy },
   { href: '/badges', label: 'Badges', icon: Badge },
+  { href: '/my-activity', label: 'My Activity', icon: Activity },
 ];
 
 function DiamondIcon(props: React.SVGProps<SVGSVGElement>) {
