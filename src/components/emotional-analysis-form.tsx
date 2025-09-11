@@ -2,6 +2,7 @@
 'use client';
 
 import { analyzeUserSentiment } from '@/ai/flows/analyze-user-sentiment';
+import { getContentRecommendations } from '@/ai/flows/get-content-recommendations';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -18,6 +19,9 @@ import {
   Camera,
   Video,
   Upload,
+  Music,
+  Book,
+  Film,
 } from 'lucide-react';
 import { Button } from './ui/button';
 import {
@@ -43,7 +47,15 @@ import { Alert, AlertTitle, AlertDescription } from './ui/alert';
 import { cn } from '@/lib/utils';
 import { Badge } from './ui/badge';
 import type { AnalyzeUserSentimentOutput } from '@/ai/flows/analyze-user-sentiment';
+import type { GetContentRecommendationsOutput } from '@/ai/flows/get-content-recommendations';
 import { Switch } from './ui/switch';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select';
 
 const formSchema = z.object({
   text: z.string().min(10, {
@@ -92,8 +104,13 @@ const SentimentIcon = ({ sentiment }: { sentiment: string }) => {
 
 export function EmotionalAnalysisForm() {
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetchingRecommendations, setIsFetchingRecommendations] =
+    useState(false);
   const [analysisResult, setAnalysisResult] =
     useState<AnalyzeUserSentimentOutput | null>(null);
+  const [recommendations, setRecommendations] =
+    useState<GetContentRecommendationsOutput | null>(null);
+  const [selectedLanguage, setSelectedLanguage] = useState<string>('');
   const { toast } = useToast();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hasCameraPermission, setHasCameraPermission] = useState<
@@ -161,6 +178,8 @@ export function EmotionalAnalysisForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     setAnalysisResult(null);
+    setRecommendations(null);
+    setSelectedLanguage('');
 
     let faceDataUri = values.faceImage;
 
@@ -216,6 +235,30 @@ export function EmotionalAnalysisForm() {
       setIsLoading(false);
     }
   }
+
+  const handleLanguageChange = async (language: string) => {
+    setSelectedLanguage(language);
+    if (analysisResult) {
+      setIsFetchingRecommendations(true);
+      setRecommendations(null);
+      try {
+        const result = await getContentRecommendations({
+          mood: analysisResult.overallSentiment,
+          language: language,
+        });
+        setRecommendations(result);
+      } catch (error) {
+        console.error('Failed to get recommendations:', error);
+        toast({
+          title: 'Failed to Get Recommendations',
+          description: 'Please try again later.',
+          variant: 'destructive',
+        });
+      } finally {
+        setIsFetchingRecommendations(false);
+      }
+    }
+  };
 
   return (
     <>
@@ -441,8 +484,90 @@ export function EmotionalAnalysisForm() {
           </div>
         </div>
       )}
+
+      {analysisResult && (
+        <div className="mt-8">
+          <h3 className="text-2xl font-bold font-headline mb-4 text-center">
+            Content Recommendations
+          </h3>
+          <div className="mb-6 max-w-sm mx-auto">
+            <Select onValueChange={handleLanguageChange} value={selectedLanguage}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a language for recommendations" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="English">English</SelectItem>
+                <SelectItem value="Spanish">Spanish</SelectItem>
+                <SelectItem value="French">French</SelectItem>
+                <SelectItem value="German">German</SelectItem>
+                <SelectItem value="Mandarin">Mandarin</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {isFetchingRecommendations && (
+            <div className="flex justify-center items-center p-8">
+              <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+          )}
+
+          {recommendations && (
+            <div className="space-y-8">
+              <div>
+                <h4 className="text-xl font-bold font-headline mb-4 flex items-center gap-2">
+                  <Music /> Music Playlists
+                </h4>
+                <div className="grid md:grid-cols-3 gap-4">
+                  {recommendations.music.map((item, index) => (
+                    <Card key={index}>
+                      <CardHeader>
+                        <CardTitle className="text-lg">{item.title}</CardTitle>
+                        <CardDescription>{item.description}</CardDescription>
+                      </CardHeader>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-xl font-bold font-headline mb-4 flex items-center gap-2">
+                  <Book /> Books
+                </h4>
+                <div className="grid md:grid-cols-3 gap-4">
+                  {recommendations.books.map((item, index) => (
+                    <Card key={index}>
+                      <CardHeader>
+                        <CardTitle className="text-lg">{item.title}</CardTitle>
+                        <CardDescription>
+                          {item.author}
+                        </CardDescription>
+                      </CardHeader>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <h4 className="text-xl font-bold font-headline mb-4 flex items-center gap-2">
+                  <Film /> Movies
+                </h4>
+                <div className="grid md:grid-cols-3 gap-4">
+                  {recommendations.movies.map((item, index) => (
+                    <Card key={index}>
+                      <CardHeader>
+                        <CardTitle className="text-lg">{item.title}</CardTitle>
+                        <CardDescription>
+                          {item.year}
+                        </CardDescription>
+                      </CardHeader>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </>
   );
 }
-
-    
