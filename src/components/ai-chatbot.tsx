@@ -4,7 +4,7 @@ import { provideAICopingStrategies } from '@/ai/flows/provide-ai-coping-strategi
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CornerDownLeft, Loader2 } from 'lucide-react';
 import { useState } from 'react';
-import { useForm, type SubmitHandler } from 'react-hook-form';
+import { useForm, type SubmitHandler, Controller } from 'react-hook-form';
 import { z } from 'zod';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
@@ -183,36 +183,27 @@ export function AIChatbot() {
                 <span className="sr-only">Send</span>
               </Button>
             </div>
-            <z.infer<typeof chatSchema> extends { language: any }
-              ? 'language' extends keyof z.infer<typeof chatSchema>
-                ? {
-                    name: 'language';
-                    control: typeof control;
-                    render: ({
-                      field,
-                    }: {
-                      field: any;
-                    }) => (
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        disabled={isLoading}
-                      >
-                        <SelectTrigger className="w-[180px]">
-                          <SelectValue placeholder="Language" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="English">English</SelectItem>
-                          <SelectItem value="Hindi">Hindi</SelectItem>
-                          <SelectItem value="Bengali">Bengali</SelectItem>
-                          <SelectItem value="Tamil">Tamil</SelectItem>
-                          <SelectItem value="Telugu">Telugu</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    );
-                  }
-                : never
-              : never
+            <Controller
+              name="language"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                  disabled={isLoading}
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Language" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="English">English</SelectItem>
+                    <SelectItem value="Hindi">Hindi</SelectItem>
+                    <SelectItem value="Bengali">Bengali</SelectItem>
+                    <SelectItem value="Tamil">Tamil</SelectItem>
+                    <SelectItem value="Telugu">Telugu</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
             />
             {errors.message && (
               <p className="text-xs text-destructive mt-1">
