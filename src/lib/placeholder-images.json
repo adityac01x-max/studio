@@ -1,3 +1,41 @@
+
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "guide-1",
+      "description": "A person meditating in a calm environment.",
+      "imageUrl": "https://picsum.photos/seed/guide1/600/400",
+      "imageHint": "meditation nature"
+    },
+    {
+      "id": "audio-1",
+      "description": "Headphones resting on a wooden table.",
+      "imageUrl": "https://picsum.photos/seed/audio1/600/400",
+      "imageHint": "headphones table"
+    },
+    {
+      "id": "video-1",
+      "description": "A play button icon over a blurred nature background.",
+      "imageUrl": "https://picsum.photos/seed/video1/600/400",
+      "imageHint": "play button"
+    },
+    {
+      "id": "guide-2",
+      "description": "A journal and pen on a desk.",
+      "imageUrl": "https://picsum.photos/seed/guide2/600/400",
+      "imageHint": "journal desk"
+    },
+    {
+      "id": "audio-2",
+      "description": "Ocean waves crashing on a shore.",
+      "imageUrl": "https://picsum.photos/seed/audio2/600/400",
+      "imageHint": "ocean waves"
+    },
+    {
+      "id": "video-2",
+      "description": "A person doing yoga in a bright room.",
+      "imageUrl": "https://picsum.photos/seed/video2/600/400",
+      "imageHint": "yoga room"
+    }
+  ]
 }
