@@ -161,7 +161,7 @@ const getScoreInterpretation = (
   } else { // GHQ-12
      if (score <= 12) return { level: 'Low psychological distress', color: 'text-green-500' };
      if (score <= 15) return { level: 'Mild psychological distress', color: 'text-yellow-500' };
-     if (score_ <= 20) return { level: 'Moderate psychological distress', color: 'text-orange-500' };
+     if (score <= 20) return { level: 'Moderate psychological distress', color: 'text-orange-500' };
      return { level: 'Severe psychological distress', color: 'text-red-500' };
   }
 };
@@ -202,7 +202,7 @@ const SurveyForm = ({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-        <Accordion type="single" collapsible className="w-full">
+        <Accordion type="multiple" className="w-full" defaultValue={questions.map((_, index) => `item-${index}`)}>
           {questions.map((question, index) => (
             <AccordionItem value={`item-${index}`} key={question.id}>
               <AccordionTrigger className="text-left hover:no-underline">
@@ -530,3 +530,5 @@ export function MentalHealthSurvey() {
     </>
   );
 }
+
+    
