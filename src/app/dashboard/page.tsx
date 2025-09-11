@@ -175,7 +175,7 @@ export default function DashboardPage() {
             </Link>
              <Link href="/badges" passHref className="flex items-center gap-2 text-sm font-medium text-primary hover:underline">
                 <Badge className="w-5 h-5" />
-                <span>Badges</span>
+                <span>My Badges</span>
             </Link>
           </CardContent>
         </Card>

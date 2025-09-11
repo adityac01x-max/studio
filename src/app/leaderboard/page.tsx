@@ -14,8 +14,10 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Trophy } from 'lucide-react';
+import { Badge as BadgeComponent } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { Trophy, Badge } from 'lucide-react';
 
 const leaderboardData = [
   { rank: 1, studentId: 'STU-845', points: 1250, level: 'Gold' },
@@ -34,10 +36,19 @@ export default function LeaderboardPage() {
   return (
     <div className="flex-1 p-4 md:p-8 pt-6">
       <div className="space-y-4">
-        <h1 className="font-headline text-3xl font-bold tracking-tight flex items-center gap-2">
-          <Trophy className="w-8 h-8 text-primary" />
-          Leaderboard
-        </h1>
+        <div className="flex justify-between items-center">
+          <h1 className="font-headline text-3xl font-bold tracking-tight flex items-center gap-2">
+            <Trophy className="w-8 h-8 text-primary" />
+            Leaderboard
+          </h1>
+          <Link href="/badges" passHref>
+            <Button variant="outline">
+              <Badge className="w-5 h-5 mr-2" />
+              View Badges
+            </Button>
+          </Link>
+        </div>
+
         <p className="text-muted-foreground">
           See how you rank among your peers. Keep participating to climb up!
         </p>
@@ -75,24 +86,24 @@ export default function LeaderboardPage() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge
+                      <BadgeComponent
                         variant={
                           user.level === 'Gold'
                             ? 'default'
                             : user.level === 'Silver'
-                              ? 'secondary'
-                              : 'outline'
+                            ? 'secondary'
+                            : 'outline'
                         }
                         className={
                           user.level === 'Gold'
                             ? 'bg-yellow-500 text-white'
                             : user.level === 'Silver'
-                              ? 'bg-slate-400 text-white'
-                              : ''
+                            ? 'bg-slate-400 text-white'
+                            : ''
                         }
                       >
                         {user.level}
-                      </Badge>
+                      </BadgeComponent>
                     </TableCell>
                     <TableCell className="text-right font-bold">
                       {user.points}
