@@ -12,11 +12,14 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
-  RadioGroup,
-  RadioGroupItem,
-} from '@/components/ui/radio-group';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from './ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { useState } from 'react';
 import {
@@ -24,10 +27,6 @@ import {
   LineChart,
   Pie,
   PieChart,
-  PolarGrid,
-  PolarRadiusAxis,
-  Radar,
-  RadarChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -39,6 +38,12 @@ import {
   ChartTooltipContent,
 } from './ui/chart';
 import { RiskManagementDialog } from './risk-management-dialog';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from './ui/accordion';
 
 const phq9Questions = [
   { id: 'q1', text: 'Little interest or pleasure in doing things' },
@@ -107,27 +112,36 @@ const getScoreInterpretation = (
   if (score === null) return { level: '', color: '' };
 
   if (type === 'phq9') {
-    if (score <= 4) return { level: 'Minimal depression', color: 'text-green-500' };
-    if (score <= 9) return { level: 'Mild depression', color: 'text-yellow-500' };
-    if (score <= 14) return { level: 'Moderate depression', color: 'text-orange-500' };
-    if (score <= 19) return { level: 'Moderately severe depression', color: 'text-red-500' };
+    if (score <= 4)
+      return { level: 'Minimal depression', color: 'text-green-500' };
+    if (score <= 9)
+      return { level: 'Mild depression', color: 'text-yellow-500' };
+    if (score <= 14)
+      return { level: 'Moderate depression', color: 'text-orange-500' };
+    if (score <= 19)
+      return {
+        level: 'Moderately severe depression',
+        color: 'text-red-500',
+      };
     return { level: 'Severe depression', color: 'text-red-600' };
   } else {
-    if (score <= 4) return { level: 'Minimal anxiety', color: 'text-green-500' };
+    if (score <= 4)
+      return { level: 'Minimal anxiety', color: 'text-green-500' };
     if (score <= 9) return { level: 'Mild anxiety', color: 'text-yellow-500' };
-    if (score <= 14) return { level: 'Moderate anxiety', color: 'text-orange-500' };
+    if (score <= 14)
+      return { level: 'Moderate anxiety', color: 'text-orange-500' };
     return { level: 'Severe anxiety', color: 'text-red-500' };
   }
 };
 
 const surveyHistory = [
-    { date: 'Jan', phq9: 12, gad7: 10 },
-    { date: 'Feb', phq9: 14, gad7: 11 },
-    { date: 'Mar', phq9: 10, gad7: 8 },
-    { date: 'Apr', phq9: 8, gad7: 7 },
-    { date: 'May', phq9: 5, gad7: 5 },
-    { date: 'Jun', phq9: 7, gad7: 6 },
-  ];
+  { date: 'Jan', phq9: 12, gad7: 10 },
+  { date: 'Feb', phq9: 14, gad7: 11 },
+  { date: 'Mar', phq9: 10, gad7: 8 },
+  { date: 'Apr', phq9: 8, gad7: 7 },
+  { date: 'May', phq9: 5, gad7: 5 },
+  { date: 'Jun', phq9: 7, gad7: 6 },
+];
 
 const SurveyForm = ({
   questions,
@@ -153,44 +167,55 @@ const SurveyForm = ({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
-        {questions.map((question, index) => (
-          <FormField
-            key={question.id}
-            control={form.control}
-            name={question.id}
-            render={({ field }) => (
-              <FormItem className="space-y-3 p-4 rounded-lg border bg-card">
-                <FormLabel className="text-base">
-                  {index + 1}. {question.text}
-                </FormLabel>
-                <FormControl>
-                  <RadioGroup
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                    className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 pt-2"
-                  >
-                    {options.map((option) => (
-                      <FormItem
-                        key={option.value}
-                        className="flex items-center space-x-2 space-y-0"
-                      >
-                        <FormControl>
-                          <RadioGroupItem value={String(option.value)} />
-                        </FormControl>
-                        <FormLabel className="font-normal">
-                          {option.label}
-                        </FormLabel>
-                      </FormItem>
-                    ))}
-                  </RadioGroup>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        ))}
-        <Button type="submit" size="lg" className="w-full">View My Results</Button>
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+        <Accordion type="single" collapsible className="w-full space-y-4">
+          {questions.map((question, index) => (
+            <FormField
+              key={question.id}
+              control={form.control}
+              name={question.id}
+              render={({ field }) => (
+                <AccordionItem
+                  value={`item-${index}`}
+                  className="border bg-card rounded-lg"
+                >
+                  <AccordionTrigger className="p-4 text-base hover:no-underline">
+                    {index + 1}. {question.text}
+                  </AccordionTrigger>
+                  <AccordionContent className="p-4 pt-0">
+                    <FormItem className="space-y-3">
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 pt-2"
+                        >
+                          {options.map((option) => (
+                            <FormItem
+                              key={option.value}
+                              className="flex items-center space-x-2 space-y-0"
+                            >
+                              <FormControl>
+                                <RadioGroupItem value={String(option.value)} />
+                              </FormControl>
+                              <FormLabel className="font-normal">
+                                {option.label}
+                              </FormLabel>
+                            </FormItem>
+                          ))}
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  </AccordionContent>
+                </AccordionItem>
+              )}
+            />
+          ))}
+        </Accordion>
+        <Button type="submit" size="lg" className="w-full">
+          View My Results
+        </Button>
       </form>
     </Form>
   );
@@ -202,7 +227,6 @@ export function MentalHealthSurvey() {
     gad7: null,
   });
   const [isDialogOpen, setDialogOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('phq9');
 
   const handlePhq9Submit = (score: number) => {
     setScores((s) => ({ ...s, phq9: score }));
@@ -221,14 +245,11 @@ export function MentalHealthSurvey() {
   const phq9Interpretation = getScoreInterpretation('phq9', scores.phq9);
   const gad7Interpretation = getScoreInterpretation('gad7', scores.gad7);
 
-  const phqData = [{ name: 'PHQ-9', score: scores.phq9, max: 27 }];
-  const gadData = [{ name: 'GAD-7', score: scores.gad7, max: 21 }];
-  
   const resultsAvailable = scores.phq9 !== null || scores.gad7 !== null;
 
   return (
     <>
-      <Tabs defaultValue="phq9" className="w-full space-y-6" onValueChange={setActiveTab}>
+      <Tabs defaultValue="phq9" className="w-full space-y-6">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="phq9">Depression (PHQ-9)</TabsTrigger>
           <TabsTrigger value="gad7">Anxiety (GAD-7)</TabsTrigger>
@@ -248,111 +269,154 @@ export function MentalHealthSurvey() {
           />
         </TabsContent>
       </Tabs>
-      
+
       {resultsAvailable && (
         <div className="mt-12">
-            <h2 className="text-2xl font-bold font-headline mb-4 text-center">
-                Your Detailed Report
-            </h2>
-            <div className="grid md:grid-cols-2 gap-6">
-                {scores.phq9 !== null && (
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>PHQ-9 Depression Score</CardTitle>
-                        </CardHeader>
-                        <CardContent className="flex flex-col items-center">
-                            <ChartContainer config={{}} className="h-[250px] w-full">
-                                <ResponsiveContainer>
-                                    <PieChart>
-                                        <Tooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                                        <Pie 
-                                            data={[{ value: scores.phq9 }, { value: 27 - scores.phq9 }]} 
-                                            dataKey="value" 
-                                            nameKey="name" 
-                                            startAngle={90} 
-                                            endAngle={-270}
-                                            innerRadius="60%"
-                                            outerRadius="80%"
-                                            cy="50%"
-                                            strokeWidth={0}
-                                        >
-                                            <z.ZodCell fill="hsl(var(--chart-2))" />
-                                            <z.ZodCell fill="hsl(var(--muted))" />
-                                        </Pie>
-                                    </PieChart>
-                                </ResponsiveContainer>
-                            </ChartContainer>
-                             <p className="text-4xl font-bold">{scores.phq9} <span className="text-lg font-normal text-muted-foreground">/ 27</span></p>
-                            <p className={`text-lg font-semibold ${phq9Interpretation.color}`}>{phq9Interpretation.level}</p>
-                        </CardContent>
-                    </Card>
-                )}
-                 {scores.gad7 !== null && (
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>GAD-7 Anxiety Score</CardTitle>
-                        </CardHeader>
-                        <CardContent className="flex flex-col items-center">
-                            <ChartContainer config={{}} className="h-[250px] w-full">
-                                <ResponsiveContainer>
-                                    <PieChart>
-                                        <Tooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
-                                        <Pie 
-                                            data={[{ value: scores.gad7 }, { value: 21 - scores.gad7 }]} 
-                                            dataKey="value" 
-                                            nameKey="name" 
-                                            startAngle={90} 
-                                            endAngle={-270}
-                                            innerRadius="60%"
-                                            outerRadius="80%"
-                                            cy="50%"
-                                            strokeWidth={0}
-                                        >
-                                            <z.ZodCell fill="hsl(var(--chart-5))" />
-                                            <z.ZodCell fill="hsl(var(--muted))" />
-                                        </Pie>
-                                    </PieChart>
-                                </ResponsiveContainer>
-                            </ChartContainer>
-                             <p className="text-4xl font-bold">{scores.gad7} <span className="text-lg font-normal text-muted-foreground">/ 21</span></p>
-                            <p className={`text-lg font-semibold ${gad7Interpretation.color}`}>{gad7Interpretation.level}</p>
-                        </CardContent>
-                    </Card>
-                )}
-            </div>
-             <Card className="mt-6">
-              <CardHeader>
-                <CardTitle>Survey Score History (PHQ-9 & GAD-7)</CardTitle>
-                <CardDescription>
-                  Track your mental health survey scores over time. Lower scores are better.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <ChartContainer config={{}} className="h-[300px] w-full">
-                  <ResponsiveContainer>
-                    <LineChart data={surveyHistory}>
-                      <XAxis
-                        dataKey="date"
-                        stroke="hsl(var(--muted-foreground))"
-                        fontSize={12}
-                        tickLine={false}
-                        axisLine={false}
-                      />
-                      <YAxis
-                        stroke="hsl(var(--muted-foreground))"
-                        fontSize={12}
-                        tickLine={false}
-                        axisLine={false}
-                        domain={[0, 27]}
-                      />
-                      <Tooltip content={<ChartTooltipContent />} />
-                      <Line type="monotone" dataKey="phq9" name="PHQ-9" stroke="hsl(var(--chart-2))" strokeWidth={2} />
-                      <Line type="monotone" dataKey="gad7" name="GAD-7" stroke="hsl(var(--chart-5))" strokeWidth={2} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </ChartContainer>
-              </CardContent>
-            </Card>
+          <h2 className="text-2xl font-bold font-headline mb-4 text-center">
+            Your Detailed Report
+          </h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            {scores.phq9 !== null && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>PHQ-9 Depression Score</CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-col items-center">
+                  <ChartContainer config={{}} className="h-[250px] w-full">
+                    <ResponsiveContainer>
+                      <PieChart>
+                        <Tooltip
+                          cursor={false}
+                          content={<ChartTooltipContent hideLabel />}
+                        />
+                        <Pie
+                          data={[
+                            { value: scores.phq9 },
+                            { value: 27 - scores.phq9 },
+                          ]}
+                          dataKey="value"
+                          nameKey="name"
+                          startAngle={90}
+                          endAngle={-270}
+                          innerRadius="60%"
+                          outerRadius="80%"
+                          cy="50%"
+                          strokeWidth={0}
+                        >
+                          <z.ZodCell fill="hsl(var(--chart-2))" />
+                          <z.ZodCell fill="hsl(var(--muted))" />
+                        </Pie>
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </ChartContainer>
+                  <p className="text-4xl font-bold">
+                    {scores.phq9}{' '}
+                    <span className="text-lg font-normal text-muted-foreground">
+                      / 27
+                    </span>
+                  </p>
+                  <p
+                    className={`text-lg font-semibold ${phq9Interpretation.color}`}
+                  >
+                    {phq9Interpretation.level}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+            {scores.gad7 !== null && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>GAD-7 Anxiety Score</CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-col items-center">
+                  <ChartContainer config={{}} className="h-[250px] w-full">
+                    <ResponsiveContainer>
+                      <PieChart>
+                        <Tooltip
+                          cursor={false}
+                          content={<ChartTooltipContent hideLabel />}
+                        />
+                        <Pie
+                          data={[
+                            { value: scores.gad7 },
+                            { value: 21 - scores.gad7 },
+                          ]}
+                          dataKey="value"
+                          nameKey="name"
+                          startAngle={90}
+                          endAngle={-270}
+                          innerRadius="60%"
+                          outerRadius="80%"
+                          cy="50%"
+                          strokeWidth={0}
+                        >
+                          <z.ZodCell fill="hsl(var(--chart-5))" />
+                          <z.ZodCell fill="hsl(var(--muted))" />
+                        </Pie>
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </ChartContainer>
+                  <p className="text-4xl font-bold">
+                    {scores.gad7}{' '}
+                    <span className="text-lg font-normal text-muted-foreground">
+                      / 21
+                    </span>
+                  </p>
+                  <p
+                    className={`text-lg font-semibold ${gad7Interpretation.color}`}
+                  >
+                    {gad7Interpretation.level}
+                  </p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle>Survey Score History (PHQ-9 & GAD-7)</CardTitle>
+              <CardDescription>
+                Track your mental health survey scores over time. Lower scores
+                are better.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ChartContainer config={{}} className="h-[300px] w-full">
+                <ResponsiveContainer>
+                  <LineChart data={surveyHistory}>
+                    <XAxis
+                      dataKey="date"
+                      stroke="hsl(var(--muted-foreground))"
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                    />
+                    <YAxis
+                      stroke="hsl(var(--muted-foreground))"
+                      fontSize={12}
+                      tickLine={false}
+                      axisLine={false}
+                      domain={[0, 27]}
+                    />
+                    <Tooltip content={<ChartTooltipContent />} />
+                    <Line
+                      type="monotone"
+                      dataKey="phq9"
+                      name="PHQ-9"
+                      stroke="hsl(var(--chart-2))"
+                      strokeWidth={2}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="gad7"
+                      name="GAD-7"
+                      stroke="hsl(var(--chart-5))"
+                      strokeWidth={2}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </ChartContainer>
+            </CardContent>
+          </Card>
         </div>
       )}
 
@@ -360,5 +424,3 @@ export function MentalHealthSurvey() {
     </>
   );
 }
-
-    
