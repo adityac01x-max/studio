@@ -149,7 +149,7 @@ export default function DashboardPage() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Gamification</CardTitle>
+            <CardTitle>Achievements</CardTitle>
             <CardDescription>
               Engage more, earn more.
             </CardDescription>
