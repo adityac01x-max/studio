@@ -59,6 +59,7 @@ const adminNavItems = [
   { href: '/admin/dashboard', label: 'Admin Dashboard', icon: Shield },
   { href: '/admin/resources', label: 'Manage Resources', icon: Library },
   { href: '/admin/peers', label: 'Manage Peers', icon: Users },
+  { href: '/admin/counselors', label: 'Manage Counselors', icon: BookUser },
   { href: '/admin/schedule', label: 'Manage Schedule', icon: Calendar },
 ];
 
