@@ -66,21 +66,21 @@ const formSchema = z.object({
     .any()
     .optional()
     .refine(
-      (files) => !files || files?.[0]?.type.startsWith('image/'),
+      (files) => !files || files?.length === 0 || files?.[0]?.type.startsWith('image/'),
       'Only image files are accepted.'
     ),
   voiceRecording: z
     .any()
-    .refine((files) => files?.length == 1, 'Voice recording is required.')
+    .optional()
     .refine(
-      (files) => files?.[0]?.type.startsWith('audio/'),
+      (files) => !files || files?.length === 0 || files?.[0]?.type.startsWith('audio/'),
       'Only audio files are accepted.'
     ),
   videoRecording: z
     .any()
     .optional()
     .refine(
-      (files) => !files || files?.[0]?.type.startsWith('video/'),
+      (files) => !files || files?.length === 0 || files?.[0]?.type.startsWith('video/'),
       'Only video files are accepted.'
     ),
 });
@@ -203,6 +203,17 @@ export function EmotionalAnalysisForm() {
       setIsLoading(false);
       return;
     }
+
+    if (!values.voiceRecording || values.voiceRecording.length === 0) {
+        toast({
+          variant: 'destructive',
+          title: 'Missing Voice Recording',
+          description: 'Please upload an audio file before analyzing.',
+        });
+        setIsLoading(false);
+        return;
+    }
+
 
     try {
       const voiceDataUri = await fileToDataUri(values.voiceRecording[0]);
