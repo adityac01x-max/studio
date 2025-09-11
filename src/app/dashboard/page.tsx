@@ -7,7 +7,14 @@ import {
 } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Calendar, FileText, Heart, Bot } from 'lucide-react';
+import {
+  ArrowRight,
+  Calendar,
+  FileText,
+  Bot,
+  Trophy,
+  Badge,
+} from 'lucide-react';
 import Link from 'next/link';
 
 function DiamondIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -140,28 +147,38 @@ export default function DashboardPage() {
             </p>
           </CardContent>
         </Card>
-        <div className="grid grid-cols-2 gap-6">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">
-                Total Points
-              </CardTitle>
-              <DiamondIcon className="w-5 h-5 text-primary" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">30</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Day Streak</CardTitle>
-              <FlameIcon className="w-5 h-5 text-primary" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">1</div>
-            </CardContent>
-          </Card>
-        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Gamification</CardTitle>
+            <CardDescription>
+              Engage more, earn more.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="grid grid-cols-2 gap-4">
+            <div className="flex items-center gap-2">
+              <DiamondIcon className="w-6 h-6 text-primary" />
+              <div>
+                <div className="font-bold">30</div>
+                <div className="text-sm text-muted-foreground">Points</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <FlameIcon className="w-6 h-6 text-primary" />
+              <div>
+                <div className="font-bold">1</div>
+                <div className="text-sm text-muted-foreground">Day Streak</div>
+              </div>
+            </div>
+             <Link href="/leaderboard" passHref className="flex items-center gap-2 text-sm font-medium text-primary hover:underline">
+                <Trophy className="w-5 h-5" />
+                <span>Leaderboard</span>
+            </Link>
+             <Link href="/badges" passHref className="flex items-center gap-2 text-sm font-medium text-primary hover:underline">
+                <Badge className="w-5 h-5" />
+                <span>Badges</span>
+            </Link>
+          </CardContent>
+        </Card>
       </div>
 
       <Card>
@@ -173,18 +190,18 @@ export default function DashboardPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex justify-around">
-          <div className="flex flex-col items-center gap-2">
+          <Button variant="ghost" className="flex flex-col items-center gap-2 h-auto">
             <FrownIcon className="w-8 h-8 text-red-500" />
             <span className="text-sm font-medium">Not Good</span>
-          </div>
-          <div className="flex flex-col items-center gap-2">
+          </Button>
+          <Button variant="ghost" className="flex flex-col items-center gap-2 h-auto">
             <MehIcon className="w-8 h-8 text-yellow-500" />
             <span className="text-sm font-medium">Okay</span>
-          </div>
-          <div className="flex flex-col items-center gap-2">
+          </Button>
+          <Button variant="ghost" className="flex flex-col items-center gap-2 h-auto">
             <SmileIcon className="w-8 h-8 text-green-500" />
             <span className="text-sm font-medium">Good</span>
-          </div>
+          </Button>
         </CardContent>
       </Card>
 

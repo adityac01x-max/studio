@@ -13,6 +13,8 @@ import {
   Library,
   Smile,
   Users,
+  Trophy,
+  Badge,
 } from 'lucide-react';
 import { AppLogo } from './icons';
 import {
@@ -49,6 +51,8 @@ const navItems = [
   { href: '/resources', label: 'Resource Hub', icon: Library },
   { href: '/schedule', label: 'My Schedule', icon: Calendar },
   { href: '/chat', label: 'AI First-Aid', icon: Bot },
+  { href: '/leaderboard', label: 'Leaderboard', icon: Trophy },
+  { href: '/badges', label: 'Badges', icon: Badge },
 ];
 
 function DiamondIcon(props: React.SVGProps<SVGSVGElement>) {
