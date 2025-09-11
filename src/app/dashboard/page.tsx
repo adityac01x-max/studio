@@ -14,6 +14,7 @@ import {
   Bot,
   Trophy,
   Badge,
+  Activity,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -169,13 +170,21 @@ export default function DashboardPage() {
                 <div className="text-sm text-muted-foreground">Day Streak</div>
               </div>
             </div>
-             <Link href="/leaderboard" passHref className="flex items-center gap-2 text-sm font-medium text-primary hover:underline">
-                <Trophy className="w-5 h-5" />
-                <span>Leaderboard</span>
+            <Link
+              href="/leaderboard"
+              passHref
+              className="flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+            >
+              <Trophy className="w-5 h-5" />
+              <span>Leaderboard</span>
             </Link>
-             <Link href="/badges" passHref className="flex items-center gap-2 text-sm font-medium text-primary hover:underline">
-                <Badge className="w-5 h-5" />
-                <span>My Badges</span>
+            <Link
+              href="/badges"
+              passHref
+              className="flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+            >
+              <Badge className="w-5 h-5" />
+              <span>My Badges</span>
             </Link>
           </CardContent>
         </Card>
@@ -190,15 +199,24 @@ export default function DashboardPage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex justify-around">
-          <Button variant="ghost" className="flex flex-col items-center gap-2 h-auto">
+          <Button
+            variant="ghost"
+            className="flex flex-col items-center gap-2 h-auto"
+          >
             <FrownIcon className="w-8 h-8 text-red-500" />
             <span className="text-sm font-medium">Not Good</span>
           </Button>
-          <Button variant="ghost" className="flex flex-col items-center gap-2 h-auto">
+          <Button
+            variant="ghost"
+            className="flex flex-col items-center gap-2 h-auto"
+          >
             <MehIcon className="w-8 h-8 text-yellow-500" />
             <span className="text-sm font-medium">Okay</span>
           </Button>
-          <Button variant="ghost" className="flex flex-col items-center gap-2 h-auto">
+          <Button
+            variant="ghost"
+            className="flex flex-col items-center gap-2 h-auto"
+          >
             <SmileIcon className="w-8 h-8 text-green-500" />
             <span className="text-sm font-medium">Good</span>
           </Button>
@@ -254,6 +272,25 @@ export default function DashboardPage() {
               <Link href="/schedule" passHref>
                 <Button variant="ghost" className="text-primary p-0">
                   View Schedule <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
+        <div className="mt-6">
+          <Card>
+            <CardHeader>
+              <Activity className="w-8 h-8 text-primary mb-2" />
+              <CardTitle>My Activity</CardTitle>
+              <CardDescription>
+                Track your progress and review your recent activities on the
+                platform.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Link href="/my-activity" passHref>
+                <Button variant="ghost" className="text-primary p-0">
+                  View My Activity <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </Link>
             </CardContent>

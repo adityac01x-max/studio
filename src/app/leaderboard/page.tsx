@@ -17,7 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge as BadgeComponent } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
-import { Trophy, Badge } from 'lucide-react';
+import { Trophy, Badge, Activity } from 'lucide-react';
 
 const leaderboardData = [
   { rank: 1, studentId: 'STU-845', points: 1250, level: 'Gold' },
@@ -41,12 +41,20 @@ export default function LeaderboardPage() {
             <Trophy className="w-8 h-8 text-primary" />
             Leaderboard
           </h1>
-          <Link href="/badges" passHref>
-            <Button variant="outline">
-              <Badge className="w-5 h-5 mr-2" />
-              View Badges
-            </Button>
-          </Link>
+          <div className="flex gap-2">
+            <Link href="/badges" passHref>
+              <Button variant="outline">
+                <Badge className="w-5 h-5 mr-2" />
+                View Badges
+              </Button>
+            </Link>
+            <Link href="/my-activity" passHref>
+              <Button variant="outline">
+                <Activity className="w-5 h-5 mr-2" />
+                My Activity
+              </Button>
+            </Link>
+          </div>
         </div>
 
         <p className="text-muted-foreground">
