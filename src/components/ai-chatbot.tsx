@@ -19,10 +19,18 @@ import { Input } from './ui/input';
 import { ScrollArea } from './ui/scroll-area';
 import { useToast } from '@/hooks/use-toast';
 import { AppLogo } from './icons';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from './ui/select';
 
 const chatSchema = z.object({
   message: z.string().min(1, 'Message cannot be empty'),
   emotionalState: z.string().optional(),
+  language: z.string().optional(),
 });
 
 type ChatSchema = z.infer<typeof chatSchema>;
@@ -41,6 +49,7 @@ export function AIChatbot() {
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors },
   } = useForm<ChatSchema>({
     resolver: zodResolver(chatSchema),
@@ -50,12 +59,13 @@ export function AIChatbot() {
     setIsLoading(true);
     const userMessage: Message = { role: 'user', content: data.message };
     setMessages((prev) => [...prev, userMessage]);
-    reset();
+    reset({ message: '', language: data.language });
 
     try {
       const result = await provideAICopingStrategies({
         query: data.message,
         emotionalState: data.emotionalState || 'Not specified',
+        language: data.language,
       });
       const assistantMessage: Message = {
         role: 'assistant',
@@ -155,27 +165,62 @@ export function AIChatbot() {
           onSubmit={handleSubmit(onSubmit)}
           className="flex w-full items-start space-x-2"
         >
-          <Input
-            {...register('message')}
-            placeholder="Describe how you're feeling..."
-            autoComplete="off"
-            className="flex-1"
-            disabled={isLoading}
-          />
-          <Button type="submit" size="icon" disabled={isLoading}>
-            {isLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <CornerDownLeft className="h-4 w-4" />
+          <div className="flex flex-col gap-2 w-full">
+            <div className="flex w-full items-start space-x-2">
+              <Input
+                {...register('message')}
+                placeholder="Describe how you're feeling..."
+                autoComplete="off"
+                className="flex-1"
+                disabled={isLoading}
+              />
+              <Button type="submit" size="icon" disabled={isLoading}>
+                {isLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <CornerDownLeft className="h-4 w-4" />
+                )}
+                <span className="sr-only">Send</span>
+              </Button>
+            </div>
+            <z.infer<typeof chatSchema> extends { language: any }
+              ? 'language' extends keyof z.infer<typeof chatSchema>
+                ? {
+                    name: 'language';
+                    control: typeof control;
+                    render: ({
+                      field,
+                    }: {
+                      field: any;
+                    }) => (
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                        disabled={isLoading}
+                      >
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue placeholder="Language" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="English">English</SelectItem>
+                          <SelectItem value="Hindi">Hindi</SelectItem>
+                          <SelectItem value="Bengali">Bengali</SelectItem>
+                          <SelectItem value="Tamil">Tamil</SelectItem>
+                          <SelectItem value="Telugu">Telugu</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    );
+                  }
+                : never
+              : never
+            />
+            {errors.message && (
+              <p className="text-xs text-destructive mt-1">
+                {errors.message.message}
+              </p>
             )}
-            <span className="sr-only">Send</span>
-          </Button>
+          </div>
         </form>
-        {errors.message && (
-          <p className="text-xs text-destructive mt-1">
-            {errors.message.message}
-          </p>
-        )}
       </CardFooter>
     </Card>
   );

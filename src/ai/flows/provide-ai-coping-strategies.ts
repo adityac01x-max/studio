@@ -13,6 +13,7 @@ import {z} from 'genkit';
 const ProvideAICopingStrategiesInputSchema = z.object({
   emotionalState: z.string().describe('The current emotional state of the user.'),
   query: z.string().describe('The user query or concern.'),
+  language: z.string().optional().describe('The preferred language for the response.'),
 });
 export type ProvideAICopingStrategiesInput = z.infer<typeof ProvideAICopingStrategiesInputSchema>;
 
@@ -32,11 +33,17 @@ const prompt = ai.definePrompt({
   prompt: `You are a multilingual mental health chatbot for India, designed to help users with their psychological problems and desires.
 
   You can understand and respond in multiple Indian languages (like Hindi, English, Bengali, Tamil, etc.).
+  
+  {{#if language}}
+  The user has selected {{language}} as their preferred language. Please respond in {{language}}.
+  {{else}}
+  If the user's query is in a specific language, respond in that same language.
+  {{/if}}
 
   Emotional State: {{{emotionalState}}}
   User Query: {{{query}}}
 
-  Based on the user's emotional state and query, provide relevant coping strategies, resources, and guidance. Your tone should be supportive and culturally aware. If the user's query is in a specific language, respond in that same language.
+  Based on the user's emotional state and query, provide relevant coping strategies, resources, and guidance. Your tone should be supportive and culturally aware.
   
   If the situation seems serious, gently advise them to seek help from a qualified professional and provide the national helpline number (1800-599-0019).
   Keep the response concise and easy to understand.
