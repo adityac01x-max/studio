@@ -10,7 +10,8 @@ import {
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { PlayCircle, Headphones, BookOpen } from 'lucide-react';
+import { PlayCircle, Headphones, BookOpen, ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
 
 const resources = [
   {
@@ -98,9 +99,17 @@ export default function ResourcesPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="font-headline text-3xl font-bold tracking-tight">
-        Resource Hub
-      </h1>
+      <div className="flex items-center gap-4 mb-6">
+        <Link href="/dashboard" passHref>
+          <Button variant="outline" size="icon">
+            <ArrowLeft />
+            <span className="sr-only">Back to Dashboard</span>
+          </Button>
+        </Link>
+        <h1 className="font-headline text-3xl font-bold tracking-tight">
+          Resource Hub
+        </h1>
+      </div>
       <p className="text-muted-foreground">
         Explore our curated collection of psychoeducational resources to
         support your mental wellness journey.
@@ -130,5 +139,3 @@ export default function ResourcesPage() {
     </div>
   );
 }
-
-    
