@@ -45,7 +45,7 @@ import {
 } from './ui/table';
 import { Badge } from './ui/badge';
 
-const bookingSchema = z.object({
+const consultationSchema = z.object({
   date: z.date({
     required_error: 'A date is required.',
   }),
@@ -55,7 +55,7 @@ const bookingSchema = z.object({
   notes: z.string().optional(),
 });
 
-type BookingFormValues = z.infer<typeof bookingSchema>;
+type ConsultationFormValues = z.infer<typeof consultationSchema>;
 
 const timeSlots = [
   '09:00 AM',
@@ -83,15 +83,15 @@ const pastSessions = [
   },
 ];
 
-export function CounselorBooking() {
+export function CounselorConsultation() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
 
-  const form = useForm<BookingFormValues>({
-    resolver: zodResolver(bookingSchema),
+  const form = useForm<ConsultationFormValues>({
+    resolver: zodResolver(consultationSchema),
   });
 
-  function onSubmit(data: BookingFormValues) {
+  function onSubmit(data: ConsultationFormValues) {
     setIsLoading(true);
     console.log(data);
 
