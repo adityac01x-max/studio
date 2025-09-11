@@ -1,0 +1,187 @@
+
+'use client';
+
+import { useState } from 'react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Calendar as CalendarIcon, Clock, MapPin, User, FileText, Trash2, Edit } from 'lucide-react';
+import { Calendar } from '@/components/ui/calendar';
+import { Badge } from '@/components/ui/badge';
+import { format } from 'date-fns';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+
+const allSessions = [
+  {
+    id: 'session-1',
+    studentId: 'STU-anon-123',
+    counselor: 'Dr. Sunita Sharma',
+    date: '2024-07-29',
+    time: '10:00 AM - 11:00 AM',
+    location: 'Counseling Center, Room 2',
+    status: 'Completed',
+  },
+  {
+    id: 'session-2',
+    studentId: 'STU-anon-456',
+    counselor: 'Rohan Kumar',
+    date: '2024-07-29',
+    time: '02:00 PM - 03:00 PM',
+    location: 'Student Union, Room 5',
+    status: 'Completed',
+  },
+  {
+    id: 'session-3',
+    studentId: 'STU-anon-789',
+    counselor: 'Dr. Sunita Sharma',
+    date: '2024-07-31',
+    time: '10:00 AM - 11:00 AM',
+    location: 'Counseling Center, Room 2',
+    status: 'Upcoming',
+  },
+  {
+    id: 'session-4',
+    studentId: 'STU-anon-101',
+    counselor: 'Dr. Rohan Mehra',
+    date: '2024-08-01',
+    time: '09:00 AM - 10:00 AM',
+    location: 'Counseling Center, Room 1',
+    status: 'Upcoming',
+  },
+  {
+    id: 'session-5',
+    studentId: 'STU-anon-112',
+    counselor: 'Dr. Sunita Sharma',
+    date: '2024-08-02',
+    time: '02:00 PM - 03:00 PM',
+    location: 'Counseling Center, Room 2',
+    status: 'Upcoming',
+  },
+];
+
+
+export default function AdminSchedulePage() {
+  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [sessions, setSessions] = useState(allSessions);
+
+  const sessionDays = sessions.map((c) => new Date(c.date));
+
+  const filteredSessions = date
+    ? sessions.filter(
+        (c) => format(new Date(c.date), 'PPP') === format(date, 'PPP')
+      )
+    : sessions;
+    
+  const upcomingSessionsCount = sessions.filter(s => s.status === 'Upcoming').length;
+
+  return (
+    <div className="space-y-6">
+       <h1 className="font-headline text-3xl font-bold tracking-tight">
+          Manage Schedule
+        </h1>
+
+      <div className="grid gap-8 md:grid-cols-3">
+        <div className="md:col-span-2 space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>All Sessions</CardTitle>
+              <CardDescription>
+                {date
+                  ? `Showing sessions for ${format(date, 'PPP')}`
+                  : 'Showing all sessions. Select a day to filter.'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Student ID (Anon)</TableHead>
+                            <TableHead>Counselor</TableHead>
+                            <TableHead>Time</TableHead>
+                            <TableHead>Status</TableHead>
+                             <TableHead className="text-right">Actions</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {filteredSessions.length > 0 ? (
+                            filteredSessions.map((item) => (
+                                <TableRow key={item.id}>
+                                    <TableCell className="font-medium">{item.studentId}</TableCell>
+                                    <TableCell>{item.counselor}</TableCell>
+                                    <TableCell>{item.time}</TableCell>
+                                    <TableCell>
+                                        <Badge variant={item.status === 'Completed' ? 'secondary' : 'default'}>{item.status}</Badge>
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <Button variant="ghost" size="icon"><Edit className="w-4 h-4" /></Button>
+                                        <Button variant="ghost" size="icon"><Trash2 className="w-4 h-4 text-destructive" /></Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        ) : (
+                             <TableRow>
+                                <TableCell colSpan={5} className="text-center h-24">
+                                     No sessions scheduled for this day.
+                                </TableCell>
+                            </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
+            </CardContent>
+          </Card>
+        </div>
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Upcoming Sessions</CardTitle>
+            </CardHeader>
+            <CardContent className="flex items-center gap-4">
+              <User className="w-8 h-8 text-primary" />
+              <div className="text-3xl font-bold">
+                {upcomingSessionsCount}
+              </div>
+              <p className="text-muted-foreground">Sessions</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-0">
+              <Calendar
+                mode="single"
+                selected={date}
+                onSelect={setDate}
+                className="w-full"
+                modifiers={{ booked: sessionDays }}
+                modifiersClassNames={{
+                  booked: 'bg-primary/20 rounded-full',
+                }}
+              />
+            </CardContent>
+          </Card>
+          <Button className="w-full">Schedule New Session</Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+

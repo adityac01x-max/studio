@@ -69,7 +69,7 @@ export default function LandingPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Link href="/dashboard" className="w-full" passHref>
+                <Link href="/admin/dashboard" className="w-full" passHref>
                   <Button variant="outline" className="w-full">
                     Login as Admin
                   </Button>

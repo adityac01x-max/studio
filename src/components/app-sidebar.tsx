@@ -14,6 +14,7 @@ import {
   Library,
   Users,
   Trophy,
+  Shield,
 } from 'lucide-react';
 import { AppLogo } from './icons';
 import {
@@ -52,6 +53,14 @@ const navItems = [
   { href: '/chat', label: 'AI First-Aid', icon: Bot },
   { href: '/progress', label: 'My Progress', icon: Trophy },
 ];
+
+const adminNavItems = [
+  { href: '/admin/dashboard', label: 'Admin Dashboard', icon: Shield },
+  { href: '/admin/resources', label: 'Manage Resources', icon: Library },
+  { href: '/admin/peers', label: 'Manage Peers', icon: Users },
+  { href: '/admin/schedule', label: 'Manage Schedule', icon: Calendar },
+];
+
 
 function DiamondIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -95,12 +104,19 @@ export function AppSidebar() {
   const pathname = usePathname();
   const { state } = useSidebar();
   const isCollapsed = state === 'collapsed';
+  
+  const isAdminRoute = pathname.startsWith('/admin');
+  const currentNavItems = isAdminRoute ? adminNavItems : navItems;
+  const currentUser = isAdminRoute
+    ? { name: 'Admin User', email: 'admin@college.ac.in' }
+    : { name: 'Student User', email: 'student@college.ac.in' };
+
 
   return (
     <>
       <SidebarHeader className="flex items-center justify-between p-2">
         <Link
-          href="/dashboard"
+          href={isAdminRoute ? '/admin/dashboard' : '/dashboard'}
           className="flex items-center gap-2 p-2 font-headline font-bold text-lg"
         >
           <div className="p-1.5 rounded-md bg-primary text-primary-foreground">
@@ -114,7 +130,7 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarMenu>
-          {navItems.map((item) => (
+          {currentNavItems.map((item) => (
             <SidebarMenuItem key={item.href}>
               <Link href={item.href} legacyBehavior passHref>
                 <SidebarMenuButton
@@ -136,6 +152,8 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>
+        {!isAdminRoute && (
+            <>
         <SidebarGroup
           className={
             isCollapsed
@@ -184,10 +202,12 @@ export function AppSidebar() {
             </div>
           </div>
         </SidebarGroup>
-
-        <SidebarSeparator
+         <SidebarSeparator
           className={isCollapsed ? 'hidden' : 'block my-0'}
         />
+        </>
+        )}
+
 
         <div
           className={`flex items-center ${
@@ -203,12 +223,12 @@ export function AppSidebar() {
                 } items-center gap-2 p-2 h-auto w-full`}
               >
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src="https://picsum.photos/seed/user/100/100" />
-                  <AvatarFallback>U</AvatarFallback>
+                  <AvatarImage src={`https://picsum.photos/seed/${isAdminRoute ? 'admin' : 'user'}/100/100`} />
+                  <AvatarFallback>{currentUser.name.charAt(0)}</AvatarFallback>
                 </Avatar>
                 {!isCollapsed && (
                   <div className="text-left">
-                    <p className="text-sm font-medium">Student User</p>
+                    <p className="text-sm font-medium">{currentUser.name}</p>
                   </div>
                 )}
               </Button>
@@ -217,10 +237,10 @@ export function AppSidebar() {
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
                   <p className="text-sm font-medium leading-none">
-                    Student User
+                    {currentUser.name}
                   </p>
                   <p className="text-xs leading-none text-muted-foreground">
-                    student@college.ac.in
+                    {currentUser.email}
                   </p>
                 </div>
               </DropdownMenuLabel>
