@@ -16,6 +16,7 @@ import {
   Trophy,
   Shield,
   LogOut,
+  Siren,
 } from 'lucide-react';
 import { AppLogo } from './icons';
 import {
@@ -57,6 +58,7 @@ const navItems = [
 
 const adminNavItems = [
   { href: '/admin/dashboard', label: 'Admin Dashboard', icon: Shield },
+  { href: '/admin/sos', label: 'SOS & High-Risk', icon: Siren },
   { href: '/admin/resources', label: 'Manage Resources', icon: Library },
   { href: '/admin/peers', label: 'Manage Peers', icon: Users },
   { href: '/admin/counselors', label: 'Manage Counselors', icon: BookUser },
