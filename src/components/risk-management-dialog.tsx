@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useRouter } from 'next/navigation';
@@ -27,7 +28,7 @@ export function RiskManagementDialog({
 
   const handleContactHelpline = () => {
     // In a real app, this would initiate a call
-    window.location.href = 'tel:988';
+    window.location.href = 'tel:1800-599-0019';
   };
 
   const handleCopingStrategies = () => {
@@ -53,7 +54,7 @@ export function RiskManagementDialog({
             onClick={handleContactHelpline}
             className="w-full bg-red-600 hover:bg-red-700 text-white"
           >
-            <Phone className="mr-2" /> Call Mental Health Helpline (988)
+            <Phone className="mr-2" /> Call National Helpline (1800-599-0019)
           </Button>
           <p className="text-sm text-center text-muted-foreground">
             A free, confidential service available 24/7.

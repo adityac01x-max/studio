@@ -72,14 +72,14 @@ const pastSessions = [
   {
     id: 1,
     date: '2024-04-15',
-    counselor: 'Dr. Emily Carter',
+    counselor: 'Dr. Ananya Sharma',
     type: 'College Counselor',
     status: 'Completed',
   },
   {
     id: 2,
     date: '2024-05-02',
-    counselor: 'Alex Ray (Peer)',
+    counselor: 'Rohan Kumar (Peer)',
     type: 'Peer Support',
     status: 'Completed',
   },
@@ -88,21 +88,21 @@ const pastSessions = [
 const peerSupporters = [
   {
     id: 'peer1',
-    name: 'Alex Ray',
+    name: 'Rohan Kumar',
     year: '3rd Year, Psychology',
     availability: 'Mon, Wed, Fri',
     avatar: 'https://picsum.photos/seed/peer1/100/100',
   },
   {
     id: 'peer2',
-    name: 'Jordan Lee',
+    name: 'Priya Singh',
     year: '4th Year, Sociology',
     availability: 'Tue, Thu',
     avatar: 'https://picsum.photos/seed/peer2/100/100',
   },
   {
     id: 'peer3',
-    name: 'Casey Smith',
+    name: 'Aditya Verma',
     year: '3rd Year, Social Work',
     availability: 'Mon, Fri',
     avatar: 'https://picsum.photos/seed/peer3/100/100',
@@ -112,26 +112,26 @@ const peerSupporters = [
 const nearbyProfessionals = [
   {
     id: 'prof1',
-    name: 'Dr. Sarah Chen, PhD',
+    name: 'Dr. Meera Desai, PhD',
     specialty: 'Cognitive Behavioral Therapy',
-    address: '123 Wellness Ave, Cityville',
-    distance: '2.5 miles',
+    address: '123 Wellness Ave, Jayanagar',
+    distance: '2.5 km',
     avatar: 'https://picsum.photos/seed/prof1/100/100',
   },
   {
     id: 'prof2',
-    name: 'Michael Jones, LCSW',
+    name: 'Sameer Joshi, M.Phil',
     specialty: 'Anxiety & Stress Management',
-    address: '456 Serenity Blvd, Cityville',
-    distance: '3.1 miles',
+    address: '456 Serenity Blvd, Koramangala',
+    distance: '3.1 km',
     avatar: 'https://picsum.photos/seed/prof2/100/100',
   },
   {
     id: 'prof3',
-    name: 'Dr. Aisha Khan, PsyD',
+    name: 'Dr. Fatima Ahmed, PsyD',
     specialty: 'Trauma & PTSD',
-    address: '789 Harmony Ln, Cityville',
-    distance: '4.0 miles',
+    address: '789 Harmony Ln, Indiranagar',
+    distance: '4.0 km',
     avatar: 'https://picsum.photos/seed/prof3/100/100',
   },
 ];
@@ -380,7 +380,7 @@ export function CounselorConsultation() {
                   {pastSessions.map((session) => (
                     <TableRow key={session.id}>
                       <TableCell>
-                        {format(session.date, 'MMM d, yyyy')}
+                        {format(new Date(session.date), 'MMM d, yyyy')}
                       </TableCell>
                       <TableCell>{session.counselor}</TableCell>
                       <TableCell>
@@ -424,7 +424,7 @@ export function CounselorConsultation() {
               </label>
             </div>
             <div className="flex gap-2">
-              <Input placeholder="Enter zip code or city" />
+              <Input placeholder="Enter pincode or city" />
               <Button onClick={handleGeolocation}>
                 <Search className="mr-2 h-4 w-4" /> Search
               </Button>
@@ -460,5 +460,3 @@ export function CounselorConsultation() {
     </Tabs>
   );
 }
-
-    

@@ -508,6 +508,7 @@ export function EmotionalAnalysisForm() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="English">English</SelectItem>
+                <SelectItem value="Hindi">Hindi</SelectItem>
                 <SelectItem value="Spanish">Spanish</SelectItem>
                 <SelectItem value="French">French</SelectItem>
                 <SelectItem value="German">German</SelectItem>

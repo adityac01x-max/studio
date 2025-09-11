@@ -256,7 +256,7 @@ export default function DashboardPage() {
               <Calendar className="w-8 h-8 text-primary mb-2" />
               <CardTitle>Upcoming Sessions</CardTitle>
               <CardDescription>
-                You have a session with Dr. Anita scheduled for tomorrow.
+                You have a session with Dr. Sharma scheduled for tomorrow.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -272,5 +272,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-    

@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -219,7 +220,7 @@ export function AppSidebar() {
                     Student User
                   </p>
                   <p className="text-xs leading-none text-muted-foreground">
-                    student@university.edu
+                    student@college.ac.in
                   </p>
                 </div>
               </DropdownMenuLabel>
