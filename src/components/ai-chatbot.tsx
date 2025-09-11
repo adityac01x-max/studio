@@ -91,6 +91,20 @@ export function AIChatbot() {
       <CardContent className="flex-1 overflow-hidden">
         <ScrollArea className="h-full pr-4">
           <div className="space-y-4">
+            <div className="flex gap-3">
+              <Avatar>
+                <div className="bg-accent rounded-full p-2">
+                  <AppLogo className="w-6 h-6 text-primary" />
+                </div>
+              </Avatar>
+              <div className="rounded-lg px-4 py-2 bg-muted">
+                <p>
+                  Hello! I am your multilingual AI wellness assistant. How can I
+                  help you today? You can talk to me in English, Hindi, or
+                  several other Indian languages.
+                </p>
+              </div>
+            </div>
             {messages.map((message, index) => (
               <div
                 key={index}
