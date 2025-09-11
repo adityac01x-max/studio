@@ -84,7 +84,7 @@ const riskDistribution = [
     { name: 'High', value: 2, fill: 'hsl(var(--destructive))' },
     { name: 'Moderate', value: 2, fill: 'hsl(var(--chart-4))' },
     { name: 'Low', value: 1, fill: 'hsl(var(--chart-2))' },
-]
+];
 
 const alertsOverTime = [
     { month: 'Jan', alerts: 5 },
@@ -93,7 +93,7 @@ const alertsOverTime = [
     { month: 'Apr', alerts: 4 },
     { month: 'May', alerts: 2 },
     { month: 'Jun', alerts: 3 },
-]
+];
 
 export default function AdminSosPage() {
   return (
@@ -177,7 +177,7 @@ export default function AdminSosPage() {
                         </ResponsiveContainer>
                     </ChartContainer>
                 </CardContent>
-           </card>
+           </Card>
        </div>
 
       <Card>
