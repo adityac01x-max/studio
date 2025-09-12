@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import {
   User,
   Shield,
+  Briefcase,
 } from 'lucide-react';
 import { AppLogo } from '@/components/icons';
 
@@ -57,6 +58,22 @@ export default function LandingPage() {
                 </Link>
               </CardContent>
             </Card>
+             <Card>
+              <CardHeader className="items-center text-center">
+                <div className="p-3 bg-accent/20 rounded-full">
+                  <Briefcase className="w-8 h-8 text-accent" />
+                </div>
+                <CardTitle>For Professionals</CardTitle>
+                <CardDescription>
+                  Manage sessions, view student progress, and provide support.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Link href="/professional/dashboard" className="w-full" passHref>
+                  <Button variant="secondary" className="w-full">Login as Professional</Button>
+                </Link>
+              </CardContent>
+            </Card>
             <Card>
               <CardHeader className="items-center text-center">
                 <div className="p-3 bg-accent/20 rounded-full">
@@ -64,8 +81,7 @@ export default function LandingPage() {
                 </div>
                 <CardTitle>For Admin</CardTitle>
                 <CardDescription>
-                  Manage schedules, view anonymous reports, and support your
-                  students.
+                  Manage the platform, resources, and users.
                 </CardDescription>
               </CardHeader>
               <CardContent>

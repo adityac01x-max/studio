@@ -17,6 +17,10 @@ import {
   Shield,
   LogOut,
   Siren,
+  Briefcase,
+  MessageSquare,
+  Video,
+  ClipboardList,
 } from 'lucide-react';
 import { AppLogo } from './icons';
 import {
@@ -65,6 +69,15 @@ const adminNavItems = [
   { href: '/admin/schedule', label: 'Manage Schedule', icon: Calendar },
 ];
 
+const professionalNavItems = [
+    { href: '/professional/dashboard', label: 'Dashboard', icon: Briefcase },
+    { href: '/professional/students', label: 'Students', icon: Users },
+    { href: '/professional/schedule', label: 'Schedule', icon: Calendar },
+    { href: '/professional/chat', label: 'Chat', icon: MessageSquare },
+    { href: '/professional/video', label: 'Video Calls', icon: Video },
+    { href: '/professional/questionnaires', label: 'Questionnaires', icon: ClipboardList },
+]
+
 
 function DiamondIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -110,17 +123,23 @@ export function AppSidebar() {
   const isCollapsed = state === 'collapsed';
   
   const isAdminRoute = pathname.startsWith('/admin');
-  const currentNavItems = isAdminRoute ? adminNavItems : navItems;
+  const isProfessionalRoute = pathname.startsWith('/professional');
+
+  const currentNavItems = isAdminRoute ? adminNavItems : isProfessionalRoute ? professionalNavItems : navItems;
   const currentUser = isAdminRoute
-    ? { name: 'Admin User', email: 'admin@college.ac.in' }
-    : { name: 'Student User', email: 'student@college.ac.in' };
+    ? { name: 'Admin User', email: 'admin@college.ac.in', avatarSeed: 'admin' }
+    : isProfessionalRoute
+    ? { name: 'Dr. Sharma', email: 's.sharma@college.ac.in', avatarSeed: 'professional' }
+    : { name: 'Student User', email: 'student@college.ac.in', avatarSeed: 'user' };
+  
+  const homeLink = isAdminRoute ? '/admin/dashboard' : isProfessionalRoute ? '/professional/dashboard' : '/dashboard';
 
 
   return (
     <>
       <SidebarHeader className="flex items-center justify-between p-2">
         <Link
-          href={isAdminRoute ? '/admin/dashboard' : '/dashboard'}
+          href={homeLink}
           className="flex items-center gap-2 p-2 font-headline font-bold text-lg"
         >
           <div className="p-1.5 rounded-md bg-primary text-primary-foreground">
@@ -156,7 +175,7 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>
-        {!isAdminRoute && (
+        {!isAdminRoute && !isProfessionalRoute && (
             <>
         <SidebarGroup
           className={
@@ -227,7 +246,7 @@ export function AppSidebar() {
                 } items-center gap-2 p-2 h-auto w-full`}
               >
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={`https://picsum.photos/seed/${isAdminRoute ? 'admin' : 'user'}/100/100`} />
+                  <AvatarImage src={`https://picsum.photos/seed/${currentUser.avatarSeed}/100/100`} />
                   <AvatarFallback>{currentUser.name.charAt(0)}</AvatarFallback>
                 </Avatar>
                 {!isCollapsed && (

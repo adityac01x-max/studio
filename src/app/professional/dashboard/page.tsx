@@ -1,0 +1,245 @@
+
+'use client';
+import {
+  AlertTriangle,
+  BarChart3,
+  BookOpen,
+  CheckCircle,
+  FileText,
+  Users,
+  Calendar,
+} from 'lucide-react';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Bar,
+  BarChart,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+} from '@/components/ui/chart';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import Link from 'next/link';
+
+const upcomingSessions = [
+  {
+    studentId: 'STU-anon-789',
+    time: '10:00 AM',
+    date: '2024-07-31',
+    studentAvatar: 'https://picsum.photos/seed/STU-anon-789/100/100',
+  },
+  {
+    studentId: 'STU-anon-101',
+    time: '09:00 AM',
+    date: '2024-08-01',
+    studentAvatar: 'https://picsum.photos/seed/STU-anon-101/100/100',
+  },
+];
+
+const highRiskStudents = [
+  {
+    studentId: 'STU-anon-345',
+    riskLevel: 'High',
+    lastSurvey: 'PHQ-9',
+    score: 18,
+    lastSession: '2024-07-20',
+  },
+  {
+    studentId: 'STU-anon-789',
+    riskLevel: 'High',
+    lastSurvey: 'GAD-7',
+    score: 16,
+    lastSession: 'N/A',
+  },
+];
+
+const studentCaseload = [
+    { month: 'Jan', students: 15 },
+    { month: 'Feb', students: 18 },
+    { month: 'Mar', students: 22 },
+    { month: 'Apr', students: 20 },
+    { month: 'May', students: 25 },
+    { month: 'Jun', students: 28 },
+]
+
+export default function ProfessionalDashboardPage() {
+  return (
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <h1 className="font-headline text-3xl font-bold tracking-tight">
+          Welcome, Dr. Sharma
+        </h1>
+        <p className="text-muted-foreground">
+          Here's your dashboard for today.
+        </p>
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Users /> Total Students
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-4xl font-bold">28</div>
+            <p className="text-xs text-muted-foreground">
+              Currently assigned
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Calendar /> Upcoming Sessions
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-4xl font-bold">5</div>
+            <p className="text-xs text-muted-foreground">This week</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <FileText /> Reports to Review
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-4xl font-bold">3</div>
+            <p className="text-xs text-muted-foreground">New survey results</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <AlertTriangle className="text-destructive" /> High-Risk Alerts
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-4xl font-bold">2</div>
+            <p className="text-xs text-muted-foreground">Require attention</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-3">
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <AlertTriangle className="text-destructive" /> Priority: High-Risk Students
+            </CardTitle>
+            <CardDescription>
+              Students who have recently been flagged as high-risk.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Student ID (Anon)</TableHead>
+                  <TableHead>Risk Level</TableHead>
+                  <TableHead>Last Survey</TableHead>
+                  <TableHead>Score</TableHead>
+                  <TableHead>Last Session</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {highRiskStudents.map((student) => (
+                  <TableRow key={student.studentId}>
+                    <TableCell className="font-medium">
+                      {student.studentId}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="destructive">{student.riskLevel}</Badge>
+                    </TableCell>
+                    <TableCell>{student.lastSurvey}</TableCell>
+                    <TableCell>{student.score}</TableCell>
+                    <TableCell>{student.lastSession}</TableCell>
+                    <TableCell className="text-right">
+                       <Link href="/professional/students" passHref>
+                            <Button size="sm">View Profile</Button>
+                       </Link>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+        <Card>
+            <CardHeader>
+                <CardTitle>Upcoming Today</CardTitle>
+                <CardDescription>
+                    Your next sessions for today.
+                </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                {upcomingSessions.map(session => (
+                    <div key={session.studentId} className="flex items-center justify-between">
+                         <div className="flex items-center gap-3">
+                            <Avatar>
+                                <AvatarImage src={session.studentAvatar} />
+                                <AvatarFallback>{session.studentId.slice(-2)}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                                <p className="font-medium">{session.studentId}</p>
+                                <p className="text-sm text-muted-foreground">{session.time}</p>
+                            </div>
+                         </div>
+                         <Button variant="secondary" size="sm">Start</Button>
+                    </div>
+                ))}
+            </CardContent>
+        </Card>
+      </div>
+
+       <Card>
+        <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+                <BarChart3 /> Student Caseload Growth
+            </CardTitle>
+            <CardDescription>
+              Number of students assigned to you over the past six months.
+            </CardDescription>
+        </CardHeader>
+        <CardContent>
+             <ChartContainer config={{}} className="h-[300px] w-full">
+              <ResponsiveContainer>
+                <LineChart data={studentCaseload}>
+                    <XAxis dataKey="month" fontSize={12} />
+                    <YAxis fontSize={12} allowDecimals={false}/>
+                    <Tooltip content={<ChartTooltipContent />} />
+                    <Line type="monotone" dataKey="students" name="Students" stroke="hsl(var(--primary))" />
+                </LineChart>
+              </ResponsiveContainer>
+            </ChartContainer>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
