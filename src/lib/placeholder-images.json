@@ -36,6 +36,24 @@
       "description": "A person doing yoga in a bright room.",
       "imageUrl": "https://picsum.photos/seed/video2/600/400",
       "imageHint": "yoga room"
+    },
+    {
+      "id": "lifestyle-1",
+      "description": "A person dancing joyfully.",
+      "imageUrl": "https://picsum.photos/seed/lifestyle1/600/400",
+      "imageHint": "dance joy"
+    },
+    {
+      "id": "lifestyle-2",
+      "description": "A person working out with dumbbells.",
+      "imageUrl": "https://picsum.photos/seed/lifestyle2/600/400",
+      "imageHint": "workout fitness"
+    },
+    {
+      "id": "lifestyle-3",
+      "description": "A person jogging on a path in a park.",
+      "imageUrl": "https://picsum.photos/seed/lifestyle3/600/400",
+      "imageHint": "jogging park"
     }
   ]
 }
