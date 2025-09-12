@@ -8,6 +8,7 @@ import {
   FileText,
   Users,
   Calendar,
+  PieChart as PieChartIcon,
 } from 'lucide-react';
 import {
   Card,
@@ -29,8 +30,11 @@ import { Button } from '@/components/ui/button';
 import {
   Bar,
   BarChart,
+  Cell,
   Line,
   LineChart,
+  Pie,
+  PieChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -79,12 +83,24 @@ const highRiskStudents = [
 ];
 
 const studentCaseload = [
-    { month: 'Jan', students: 15 },
-    { month: 'Feb', students: 18 },
-    { month: 'Mar', students: 22 },
-    { month: 'Apr', students: 20 },
-    { month: 'May', students: 25 },
-    { month: 'Jun', students: 28 },
+  { month: 'Jan', students: 15 },
+  { month: 'Feb', students: 18 },
+  { month: 'Mar', students: 22 },
+  { month: 'Apr', students: 20 },
+  { month: 'May', students: 25 },
+  { month: 'Jun', students: 28 },
+];
+
+const featureUsageData = [
+  { name: 'Surveys', value: 120, fill: 'hsl(var(--chart-1))' },
+  { name: 'Resources', value: 90, fill: 'hsl(var(--chart-2))' },
+  { name: 'AI Chat', value: 60, fill: 'hsl(var(--chart-3))' },
+  { name: 'Bookings', value: 45, fill: 'hsl(var(--chart-4))' },
+];
+
+const sessionTypeData = [
+    { name: 'In-Person', count: 35, fill: 'hsl(var(--chart-5))'},
+    { name: 'Video Call', count: 54, fill: 'hsl(var(--chart-2))'},
 ]
 
 export default function ProfessionalDashboardPage() {
@@ -152,7 +168,8 @@ export default function ProfessionalDashboardPage() {
         <Card className="md:col-span-2">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <AlertTriangle className="text-destructive" /> Priority: High-Risk Students
+              <AlertTriangle className="text-destructive" /> Priority: High-Risk
+              Students
             </CardTitle>
             <CardDescription>
               Students who have recently been flagged as high-risk.
@@ -183,9 +200,9 @@ export default function ProfessionalDashboardPage() {
                     <TableCell>{student.score}</TableCell>
                     <TableCell>{student.lastSession}</TableCell>
                     <TableCell className="text-right">
-                       <Link href="/professional/students" passHref>
-                            <Button size="sm">View Profile</Button>
-                       </Link>
+                      <Link href="/professional/students" passHref>
+                        <Button size="sm">View Profile</Button>
+                      </Link>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -194,58 +211,136 @@ export default function ProfessionalDashboardPage() {
           </CardContent>
         </Card>
         <Card>
-            <CardHeader>
-                <CardTitle>Upcoming Today</CardTitle>
-                <CardDescription>
-                    Your next sessions for today.
-                </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-                {upcomingSessions.map(session => (
-                    <div key={session.studentId} className="flex items-center justify-between">
-                         <div className="flex items-center gap-3">
-                            <Avatar>
-                                <AvatarImage src={session.studentAvatar} />
-                                <AvatarFallback>{session.studentId.slice(-2)}</AvatarFallback>
-                            </Avatar>
-                            <div>
-                                <p className="font-medium">{session.studentId}</p>
-                                <p className="text-sm text-muted-foreground">{session.time}</p>
-                            </div>
-                         </div>
-                         {session.type === 'Video Call' ? (
-                           <Link href={`/professional/video?studentId=${session.studentId}`} passHref>
-                             <Button variant="secondary" size="sm">Start</Button>
-                           </Link>
-                         ) : (
-                           <Button variant="secondary" size="sm" disabled>In-Person</Button>
-                         )}
-                    </div>
-                ))}
-            </CardContent>
+          <CardHeader>
+            <CardTitle>Upcoming Today</CardTitle>
+            <CardDescription>Your next sessions for today.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {upcomingSessions.map((session) => (
+              <div
+                key={session.studentId}
+                className="flex items-center justify-between"
+              >
+                <div className="flex items-center gap-3">
+                  <Avatar>
+                    <AvatarImage src={session.studentAvatar} />
+                    <AvatarFallback>
+                      {session.studentId.slice(-2)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="font-medium">{session.studentId}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {session.time}
+                    </p>
+                  </div>
+                </div>
+                {session.type === 'Video Call' ? (
+                  <Link
+                    href={`/professional/video?studentId=${session.studentId}`}
+                    passHref
+                  >
+                    <Button variant="secondary" size="sm">
+                      Start
+                    </Button>
+                  </Link>
+                ) : (
+                  <Button variant="secondary" size="sm" disabled>
+                    In-Person
+                  </Button>
+                )}
+              </div>
+            ))}
+          </CardContent>
         </Card>
       </div>
 
-       <Card>
-        <CardHeader>
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card>
+          <CardHeader>
             <CardTitle className="flex items-center gap-2">
-                <BarChart3 /> Student Caseload Growth
+              <PieChartIcon /> Student Feature Engagement
             </CardTitle>
             <CardDescription>
-              Number of students assigned to you over the past six months.
+              Breakdown of how your students are using the platform.
             </CardDescription>
-        </CardHeader>
-        <CardContent>
-             <ChartContainer config={{}} className="h-[300px] w-full">
+          </CardHeader>
+          <CardContent>
+            <ChartContainer config={{}} className="h-[250px] w-full">
               <ResponsiveContainer>
-                <LineChart data={studentCaseload}>
-                    <XAxis dataKey="month" fontSize={12} />
-                    <YAxis fontSize={12} allowDecimals={false}/>
-                    <Tooltip content={<ChartTooltipContent />} />
-                    <Line type="monotone" dataKey="students" name="Students" stroke="hsl(var(--primary))" />
-                </LineChart>
+                <PieChart>
+                  <Pie
+                    data={featureUsageData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    label
+                  >
+                    {featureUsageData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.fill} />
+                    ))}
+                  </Pie>
+                  <Tooltip content={<ChartTooltipContent />} />
+                </PieChart>
               </ResponsiveContainer>
             </ChartContainer>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+                <BarChart3 /> Session Type Breakdown
+            </CardTitle>
+            <CardDescription>
+                Distribution of in-person vs. video call sessions.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+             <ChartContainer config={{}} className="h-[250px] w-full">
+              <ResponsiveContainer>
+                <BarChart data={sessionTypeData} layout="vertical">
+                    <XAxis type="number" hide/>
+                    <YAxis dataKey="name" type="category" tickLine={false} axisLine={false} />
+                    <Tooltip content={<ChartTooltipContent />} />
+                    <Bar dataKey="count" name="Sessions" radius={5}>
+                         {sessionTypeData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                        ))}
+                    </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </ChartContainer>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <BarChart3 /> Student Caseload Growth
+          </CardTitle>
+          <CardDescription>
+            Number of students assigned to you over the past six months.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <ChartContainer config={{}} className="h-[300px] w-full">
+            <ResponsiveContainer>
+              <LineChart data={studentCaseload}>
+                <XAxis dataKey="month" fontSize={12} />
+                <YAxis fontSize={12} allowDecimals={false} />
+                <Tooltip content={<ChartTooltipContent />} />
+                <Line
+                  type="monotone"
+                  dataKey="students"
+                  name="Students"
+                  stroke="hsl(var(--primary))"
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </ChartContainer>
         </CardContent>
       </Card>
     </div>
