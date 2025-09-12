@@ -95,6 +95,7 @@ type Session = (typeof scheduledSessions)[0];
 export default function SchedulePage() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
+  const [isDialogOpen, setDialogOpen] = useState(false);
 
   const sessionDays = scheduledSessions.map((c) => new Date(c.date));
 
@@ -103,6 +104,11 @@ export default function SchedulePage() {
         (c) => format(new Date(c.date), 'PPP') === format(date, 'PPP')
       )
     : scheduledSessions.filter((c) => new Date(c.date) >= new Date());
+
+  const handleOpenDialog = (session: Session) => {
+    setSelectedSession(session);
+    setDialogOpen(true);
+  };
 
   return (
     <div>
@@ -156,18 +162,14 @@ export default function SchedulePage() {
                         </div>
                       </CardContent>
                       <CardFooter>
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button
-                              variant="outline"
-                              className="w-full"
-                              onClick={() => setSelectedSession(item)}
-                            >
-                              <FileText className="w-4 h-4 mr-2" />
-                              View Report
-                            </Button>
-                          </DialogTrigger>
-                        </Dialog>
+                        <Button
+                          variant="outline"
+                          className="w-full"
+                          onClick={() => handleOpenDialog(item)}
+                        >
+                          <FileText className="w-4 h-4 mr-2" />
+                          View Report
+                        </Button>
                       </CardFooter>
                     </Card>
                   ))}
@@ -212,32 +214,34 @@ export default function SchedulePage() {
         </div>
       </div>
 
-      {selectedSession && (
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Session Report</DialogTitle>
-            <DialogDescription>
-              A summary of your session on{' '}
-              {format(new Date(selectedSession.date), 'PPP')} with{' '}
-              {selectedSession.counselor}.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div>
-              <h4 className="font-semibold mb-2">Counselor's Notes</h4>
-              <p className="text-sm text-muted-foreground">
-                {selectedSession.report.notes}
-              </p>
+      <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
+        {selectedSession && (
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Session Report</DialogTitle>
+              <DialogDescription>
+                A summary of your session on{' '}
+                {format(new Date(selectedSession.date), 'PPP')} with{' '}
+                {selectedSession.counselor}.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div>
+                <h4 className="font-semibold mb-2">Counselor's Notes</h4>
+                <p className="text-sm text-muted-foreground">
+                  {selectedSession.report.notes}
+                </p>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">Follow-up Actions</h4>
+                <p className="text-sm text-muted-foreground">
+                  {selectedSession.report.followUp}
+                </p>
+              </div>
             </div>
-            <div>
-              <h4 className="font-semibold mb-2">Follow-up Actions</h4>
-              <p className="text-sm text-muted-foreground">
-                {selectedSession.report.followUp}
-              </p>
-            </div>
-          </div>
-        </DialogContent>
-      )}
+          </DialogContent>
+        )}
+      </Dialog>
     </div>
   );
 }
