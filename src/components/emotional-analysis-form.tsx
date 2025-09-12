@@ -22,6 +22,7 @@ import {
   Music,
   Book,
   Film,
+  PlayCircle,
 } from 'lucide-react';
 import { Button } from './ui/button';
 import {
@@ -42,6 +43,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from './ui/card';
 import { Alert, AlertTitle, AlertDescription } from './ui/alert';
 import { cn } from '@/lib/utils';
@@ -56,6 +58,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from './ui/select';
+import Link from 'next/link';
 
 const formSchema = z.object({
   text: z.string().min(10, {
@@ -531,11 +534,18 @@ export function EmotionalAnalysisForm() {
                 </h4>
                 <div className="grid md:grid-cols-3 gap-4">
                   {recommendations.music.map((item, index) => (
-                    <Card key={index}>
+                    <Card key={index} className="flex flex-col">
                       <CardHeader>
                         <CardTitle className="text-lg">{item.title}</CardTitle>
                         <CardDescription>{item.description}</CardDescription>
                       </CardHeader>
+                      <CardFooter className="mt-auto">
+                        <Button asChild className="w-full">
+                          <Link href={item.url} target="_blank">
+                            <PlayCircle className="mr-2" /> Listen
+                          </Link>
+                        </Button>
+                      </CardFooter>
                     </Card>
                   ))}
                 </div>
@@ -547,13 +557,20 @@ export function EmotionalAnalysisForm() {
                 </h4>
                 <div className="grid md:grid-cols-3 gap-4">
                   {recommendations.books.map((item, index) => (
-                    <Card key={index}>
+                    <Card key={index} className="flex flex-col">
                       <CardHeader>
                         <CardTitle className="text-lg">{item.title}</CardTitle>
                         <CardDescription>
                           {item.author}
                         </CardDescription>
                       </CardHeader>
+                       <CardFooter className="mt-auto">
+                        <Button asChild className="w-full">
+                          <Link href={item.url} target="_blank">
+                            <Book className="mr-2" /> Read
+                          </Link>
+                        </Button>
+                      </CardFooter>
                     </Card>
                   ))}
                 </div>
@@ -565,13 +582,20 @@ export function EmotionalAnalysisForm() {
                 </h4>
                 <div className="grid md:grid-cols-3 gap-4">
                   {recommendations.movies.map((item, index) => (
-                    <Card key={index}>
+                    <Card key={index} className="flex flex-col">
                       <CardHeader>
                         <CardTitle className="text-lg">{item.title}</CardTitle>
                         <CardDescription>
                           {item.year}
                         </CardDescription>
                       </CardHeader>
+                       <CardFooter className="mt-auto">
+                        <Button asChild className="w-full">
+                          <Link href={item.url} target="_blank">
+                            <Film className="mr-2" /> Watch
+                          </Link>
+                        </Button>
+                      </CardFooter>
                     </Card>
                   ))}
                 </div>

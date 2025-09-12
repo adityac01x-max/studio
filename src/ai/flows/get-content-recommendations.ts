@@ -23,12 +23,17 @@ const RecommendationSchema = z.object({
   description: z.string().optional(),
   author: z.string().optional(),
   year: z.number().optional(),
+  url: z.string().url().describe('A URL to access the content.'),
 });
 
 const GetContentRecommendationsOutputSchema = z.object({
-  music: z.array(RecommendationSchema).describe('A list of music playlist recommendations.'),
+  music: z
+    .array(RecommendationSchema)
+    .describe('A list of music playlist recommendations.'),
   books: z.array(RecommendationSchema).describe('A list of book recommendations.'),
-  movies: z.array(RecommendationSchema).describe('A list of movie recommendations.'),
+  movies: z
+    .array(RecommendationSchema)
+    .describe('A list of movie recommendations.'),
 });
 export type GetContentRecommendationsOutput = z.infer<
   typeof GetContentRecommendationsOutputSchema
@@ -49,7 +54,7 @@ const prompt = ai.definePrompt({
 Mood: {{{mood}}}
 Language: {{{language}}}
 
-Provide diverse recommendations that are suitable for the given mood. For each item, provide a title and a brief description or author/year where applicable.
+Provide diverse recommendations that are suitable for the given mood. For each item, provide a title, a brief description or author/year where applicable, and a valid URL to access the content (e.g., a link to Spotify, Apple Music, a book store, or a movie streaming service).
 `,
 });
 
