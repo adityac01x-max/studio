@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Wind, Droplets, Flame, Mountain } from 'lucide-react';
+import { ArrowLeft, Wind, Droplets, Flame, Mountain, PlayCircle } from 'lucide-react';
 import Link from 'next/link';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Image from 'next/image';
@@ -31,7 +31,7 @@ const exercises = {
   Anxious: [
     { title: '20-Min Calming Pilates', videoUrl: 'https://www.youtube.com/embed/vlv8Y6b-1sM', imageId: 'video-2' },
     { title: 'Guided Breathing for Anxiety', videoUrl: 'https://www.youtube.com/embed/F28MGLlpP90', imageId: 'guide-2' },
-    { title: 'Gentle Stretching Routine', videoUrl: 'https://www.youtube.com/embed/5N2L1y-a0H4', imageId: 'video-1' },
+    { title: 'Gentle Stretching Routine', videoUrl: 'https://www.youtube.com/embed/50kH47ZztHs', imageId: 'video-1' },
   ],
   Sad: [
     { title: '30-Min Feel-Good Dance Cardio', videoUrl: 'https://www.youtube.com/embed/T44x9t2-Szc', imageId: 'lifestyle-1' },
@@ -49,6 +49,7 @@ type Mood = keyof typeof exercises;
 
 export default function LifestylePage() {
   const [selectedMood, setSelectedMood] = useState<Mood>('Stressed');
+  const [activeVideo, setActiveVideo] = useState<string | null>(null);
 
   const getImageForExercise = (imageId: string) => {
     return PlaceHolderImages.find((img) => img.id === imageId);
@@ -82,7 +83,10 @@ export default function LifestylePage() {
                 key={mood.name}
                 variant={selectedMood === mood.name ? 'default' : 'outline'}
                 className={`h-24 flex flex-col gap-2 ${selectedMood === mood.name ? '' : mood.color}`}
-                onClick={() => setSelectedMood(mood.name as Mood)}
+                onClick={() => {
+                  setSelectedMood(mood.name as Mood);
+                  setActiveVideo(null); // Reset active video when mood changes
+                }}
               >
                 {mood.icon}
                 <span>{mood.name}</span>
@@ -99,17 +103,36 @@ export default function LifestylePage() {
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {exercises[selectedMood].map((exercise) => {
             const image = getImageForExercise(exercise.imageId);
+            const isVideoActive = activeVideo === exercise.videoUrl;
             return (
               <Card key={exercise.title}>
                 <CardContent className="p-0">
                   <div className="relative aspect-video">
-                    <iframe
-                        className="w-full h-full rounded-t-lg"
-                        src={exercise.videoUrl}
-                        title={exercise.title}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                    ></iframe>
+                    {isVideoActive ? (
+                      <iframe
+                          className="w-full h-full rounded-t-lg"
+                          src={`${exercise.videoUrl}?autoplay=1`}
+                          title={exercise.title}
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                      ></iframe>
+                    ) : (
+                      image && (
+                        <div className="relative w-full h-full cursor-pointer" onClick={() => setActiveVideo(exercise.videoUrl)}>
+                            <Image
+                                src={image.imageUrl}
+                                alt={image.description}
+                                data-ai-hint={image.imageHint}
+                                width={600}
+                                height={400}
+                                className="rounded-t-lg object-cover aspect-video"
+                            />
+                            <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                                <PlayCircle className="w-16 h-16 text-white/80" />
+                            </div>
+                        </div>
+                      )
+                    )}
                   </div>
                 </CardContent>
                 <CardHeader>
