@@ -48,12 +48,12 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from './ui/table';
-import { Badge } from './ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { Checkbox } from './ui/checkbox';
-import { Input } from './ui/input';
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
@@ -517,5 +517,3 @@ export default function ConsultationPage() {
     </div>
   );
 }
-
-    
