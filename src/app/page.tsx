@@ -63,14 +63,14 @@ export default function LandingPage() {
                 <div className="p-3 bg-accent/20 rounded-full">
                   <Briefcase className="w-8 h-8 text-accent" />
                 </div>
-                <CardTitle>For Professionals</CardTitle>
+                <CardTitle>For Psychologists and Counsellors</CardTitle>
                 <CardDescription>
                   Manage sessions, view student progress, and provide support.
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <Link href="/professional/dashboard" className="w-full" passHref>
-                  <Button variant="secondary" className="w-full">Login as Professional</Button>
+                  <Button variant="secondary" className="w-full">Login as Psychologist/Counsellor</Button>
                 </Link>
               </CardContent>
             </Card>

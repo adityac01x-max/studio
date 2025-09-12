@@ -129,7 +129,7 @@ export function AppSidebar() {
   const currentUser = isAdminRoute
     ? { name: 'Admin User', email: 'admin@college.ac.in', avatarSeed: 'admin' }
     : isProfessionalRoute
-    ? { name: 'Dr. Sharma', email: 's.sharma@college.ac.in', avatarSeed: 'professional' }
+    ? { name: 'Dr. Sharma', email: 's.sharma@college.ac.in', avatarSeed: 'psychologist' }
     : { name: 'Student User', email: 'student@college.ac.in', avatarSeed: 'user' };
   
   const homeLink = isAdminRoute ? '/admin/dashboard' : isProfessionalRoute ? '/professional/dashboard' : '/dashboard';
