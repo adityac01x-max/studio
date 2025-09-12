@@ -50,12 +50,14 @@ const upcomingSessions = [
     time: '10:00 AM',
     date: '2024-07-31',
     studentAvatar: 'https://picsum.photos/seed/STU-anon-789/100/100',
+    type: 'In-Person',
   },
   {
     studentId: 'STU-anon-101',
     time: '09:00 AM',
     date: '2024-08-01',
     studentAvatar: 'https://picsum.photos/seed/STU-anon-101/100/100',
+    type: 'Video Call',
   },
 ];
 
@@ -211,7 +213,13 @@ export default function ProfessionalDashboardPage() {
                                 <p className="text-sm text-muted-foreground">{session.time}</p>
                             </div>
                          </div>
-                         <Button variant="secondary" size="sm">Start</Button>
+                         {session.type === 'Video Call' ? (
+                           <Link href={`/professional/video?studentId=${session.studentId}`} passHref>
+                             <Button variant="secondary" size="sm">Start</Button>
+                           </Link>
+                         ) : (
+                           <Button variant="secondary" size="sm" disabled>In-Person</Button>
+                         )}
                     </div>
                 ))}
             </CardContent>
