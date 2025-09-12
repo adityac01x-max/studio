@@ -54,7 +54,8 @@ const prompt = ai.definePrompt({
 Mood: {{{mood}}}
 Language: {{{language}}}
 
-Provide diverse recommendations that are suitable for the given mood. For each item, provide a title, a brief description or author/year where applicable, and a valid URL to access the content (e.g., a link to Spotify, Apple Music, a book store, or a movie streaming service).
+Provide diverse recommendations that are suitable for the given mood. For each item, provide a title, a brief description or author/year where applicable, and a valid URL to access the content. 
+For music, provide direct URLs to public playlists on streaming services like Spotify or YouTube Music that can be played in real-time. For books and movies, provide links to a store or streaming service where they can be accessed.
 `,
 });
 
