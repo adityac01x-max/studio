@@ -39,12 +39,6 @@ import {
   ChartTooltipContent,
 } from './ui/chart';
 import { RiskManagementDialog } from './risk-management-dialog';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from './ui/accordion';
 import { FileText, ChevronDown, CheckCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
@@ -205,23 +199,20 @@ const SurveyForm = ({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-        <Accordion type="multiple" className="w-full">
+        <div className="space-y-8">
           {questions.map((question, index) => (
-            <AccordionItem value={`item-${index}`} key={question.id}>
-              <AccordionTrigger className="text-left hover:no-underline">
-                {index + 1}. {question.text}
-              </AccordionTrigger>
-              <AccordionContent>
+            <div key={question.id} className="space-y-2 border-b pb-4">
+               <FormLabel className='font-medium'>{index + 1}. {question.text}</FormLabel>
                 <FormField
                   control={form.control}
                   name={question.id}
                   render={({ field }) => (
-                    <FormItem className="space-y-3 pt-4">
+                    <FormItem className="space-y-3 pt-2">
                       <FormControl>
                         <RadioGroup
                           onValueChange={field.onChange}
                           defaultValue={field.value}
-                          className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 pt-2"
+                          className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4"
                         >
                           {responseOptions.map((option) => (
                             <FormItem
@@ -244,10 +235,9 @@ const SurveyForm = ({
                     </FormItem>
                   )}
                 />
-              </AccordionContent>
-            </AccordionItem>
+            </div>
           ))}
-        </Accordion>
+        </div>
         <Button type="submit" size="lg" className="w-full">
           View My Results
         </Button>
