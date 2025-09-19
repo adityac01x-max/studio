@@ -21,7 +21,6 @@ import {
   CardHeader,
   CardTitle,
 } from './ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { useState } from 'react';
 import {
   Line,
@@ -46,6 +45,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from './ui/accordion';
+import { FileText, ChevronDown, CheckCircle } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
+
 
 const phq9Questions = [
   { id: 'q1', text: 'Little interest or pleasure in doing things' },
@@ -202,7 +205,7 @@ const SurveyForm = ({
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
-        <Accordion type="multiple" className="w-full" defaultValue={questions.map((_, index) => `item-${index}`)}>
+        <Accordion type="multiple" className="w-full">
           {questions.map((question, index) => (
             <AccordionItem value={`item-${index}`} key={question.id}>
               <AccordionTrigger className="text-left hover:no-underline">
@@ -260,12 +263,18 @@ export function MentalHealthSurvey() {
     ghq12: null,
   });
   const [isDialogOpen, setDialogOpen] = useState(false);
+  const [openSurvey, setOpenSurvey] = useState<string | null>(null);
+
+  const toggleSurvey = (survey: string) => {
+    setOpenSurvey(openSurvey === survey ? null : survey);
+  };
 
   const handlePhq9Submit = (score: number) => {
     setScores((s) => ({ ...s, phq9: score }));
     if (score >= 10) {
       setDialogOpen(true);
     }
+     setOpenSurvey(null);
   };
 
   const handleGad7Submit = (score: number) => {
@@ -273,6 +282,7 @@ export function MentalHealthSurvey() {
     if (score >= 10) {
       setDialogOpen(true);
     }
+     setOpenSurvey(null);
   };
 
   const handleGhq12Submit = (score: number) => {
@@ -280,6 +290,7 @@ export function MentalHealthSurvey() {
      if (score >= 15) {
       setDialogOpen(true);
     }
+     setOpenSurvey(null);
   };
 
   const phq9Interpretation = getScoreInterpretation('phq9', scores.phq9);
@@ -288,39 +299,101 @@ export function MentalHealthSurvey() {
 
   const resultsAvailable = scores.phq9 !== null || scores.gad7 !== null || scores.ghq12 !== null;
 
+  const surveys = [
+    {
+      id: 'phq9',
+      title: 'Depression (PHQ-9)',
+      description: 'A 9-item depression screening tool.',
+      isCompleted: scores.phq9 !== null,
+      component: (
+        <SurveyForm
+          questions={phq9Questions}
+          schema={phq9Schema}
+          responseOptions={options}
+          onSubmit={handlePhq9Submit}
+        />
+      ),
+    },
+    {
+      id: 'gad7',
+      title: 'Anxiety (GAD-7)',
+      description: 'A 7-item anxiety screening tool.',
+      isCompleted: scores.gad7 !== null,
+      component: (
+        <SurveyForm
+          questions={gad7Questions}
+          schema={gad7Schema}
+          responseOptions={options}
+          onSubmit={handleGad7Submit}
+        />
+      ),
+    },
+    {
+      id: 'ghq12',
+      title: 'General Health (GHQ-12)',
+      description: 'A 12-item general health questionnaire.',
+      isCompleted: scores.ghq12 !== null,
+      component: (
+        <SurveyForm
+          questions={ghq12Questions}
+          schema={ghq12Schema}
+          responseOptions={ghqOptions}
+          onSubmit={handleGhq12Submit}
+        />
+      ),
+    },
+  ];
+
   return (
     <>
-      <Tabs defaultValue="phq9" className="w-full space-y-6">
-        <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="phq9">Depression (PHQ-9)</TabsTrigger>
-          <TabsTrigger value="gad7">Anxiety (GAD-7)</TabsTrigger>
-          <TabsTrigger value="ghq12">General Health (GHQ-12)</TabsTrigger>
-        </TabsList>
-        <TabsContent value="phq9">
-          <SurveyForm
-            questions={phq9Questions}
-            schema={phq9Schema}
-            responseOptions={options}
-            onSubmit={handlePhq9Submit}
-          />
-        </TabsContent>
-        <TabsContent value="gad7">
-          <SurveyForm
-            questions={gad7Questions}
-            schema={gad7Schema}
-            responseOptions={options}
-            onSubmit={handleGad7Submit}
-          />
-        </TabsContent>
-        <TabsContent value="ghq12">
-          <SurveyForm
-            questions={ghq12Questions}
-            schema={ghq12Schema}
-            responseOptions={ghqOptions}
-            onSubmit={handleGhq12Submit}
-          />
-        </TabsContent>
-      </Tabs>
+      <div className="space-y-4">
+        {surveys.map((survey) => (
+          <Collapsible
+            key={survey.id}
+            open={openSurvey === survey.id}
+            onOpenChange={() => toggleSurvey(survey.id)}
+            className="w-full"
+          >
+            <CollapsibleTrigger asChild>
+              <button
+                className={cn(
+                  'w-full p-4 rounded-lg border flex items-center justify-between transition-colors',
+                  openSurvey === survey.id
+                    ? 'bg-muted'
+                    : 'hover:bg-muted/50',
+                  survey.isCompleted && 'border-green-500/50 bg-green-500/5'
+                )}
+              >
+                <div className="flex items-center gap-4 text-left">
+                  <FileText className="w-6 h-6 text-primary" />
+                  <div>
+                    <h3 className="font-bold">{survey.title}</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {survey.description}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                    {survey.isCompleted && <CheckCircle className="w-5 h-5 text-green-500"/>}
+                    <ChevronDown
+                    className={cn(
+                        'w-5 h-5 text-muted-foreground transition-transform',
+                        openSurvey === survey.id && 'rotate-180'
+                    )}
+                    />
+                </div>
+              </button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="mt-2">
+              <Card>
+                <CardContent className="p-6">
+                    {survey.component}
+                </CardContent>
+              </Card>
+            </CollapsibleContent>
+          </Collapsible>
+        ))}
+      </div>
 
       {resultsAvailable && (
         <div className="mt-12">
@@ -530,4 +603,3 @@ export function MentalHealthSurvey() {
     </>
   );
 }
-
