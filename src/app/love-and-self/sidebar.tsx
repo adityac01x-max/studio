@@ -15,6 +15,7 @@ import {
   Sparkles,
   LogOut,
   BookUser,
+  ClipboardList,
 } from 'lucide-react';
 import {
   SidebarHeader,
@@ -44,6 +45,7 @@ const navItems = [
   { href: '/love-and-self/consultation', label: 'Consultation', icon: Users },
   { href: '/love-and-self/schedule', label: 'My Schedule', icon: Calendar },
   { href: '/love-and-self/resources', label: 'Resource Center', icon: BookOpen },
+  { href: '/love-and-self/questionnaires', label: 'Questionnaires', icon: ClipboardList },
   { href: '/love-and-self/ai-chat', label: 'AI First-Aid', icon: Bot },
   { href: '/love-and-self/mood-mapping', label: 'Mood Mapping', icon: BarChart2 },
 ];
