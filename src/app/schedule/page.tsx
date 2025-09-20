@@ -19,8 +19,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, User, Clock, MapPin, FileText } from 'lucide-react';
-import Link from 'next/link';
+import { User, Clock, MapPin, FileText } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
@@ -112,18 +111,6 @@ export default function SchedulePage() {
 
   return (
     <div>
-      <div className="flex items-center gap-4 mb-6">
-        <Link href="/dashboard" passHref>
-          <Button variant="outline" size="icon">
-            <ArrowLeft />
-            <span className="sr-only">Back to Dashboard</span>
-          </Button>
-        </Link>
-        <h1 className="font-headline text-3xl font-bold tracking-tight">
-          My Schedule
-        </h1>
-      </div>
-
       <div className="grid gap-8 md:grid-cols-3">
         <div className="md:col-span-2 space-y-6">
           <Card>
