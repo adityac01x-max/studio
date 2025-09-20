@@ -23,6 +23,8 @@ import {
 } from './ui/card';
 import { useState } from 'react';
 import {
+  Bar,
+  BarChart,
   Line,
   LineChart,
   Pie,
@@ -96,6 +98,43 @@ const ghq12Questions = [
     { id: 'ghq12', text: 'Been feeling reasonably happy, all things considered?' },
 ];
 
+const baiQuestions = [
+    { id: 'bai1', text: 'Numbness or tingling' },
+    { id: 'bai2', text: 'Feeling hot' },
+    { id: 'bai3', text: 'Wobbliness in legs' },
+    { id: 'bai4', text: 'Unable to relax' },
+    { id: 'bai5', text: 'Fear of the worst happening' },
+    { id: 'bai6', text: 'Dizzy or lightheaded' },
+    { id: 'bai7', text: 'Heart pounding or racing' },
+    { id: 'bai8', text: 'Unsteady' },
+    { id: 'bai9', text: 'Terrified or afraid' },
+    { id: 'bai10', text: 'Nervous' },
+    { id: 'bai11', text: 'Feeling of choking' },
+    { id: 'bai12', text: 'Hands trembling' },
+    { id: 'bai13', text: 'Shaky / unsteady' },
+    { id: 'bai14', text: 'Fear of losing control' },
+    { id: 'bai15', text: 'Difficulty in breathing' },
+    { id: 'bai16', text: 'Fear of dying' },
+    { id: 'bai17', text: 'Scared' },
+    { id: 'bai18', text: 'Indigestion' },
+    { id: 'bai19', text: 'Faint / lightheaded' },
+    { id: 'bai20', text: 'Face flushed' },
+    { id: 'bai21', text: 'Hot / cold sweats' },
+];
+
+const bigFiveQuestions = [
+    { id: 'bf1', text: 'Is talkative' },
+    { id: 'bf2', text: 'Tends to find fault with others' },
+    { id: 'bf3', text: 'Does a thorough job' },
+    { id: 'bf4', text: 'Is depressed, blue' },
+    { id: 'bf5', text: 'Is original, comes up with new ideas' },
+    { id: 'bf6', text: 'Is reserved' },
+    { id: 'bf7', text: 'Is helpful and unselfish with others' },
+    { id: 'bf8', text: 'Can be somewhat careless' },
+    { id: 'bf9', text: 'Is relaxed, handles stress well' },
+    { id: 'bf10', text: 'Is curious about many different things' },
+];
+
 const options = [
   { label: 'Not at all', value: 0 },
   { label: 'Several days', value: 1 },
@@ -110,6 +149,13 @@ const ghqOptions = [
   { label: 'Much less than usual', value: 3 },
 ];
 
+const bigFiveOptions = [
+    { label: 'Disagree Strongly', value: 1 },
+    { label: 'Disagree a little', value: 2 },
+    { label: 'Neither agree nor disagree', value: 3 },
+    { label: 'Agree a little', value: 4 },
+    { label: 'Agree Strongly', value: 5 },
+];
 
 const createSurveySchema = (questions: { id: string }[]) => {
   const schemaShape = questions.reduce((acc, q) => {
@@ -122,15 +168,19 @@ const createSurveySchema = (questions: { id: string }[]) => {
 const phq9Schema = createSurveySchema(phq9Questions);
 const gad7Schema = createSurveySchema(gad7Questions);
 const ghq12Schema = createSurveySchema(ghq12Questions);
+const baiSchema = createSurveySchema(baiQuestions);
+const bigFiveSchema = createSurveySchema(bigFiveQuestions);
 
 type SurveyScores = {
   phq9: number | null;
   gad7: number | null;
   ghq12: number | null;
+  bai: number | null;
+  bigFive: Record<string, number> | null;
 };
 
 const getScoreInterpretation = (
-  type: 'phq9' | 'gad7' | 'ghq12',
+  type: 'phq9' | 'gad7' | 'ghq12' | 'bai',
   score: number | null
 ) => {
   if (score === null) return { level: '', color: '' };
@@ -155,6 +205,11 @@ const getScoreInterpretation = (
     if (score <= 14)
       return { level: 'Moderate anxiety', color: 'text-orange-500' };
     return { level: 'Severe anxiety', color: 'text-red-500' };
+  } else if (type === 'bai') {
+    if (score <= 7) return { level: 'Minimal anxiety', color: 'text-green-500' };
+    if (score <= 15) return { level: 'Mild anxiety', color: 'text-yellow-500' };
+    if (score <= 25) return { level: 'Moderate anxiety', color: 'text-orange-500' };
+    return { level: 'Severe anxiety', color: 'text-red-500' };
   } else { // GHQ-12
      if (score <= 12) return { level: 'Low psychological distress', color: 'text-green-500' };
      if (score <= 15) return { level: 'Mild psychological distress', color: 'text-yellow-500' };
@@ -178,21 +233,17 @@ const SurveyForm = ({
   responseOptions,
   onSubmit,
 }: {
-  questions: typeof phq9Questions | typeof gad7Questions | typeof ghq12Questions;
+  questions: {id: string, text: string}[];
   schema: z.ZodObject<any>;
-  responseOptions: typeof options | typeof ghqOptions;
-  onSubmit: (score: number) => void;
+  responseOptions: {label: string, value: number}[];
+  onSubmit: (data: z.infer<typeof schema>) => void;
 }) => {
   const form = useForm<z.infer<typeof schema>>({
     resolver: zodResolver(schema),
   });
 
   const handleSubmit = (data: z.infer<typeof schema>) => {
-    const score = Object.values(data).reduce(
-      (sum, val) => sum + parseInt(val as string, 10),
-      0
-    );
-    onSubmit(score);
+    onSubmit(data);
     form.reset();
   };
 
@@ -251,6 +302,8 @@ export function MentalHealthSurvey() {
     phq9: null,
     gad7: null,
     ghq12: null,
+    bai: null,
+    bigFive: null,
   });
   const [isDialogOpen, setDialogOpen] = useState(false);
   const [openSurvey, setOpenSurvey] = useState<string | null>(null);
@@ -259,7 +312,11 @@ export function MentalHealthSurvey() {
     setOpenSurvey(openSurvey === survey ? null : survey);
   };
 
-  const handlePhq9Submit = (score: number) => {
+  const handlePhq9Submit = (data: z.infer<typeof phq9Schema>) => {
+    const score = Object.values(data).reduce(
+      (sum, val) => sum + parseInt(val as string, 10),
+      0
+    );
     setScores((s) => ({ ...s, phq9: score }));
     if (score >= 10) {
       setDialogOpen(true);
@@ -267,7 +324,11 @@ export function MentalHealthSurvey() {
      setOpenSurvey(null);
   };
 
-  const handleGad7Submit = (score: number) => {
+  const handleGad7Submit = (data: z.infer<typeof gad7Schema>) => {
+    const score = Object.values(data).reduce(
+      (sum, val) => sum + parseInt(val as string, 10),
+      0
+    );
     setScores((s) => ({ ...s, gad7: score }));
     if (score >= 10) {
       setDialogOpen(true);
@@ -275,7 +336,11 @@ export function MentalHealthSurvey() {
      setOpenSurvey(null);
   };
 
-  const handleGhq12Submit = (score: number) => {
+  const handleGhq12Submit = (data: z.infer<typeof ghq12Schema>) => {
+    const score = Object.values(data).reduce(
+      (sum, val) => sum + parseInt(val as string, 10),
+      0
+    );
     setScores((s) => ({ ...s, ghq12: score }));
      if (score >= 15) {
       setDialogOpen(true);
@@ -283,11 +348,42 @@ export function MentalHealthSurvey() {
      setOpenSurvey(null);
   };
 
+  const handleBaiSubmit = (data: z.infer<typeof baiSchema>) => {
+    const score = Object.values(data).reduce((sum, val) => sum + parseInt(val, 10), 0);
+    setScores(s => ({ ...s, bai: score }));
+    if (score >= 16) {
+      setDialogOpen(true);
+    }
+    setOpenSurvey(null);
+  };
+
+  const handleBigFiveSubmit = (data: z.infer<typeof bigFiveSchema>) => {
+    const reverseScoredKeys = ['bf2', 'bf4', 'bf6', 'bf8', 'bf9'];
+    const parsedData = Object.entries(data).reduce((acc, [key, value]) => {
+      acc[key] = parseInt(value, 10);
+      return acc;
+    }, {} as Record<string, number>);
+
+    const scores = {
+      Extraversion: (parsedData['bf1'] + (6 - parsedData['bf6'])) / 2,
+      Agreeableness: ((6 - parsedData['bf2']) + parsedData['bf7']) / 2,
+      Conscientiousness: (parsedData['bf3'] + (6 - parsedData['bf8'])) / 2,
+      Neuroticism: ((6 - parsedData['bf4']) + (6 - parsedData['bf9'])) / 2,
+      Openness: (parsedData['bf5'] + parsedData['bf10']) / 2,
+    };
+    setScores(s => ({ ...s, bigFive: scores }));
+    setOpenSurvey(null);
+  };
+
   const phq9Interpretation = getScoreInterpretation('phq9', scores.phq9);
   const gad7Interpretation = getScoreInterpretation('gad7', scores.gad7);
   const ghq12Interpretation = getScoreInterpretation('ghq12', scores.ghq12);
+  const baiInterpretation = getScoreInterpretation('bai', scores.bai);
 
-  const resultsAvailable = scores.phq9 !== null || scores.gad7 !== null || scores.ghq12 !== null;
+  const resultsAvailable = scores.phq9 !== null || scores.gad7 !== null || scores.ghq12 !== null || scores.bai !== null || scores.bigFive !== null;
+
+  const bigFiveDataForChart = scores.bigFive ? Object.entries(scores.bigFive).map(([name, value]) => ({ name, value })) : [];
+
 
   const surveys = [
     {
@@ -331,6 +427,34 @@ export function MentalHealthSurvey() {
           onSubmit={handleGhq12Submit}
         />
       ),
+    },
+    {
+      id: 'bai',
+      title: 'Beck Anxiety Inventory (BAI)',
+      description: 'A 21-item scale to measure the severity of anxiety.',
+      isCompleted: scores.bai !== null,
+      component: (
+          <SurveyForm
+              questions={baiQuestions}
+              schema={baiSchema}
+              responseOptions={options}
+              onSubmit={handleBaiSubmit}
+          />
+      ),
+    },
+    {
+        id: 'bigFive',
+        title: 'Big Five Personality Test',
+        description: 'A short 10-item personality assessment.',
+        isCompleted: scores.bigFive !== null,
+        component: (
+            <SurveyForm
+                questions={bigFiveQuestions}
+                schema={bigFiveSchema}
+                responseOptions={bigFiveOptions}
+                onSubmit={handleBigFiveSubmit}
+            />
+        ),
     },
   ];
 
@@ -532,7 +656,55 @@ export function MentalHealthSurvey() {
                 </CardContent>
               </Card>
             )}
+            {scores.bai !== null && (
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Beck Anxiety Inventory (BAI) Score</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex flex-col items-center">
+                        <ChartContainer config={{}} className="h-[250px] w-full">
+                        <ResponsiveContainer>
+                            <PieChart>
+                                <Tooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+                                <Pie data={[{ value: scores.bai }, { value: 63 - scores.bai }]} dataKey="value" nameKey="name" startAngle={90} endAngle={-270} innerRadius="60%" outerRadius="80%" cy="50%" strokeWidth={0}>
+                                    <Cell fill="hsl(var(--chart-3))" />
+                                    <Cell fill="hsl(var(--muted))" />
+                                </Pie>
+                            </PieChart>
+                        </ResponsiveContainer>
+                        </ChartContainer>
+                        <p className="text-4xl font-bold">{scores.bai} <span className="text-lg font-normal text-muted-foreground">/ 63</span></p>
+                        <p className={`text-lg font-semibold ${baiInterpretation.color}`}>{baiInterpretation.level}</p>
+                    </CardContent>
+                </Card>
+            )}
           </div>
+
+            {scores.bigFive && (
+                <Card className="mt-6">
+                    <CardHeader>
+                        <CardTitle>Big Five Personality Results</CardTitle>
+                        <CardDescription>Your scores for the five major personality traits.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <ChartContainer config={{}} className="h-[300px] w-full">
+                            <ResponsiveContainer>
+                                <BarChart data={bigFiveDataForChart}>
+                                    <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} domain={[1, 5]}/>
+                                    <Tooltip content={<ChartTooltipContent />} />
+                                    <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                                      {bigFiveDataForChart.map((entry, index) => (
+                                          <Cell key={`cell-${index}`} fill={`hsl(var(--chart-${index + 1}))`} />
+                                      ))}
+                                    </Bar>
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </ChartContainer>
+                    </CardContent>
+                </Card>
+            )}
+
           <Card className="mt-6">
             <CardHeader>
               <CardTitle>Survey Score History</CardTitle>
@@ -593,3 +765,5 @@ export function MentalHealthSurvey() {
     </>
   );
 }
+
+    
