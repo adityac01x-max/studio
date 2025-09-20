@@ -216,14 +216,14 @@ export default function ProjectiveTestsPage() {
         <Card>
             <CardHeader>
                 <CardTitle className="flex items-center gap-2"><ImageIcon/> Thematic Apperception Test (TAT)</CardTitle>
-                <CardDescription>Instructions: Look at the image below. What is happening? What led to this scene, and what will happen next? Write a brief story based on your interpretation.</CardDescription>
+                <CardDescription>Instructions: Look at the image below. What is happening in this scene? Who are the people? What led to this situation, and what will happen next? Write a brief but complete story.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
                 <div className="relative aspect-video w-full">
                     <Image src={tatImageUrl} alt="Ambiguous scene for TAT" layout="fill" objectFit="cover" className="rounded-md" data-ai-hint="man woman bed" />
                 </div>
                 <Textarea 
-                    placeholder="Once upon a time..." 
+                    placeholder="Weave a story around the image you see..." 
                     rows={6}
                     value={tatStory}
                     onChange={(e) => setTatStory(e.target.value)}
@@ -239,12 +239,15 @@ export default function ProjectiveTestsPage() {
             {tatResult && (
                 <CardContent className="border-t pt-6 space-y-4">
                     <h3 className="font-bold">AI Interpretation</h3>
-                     <div className="prose prose-sm dark:prose-invert max-w-none">
+                     <div className="prose prose-sm dark:prose-invert max-w-none space-y-2">
                         <p><strong>Main Theme:</strong> {tatResult.mainTheme}</p>
-                        <p><strong>Primary Character's Needs:</strong> {tatResult.primaryCharacterNeeds.join(', ')}</p>
-                        <p><strong>Potential Conflicts:</strong> {tatResult.potentialConflicts.join(', ')}</p>
+                        <p><strong>Main Character Analysis:</strong> {tatResult.mainCharacterAnalysis}</p>
+                        <p><strong>Interpersonal Relationships:</strong> {tatResult.interpersonalRelationships}</p>
+                        <p><strong>Character Needs:</strong> {tatResult.characterNeeds.join(', ')}</p>
+                        <p><strong>Conflicts:</strong> {tatResult.conflicts.join(', ')}</p>
                         <p><strong>Outcome:</strong> {tatResult.outcome}</p>
-                        <p><strong>Interpretive Summary:</strong> {tatResult.summary}</p>
+                        <p><strong>Assumed Worldview:</strong> {tatResult.assumedWorldview}</p>
+                        <p className="border-t pt-2 mt-2 italic"><strong>Summary for Reflection:</strong> {tatResult.summary}</p>
                     </div>
                 </CardContent>
             )}
@@ -253,7 +256,7 @@ export default function ProjectiveTestsPage() {
         <Card>
             <CardHeader>
                 <CardTitle className="flex items-center gap-2"><Palette/> Draw-A-Person (DAP) Test</CardTitle>
-                <CardDescription>Instructions: Use the canvas below to draw a person. It doesn't have to be perfect; just draw whatever comes to mind. Once you're done, the AI will provide a gentle, non-diagnostic interpretation for self-reflection.</CardDescription>
+                <CardDescription>Instructions: Use the canvas below to draw a person. There's no right or wrong way to do it, and it doesn't need to be a masterpiece. Just draw what comes to mind. The AI will then offer a gentle interpretation for self-reflection.</CardDescription>
             </CardHeader>
              <CardContent>
                 <DrawingCanvas onDrawingChange={setDapDrawing} />
@@ -267,17 +270,21 @@ export default function ProjectiveTestsPage() {
             {dapResult && (
                  <CardContent className="border-t pt-6 space-y-4">
                     <h3 className="font-bold">AI Interpretation</h3>
-                    <div className="prose prose-sm dark:prose-invert max-w-none">
+                    <div className="prose prose-sm dark:prose-invert max-w-none space-y-2">
                        <p><strong>Overall Impression:</strong> {dapResult.overallImpression}</p>
-                       <p><strong>Key Features Noted:</strong></p>
-                       <ul>
-                           {dapResult.keyFeatures.map((feature, i) => <li key={i}>{feature}</li>)}
-                       </ul>
-                       <p><strong>Potential Emotional Indicators:</strong></p>
-                       <ul>
-                           {dapResult.emotionalIndicators.map((indicator, i) => <li key={i}>{indicator}</li>)}
-                       </ul>
-                       <p><strong>Interpretive Summary:</strong> {dapResult.summary}</p>
+                       <div>
+                           <p><strong>Key Features Noted:</strong></p>
+                           <ul className="list-disc pl-5">
+                               {dapResult.keyFeatures.map((feature, i) => <li key={i}>{feature}</li>)}
+                           </ul>
+                       </div>
+                       <div>
+                           <p><strong>Potential Emotional Indicators:</strong></p>
+                           <ul className="list-disc pl-5">
+                               {dapResult.emotionalIndicators.map((indicator, i) => <li key={i}>{indicator}</li>)}
+                           </ul>
+                        </div>
+                       <p className="border-t pt-2 mt-2 italic"><strong>Summary for Reflection:</strong> {dapResult.summary}</p>
                     </div>
                 </CardContent>
             )}
