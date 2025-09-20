@@ -1,12 +1,12 @@
 
 .love-and-self-theme {
-    background: linear-gradient(135deg, #ff7e5f, #feb47b, #86a8e7, #7f7fd5, #91eae4);
-    background-size: 300% 300%;
-    animation: rainbow-gradient 15s ease infinite;
+    background: linear-gradient(270deg, #b34b9c, #ff7e5f, #feb47b, #86a8e7, #7f7fd5, #91eae4, #4b0082, #ee82ee);
+    background-size: 400% 400%;
+    animation: rainbow-gradient 10s ease infinite;
 
     --background: transparent;
     --foreground: 240 10% 98%;
-    --card: 240 10% 10% / 0.6;
+    --card: 240 10% 10% / 0.75;
     --card-foreground: 240 10% 98%;
     --popover: 240 10% 10%;
     --popover-foreground: 240 10% 98%;
@@ -27,7 +27,7 @@
 
 .dark .love-and-self-theme {
     --foreground: 240 10% 98%;
-    --card: 240 10% 10% / 0.7;
+    --card: 240 10% 10% / 0.8;
     --card-foreground: 240 10% 98%;
     --popover: 240 10% 10%;
     --popover-foreground: 240 10% 98%;
