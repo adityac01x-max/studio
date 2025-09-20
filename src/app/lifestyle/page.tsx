@@ -1,25 +1,30 @@
+
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Wind, Droplets, Flame, Mountain, PlayCircle, Bed, Footprints, HeartPulse, Brain, Palette, Sprout } from 'lucide-react';
+import { ArrowLeft, Wind, Droplets, Flame, Mountain, PlayCircle, Bed, Footprints, HeartPulse, Brain, Palette, Sprout, Check, X, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Image from 'next/image';
 import { Progress } from '@/components/ui/progress';
 import {
-  ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
-} from "@/components/ui/chart"
-import { Pie, PieChart, ResponsiveContainer } from 'recharts';
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { cn } from '@/lib/utils';
 
 
 const moods = [
@@ -129,6 +134,122 @@ const DrawingCanvas = () => {
     );
 };
 
+const generatePattern = (size: number, patternCount: number) => {
+  const cards = Array.from({ length: size * size }, (_, i) => ({
+    id: i,
+    isPattern: false,
+    isSelected: false,
+    isCorrect: false,
+    isIncorrect: false,
+  }));
+  let patternIndices = new Set<number>();
+  while (patternIndices.size < patternCount) {
+    patternIndices.add(Math.floor(Math.random() * cards.length));
+  }
+  patternIndices.forEach(index => {
+    cards[index].isPattern = true;
+  });
+  return cards;
+};
+
+const PatternMatchingGame = () => {
+    const gridSize = 4;
+    const patternCount = 5;
+    const [cards, setCards] = useState(generatePattern(gridSize, patternCount));
+    const [isRevealed, setIsRevealed] = useState(true);
+    const [gameState, setGameState] = useState<'intro' | 'playing' | 'won'>('intro');
+
+    useEffect(() => {
+        if (gameState === 'intro') {
+            const timer = setTimeout(() => {
+                setIsRevealed(false);
+                setGameState('playing');
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [gameState]);
+
+    const handleCardClick = (id: number) => {
+        if (gameState !== 'playing') return;
+
+        setCards(prevCards => {
+            const newCards = [...prevCards];
+            const card = newCards.find(c => c.id === id);
+            if (card) {
+                card.isSelected = !card.isSelected;
+            }
+            return newCards;
+        });
+    };
+    
+    const checkPattern = () => {
+        let allCorrect = true;
+        let newCards = [...cards];
+
+        newCards.forEach(card => {
+            if (card.isSelected) {
+                if (card.isPattern) {
+                    card.isCorrect = true;
+                } else {
+                    card.isIncorrect = true;
+                    allCorrect = false;
+                }
+            } else {
+                 if(card.isPattern) {
+                    allCorrect = false;
+                 }
+            }
+        });
+        
+        setCards(newCards);
+
+        if (allCorrect) {
+            setGameState('won');
+        } else {
+            // Reset incorrect flags after a delay
+            setTimeout(() => {
+                setCards(prev => prev.map(c => ({...c, isIncorrect: false})))
+            }, 1000);
+        }
+    };
+
+    const resetGame = () => {
+        setCards(generatePattern(gridSize, patternCount));
+        setIsRevealed(true);
+        setGameState('intro');
+    };
+
+    return (
+        <div className="flex flex-col items-center gap-4">
+             <p className="text-muted-foreground">
+                {gameState === 'intro' && `Memorize the pattern. It will disappear in 3 seconds...`}
+                {gameState === 'playing' && `Select the tiles that were part of the pattern.`}
+                {gameState === 'won' && `Congratulations! You found the pattern.`}
+            </p>
+            <div className="grid grid-cols-4 gap-2">
+                {cards.map(card => (
+                    <button
+                        key={card.id}
+                        onClick={() => handleCardClick(card.id)}
+                        disabled={gameState !== 'playing'}
+                        className={cn(
+                            "w-16 h-16 rounded-md transition-all",
+                            "border-2",
+                            card.isCorrect ? "bg-green-500 border-green-700" :
+                            card.isIncorrect ? "bg-red-500 border-red-700" :
+                            card.isSelected ? "bg-primary/50 border-primary" :
+                            (isRevealed && card.isPattern) ? "bg-accent" : "bg-muted hover:bg-muted/80"
+                        )}
+                    />
+                ))}
+            </div>
+            <div className="flex gap-4 mt-4">
+                <Button onClick={resetGame} variant="outline"><RefreshCw className="mr-2"/>New Game</Button>
+                {gameState === 'playing' && <Button onClick={checkPattern}>Check Answer</Button>}
+            </div>
+        </div>
+    )
+}
 
 export default function LifestylePage() {
   const [selectedMood, setSelectedMood] = useState<Mood>('Stressed');
@@ -165,10 +286,20 @@ export default function LifestylePage() {
                 <CardDescription>Engage in quick games to calm your mind and reduce stress.</CardDescription>
             </CardHeader>
             <CardContent className="grid grid-cols-2 gap-4">
-                <Button variant="outline" className="h-20">Pattern Matching</Button>
-                <Button variant="outline" className="h-20">Breathing Exercise</Button>
-                <Button variant="outline" className="h-20">Mindful Puzzle</Button>
-                <Button variant="outline" className="h-20">Zen Garden</Button>
+                 <Dialog>
+                    <DialogTrigger asChild>
+                        <Button variant="outline" className="h-20">Pattern Matching</Button>
+                    </DialogTrigger>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Pattern Matching Game</DialogTitle>
+                        </DialogHeader>
+                        <PatternMatchingGame />
+                    </DialogContent>
+                </Dialog>
+                <Button variant="outline" className="h-20" disabled>Breathing Exercise</Button>
+                <Button variant="outline" className="h-20" disabled>Mindful Puzzle</Button>
+                <Button variant="outline" className="h-20" disabled>Zen Garden</Button>
             </CardContent>
         </Card>
          <Card>
@@ -279,3 +410,5 @@ export default function LifestylePage() {
     </div>
   );
 }
+
+    
