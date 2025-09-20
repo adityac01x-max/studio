@@ -44,13 +44,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Link from 'next/link';
 
 const surveyHistoryData = [
-  { date: 'Jun 2024', phq9: 7, gad7: 6, userScore: 7, cohortAvg: 9 },
-  { date: 'May 2024', phq9: 5, gad7: 5, userScore: 5, cohortAvg: 8 },
-  { date: 'Apr 2024', phq9: 8, gad7: 7, userScore: 8, cohortAvg: 10 },
-  { date: 'Mar 2024', phq9: 10, gad7: 8, userScore: 10, cohortAvg: 12 },
-  { date: 'Feb 2024', phq9: 14, gad7: 11, userScore: 14, cohortAvg: 13 },
-  { date: 'Jan 2024', phq9: 12, gad7: 10, userScore: 12, cohortAvg: 12 },
-];
+  { date: 'Jun 2024', phq9: 7, gad7: 6, cohortAvg: 9 },
+  { date: 'May 2024', phq9: 5, gad7: 5, cohortAvg: 8 },
+  { date: 'Apr 2024', phq9: 8, gad7: 7, cohortAvg: 10 },
+  { date: 'Mar 2024', phq9: 10, gad7: 8, cohortAvg: 12 },
+  { date: 'Feb 2024', phq9: 14, gad7: 11, cohortAvg: 13 },
+  { date: 'Jan 2024', phq9: 12, gad7: 10, cohortAvg: 12 },
+].map(d => ({ ...d, userScore: d.phq9 }));
 
 const scoreDistribution = [
   { name: 'Minimal', value: 2, fill: 'hsl(var(--chart-2))' },
@@ -74,6 +74,10 @@ export default function HealthReportPage() {
             return { level: 'Severe', color: 'text-red-500' };
         }
     };
+    
+    const latestPhq9Score = surveyHistoryData[0]?.phq9;
+    const latestPhq9Interpretation = getScoreInterpretation(latestPhq9Score, 'phq9');
+
   return (
     <>
       <div className="flex items-center gap-4 mb-6">
@@ -182,7 +186,7 @@ export default function HealthReportPage() {
                                 </BarChart>
                             </ResponsiveContainer>
                         </ChartContainer>
-                        <div className="text-center mt-4 text-sm text-muted-foreground">Your last score (7) falls into the 'Mild' category.</div>
+                        <div className="text-center mt-4 text-sm text-muted-foreground">Your last score ({latestPhq9Score}) falls into the '{latestPhq9Interpretation.level}' category.</div>
                     </CardContent>
                 </Card>
           </TabsContent>
