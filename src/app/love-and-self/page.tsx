@@ -1,4 +1,3 @@
-
 'use client';
 import { useState, useEffect } from 'react';
 import {
@@ -228,12 +227,6 @@ export default function LoveAndSelfPage() {
                 <CardDescription>What would you like to do today?</CardDescription>
             </CardHeader>
             <CardContent className="grid grid-cols-2 gap-4">
-                <Link href="/love-and-self/global-chat" passHref>
-                    <Button variant="outline" className="w-full h-20 flex-col gap-1">
-                        <MessageSquare />
-                        <span>Global Chat</span>
-                    </Button>
-                </Link>
                  <Link href="/love-and-self/consultation" passHref>
                     <Button variant="outline" className="w-full h-20 flex-col gap-1">
                         <Users />
