@@ -162,13 +162,13 @@ export default function LoveAndSelfResourcesPage() {
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {resources
                 .filter(
-                  (resource) => type === 'All' || resource.type === type
+                  (resource) => (type === 'All' && resource.type !== 'Guides') || resource.type === type
                 )
                 .map((resource) => (
                   <ResourceCard key={resource.id} resource={resource} />
                 ))}
             </div>
-            {resources.filter(resource => type === 'All' || resource.type === type).length === 0 && (
+            {resources.filter(resource => (type === 'All' && resource.type !== 'Guides') || resource.type === type).length === 0 && (
                 <div className="text-center py-12 text-white/80">
                     <p>No {type.toLowerCase()} match your selected interests right now.</p>
                     <p className="text-sm">Check back later for more curated content!</p>
