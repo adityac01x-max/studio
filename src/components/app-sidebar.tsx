@@ -64,7 +64,6 @@ const navItems = [
 const adminNavItems = [
   { href: '/admin/dashboard', label: 'Admin Dashboard', icon: Shield },
   { href: '/admin/sos', label: 'SOS & High-Risk', icon: Siren },
-  { href: '/admin/reports', label: 'Chat Reports', icon: FileWarning },
   { href: '/admin/resources', label: 'Manage Resources', icon: Library },
   { href: '/admin/peers', label: 'Manage Peers', icon: Users },
   { href: '/admin/counselors', label: 'Manage Counselors', icon: BookUser },
