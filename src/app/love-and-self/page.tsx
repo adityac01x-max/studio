@@ -57,7 +57,7 @@ const identities = [
 
 const interests = [
   'Art & Culture', 'Activism', 'Movies & TV', 'Gaming', 'Music', 'Literature',
-  'Technology', 'Travel', 'Sports', 'Fashion', 'Foodie', 'History'
+  'Technology', 'Travel', 'Sports', 'Fashion', 'Foodie', 'History', 'Health & Wellness', 'Science'
 ];
 
 
@@ -243,6 +243,12 @@ export default function LoveAndSelfPage() {
                     <Button variant="outline" className="w-full h-20 flex-col gap-1">
                         <BarChart2 />
                         <span>Mood Map</span>
+                    </Button>
+                </Link>
+                 <Link href="/love-and-self/ai-chat" passHref>
+                    <Button variant="outline" className="w-full h-20 flex-col gap-1">
+                        <MessageSquare />
+                        <span>AI Chat</span>
                     </Button>
                 </Link>
             </CardContent>

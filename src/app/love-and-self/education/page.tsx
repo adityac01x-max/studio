@@ -21,6 +21,8 @@ const placeholderImages = [
     { id: 'lgbtq-vid2', url: 'https://picsum.photos/seed/lgbtq-vid2/600/400', hint: 'protest signs' },
     { id: 'lgbtq-aud2', url: 'https://picsum.photos/seed/lgbtq-aud2/600/400', hint: 'people talking' },
     { id: 'lgbtq-gui2', url: 'https://picsum.photos/seed/lgbtq-gui2/600/400', hint: 'couple holding hands' },
+    { id: 'lgbtq-vid3', url: 'https://picsum.photos/seed/lgbtq-vid3/600/400', hint: 'person waving rainbow flag' },
+    { id: 'lgbtq-aud3', url: 'https://picsum.photos/seed/lgbtq-aud3/600/400', hint: 'audio sound waves' },
 ];
 
 const getImage = (id: string) => placeholderImages.find(img => img.id === id);
@@ -32,7 +34,7 @@ const allResources = [
     title: 'Understanding Gender Identity',
     description: 'A short animated video explaining the basics of gender identity.',
     type: 'Videos',
-    tags: ['Transgender', 'Genderqueer', 'Non-binary', 'All'],
+    tags: ['Transgender', 'Genderqueer', 'Non-binary', 'All', 'Health & Wellness'],
     image: getImage('lgbtq-vid1'),
   },
   {
@@ -48,7 +50,7 @@ const allResources = [
     title: 'Guide to Coming Out',
     description: 'A supportive guide on navigating the coming out process at your own pace.',
     type: 'Guides',
-    tags: ['Questioning', 'All'],
+    tags: ['Questioning', 'All', 'Health & Wellness'],
     image: getImage('lgbtq-gui1'),
   },
   {
@@ -72,8 +74,24 @@ const allResources = [
     title: 'Healthy Relationships in Queer Communities',
     description: 'Tips for building and maintaining healthy relationships.',
     type: 'Guides',
-    tags: ['All'],
+    tags: ['All', 'Health & Wellness'],
     image: getImage('lgbtq-gui2'),
+  },
+    {
+    id: 'vid3',
+    title: 'Science of Sexuality',
+    description: 'Explore the science behind sexual orientation and identity.',
+    type: 'Videos',
+    tags: ['Science', 'Health & Wellness', 'All'],
+    image: getImage('lgbtq-vid3'),
+  },
+  {
+    id: 'aud3',
+    title: 'Activism in Audio: The Fight for Rights',
+    description: 'A podcast series on the history and future of LGBTQ+ activism.',
+    type: 'Audio',
+    tags: ['Activism', 'History', 'All'],
+    image: getImage('lgbtq-aud3'),
   },
 ];
 
