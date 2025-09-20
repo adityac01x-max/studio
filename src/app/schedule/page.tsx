@@ -19,7 +19,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { User, Clock, MapPin, FileText } from 'lucide-react';
+import { User, Clock, MapPin, FileText, Users, Wind } from 'lucide-react';
 import { Calendar } from '@/components/ui/calendar';
 import { Badge } from '@/components/ui/badge';
 import { format } from 'date-fns';
@@ -32,6 +32,7 @@ const scheduledSessions = [
     date: '2024-07-29',
     time: '10:00 AM - 11:00 AM',
     location: 'Counseling Center, Room 2',
+    type: 'Consultation',
     report: {
       notes:
         'Patient discussed feelings of anxiety related to upcoming exams. We practiced breathing exercises and discussed time management strategies. Patient seemed receptive and engaged.',
@@ -45,6 +46,7 @@ const scheduledSessions = [
     date: '2024-07-29',
     time: '02:00 PM - 03:00 PM',
     location: 'Student Union, Room 5',
+    type: 'Peer Support',
     report: {
       notes:
         'Discussed challenges with balancing social life and academics. Shared experiences with other peers. The group was supportive and offered practical advice.',
@@ -58,6 +60,7 @@ const scheduledSessions = [
     date: '2024-07-31',
     time: '10:00 AM - 11:00 AM',
     location: 'Counseling Center, Room 2',
+    type: 'Consultation',
     report: {
       notes: 'This is an upcoming session. Notes will be available after completion.',
       followUp: 'Come prepared to discuss progress on time management strategies.',
@@ -65,23 +68,25 @@ const scheduledSessions = [
   },
   {
     id: 'session-4',
-    title: 'Session with Dr. Rohan Mehra',
-    counselor: 'Dr. Rohan Mehra',
+    title: 'Mindfulness Workshop',
+    counselor: 'College Wellness Dept.',
     date: '2024-08-01',
-    time: '09:00 AM - 10:00 AM',
-    location: 'Counseling Center, Room 1',
+    time: '04:00 PM - 05:00 PM',
+    location: 'Virtual Meeting',
+    type: 'Workshop',
     report: {
-      notes: 'This is an upcoming session. Notes will be available after completion.',
+      notes: 'This is an upcoming workshop. A summary will be provided after the event.',
       followUp: 'N/A',
     },
   },
-  {
+   {
     id: 'session-5',
-    title: 'Session with Dr. Sunita Sharma',
-    counselor: 'Dr. Sunita Sharma',
+    title: 'Session with Dr. Rohan Mehra',
+    counselor: 'Dr. Rohan Mehra',
     date: '2024-08-02',
-    time: '02:00 PM - 03:00 PM',
-    location: 'Counseling Center, Room 2',
+    time: '09:00 AM - 10:00 AM',
+    location: 'Counseling Center, Room 1',
+    type: 'Consultation',
     report: {
       notes: 'This is an upcoming session. Notes will be available after completion.',
       followUp: 'N/A',
@@ -90,6 +95,15 @@ const scheduledSessions = [
 ];
 
 type Session = (typeof scheduledSessions)[0];
+
+const SessionIcon = ({type}: {type: string}) => {
+    switch (type) {
+        case 'Consultation': return <User className="w-4 h-4"/>;
+        case 'Peer Support': return <Users className="w-4 h-4"/>;
+        case 'Workshop': return <Wind className="w-4 h-4"/>;
+        default: return <User className="w-4 h-4"/>;
+    }
+}
 
 export default function SchedulePage() {
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -135,7 +149,10 @@ export default function SchedulePage() {
                               with {item.counselor}
                             </p>
                           </div>
-                          <Badge variant="secondary">Consultation</Badge>
+                           <Badge variant="secondary" className="flex items-center gap-2">
+                            <SessionIcon type={item.type} />
+                            {item.type}
+                          </Badge>
                         </div>
                         <div className="flex justify-between items-center text-sm text-muted-foreground">
                           <div className="flex items-center gap-2">
