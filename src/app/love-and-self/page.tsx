@@ -73,16 +73,16 @@ export default function LoveAndSelfPage() {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-2">
-        <h1 className="font-headline text-3xl font-bold tracking-tight">
+      <div className="space-y-2 text-center text-white">
+        <h1 className="font-headline text-4xl font-bold tracking-tight">
           Welcome to Your Safe Space
         </h1>
-        <p className="text-muted-foreground">
+        <p className="text-white/80">
           Connect, learn, and grow in a community that understands and celebrates you.
         </p>
       </div>
 
-       <Card>
+       <Card className="bg-card/80 backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center gap-2"><Sparkles className="w-6 h-6 text-primary" /> Personalize Your Experience</CardTitle>
           <CardDescription>Help us tailor content for you. This information is kept private.</CardDescription>
@@ -125,7 +125,7 @@ export default function LoveAndSelfPage() {
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {communityStats.map(stat => (
-            <Card key={stat.label}>
+            <Card key={stat.label} className="bg-card/80 backdrop-blur-sm">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                     <CardTitle className="text-sm font-medium">{stat.label}</CardTitle>
                     {stat.icon}
@@ -138,7 +138,7 @@ export default function LoveAndSelfPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card>
+        <Card className="bg-card/80 backdrop-blur-sm">
             <CardHeader>
                 <CardTitle>Quick Actions</CardTitle>
                 <CardDescription>What would you like to do today?</CardDescription>
@@ -170,7 +170,7 @@ export default function LoveAndSelfPage() {
                 </Link>
             </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-card/80 backdrop-blur-sm">
             <CardHeader>
                 <CardTitle>Upcoming Community Events</CardTitle>
                 <CardDescription>Join our upcoming events to connect and learn.</CardDescription>

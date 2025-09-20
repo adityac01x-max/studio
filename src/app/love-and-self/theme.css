@@ -1,0 +1,47 @@
+
+.love-and-self-theme {
+    background: linear-gradient(135deg, #ff7e5f, #feb47b, #86a8e7, #7f7fd5, #91eae4);
+    background-size: 300% 300%;
+    animation: rainbow-gradient 15s ease infinite;
+
+    --background: transparent;
+    --foreground: 240 10% 98%;
+    --card: 240 10% 10% / 0.6;
+    --card-foreground: 240 10% 98%;
+    --popover: 240 10% 10%;
+    --popover-foreground: 240 10% 98%;
+    --primary: 340 90% 60%;
+    --primary-foreground: 240 10% 10%;
+    --secondary: 240 5% 30% / 0.8;
+    --secondary-foreground: 240 10% 98%;
+    --muted: 240 5% 30% / 0.8;
+    --muted-foreground: 240 5% 80%;
+    --accent: 340 80% 70%;
+    --accent-foreground: 240 10% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5% 40%;
+    --input: 240 5% 30% / 0.8;
+    --ring: 340 90% 60%;
+}
+
+.dark .love-and-self-theme {
+    --foreground: 240 10% 98%;
+    --card: 240 10% 10% / 0.7;
+    --card-foreground: 240 10% 98%;
+    --popover: 240 10% 10%;
+    --popover-foreground: 240 10% 98%;
+    --primary: 340 90% 65%;
+    --secondary: 240 5% 25% / 0.7;
+    --muted: 240 5% 25% / 0.7;
+    --accent: 340 80% 75%;
+    --border: 240 5% 35%;
+    --input: 240 5% 25% / 0.7;
+}
+
+
+@keyframes rainbow-gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}

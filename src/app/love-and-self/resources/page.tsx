@@ -72,7 +72,7 @@ const resources = [
 ];
 
 const ResourceCard = ({ resource }: { resource: (typeof resources)[0] }) => (
-  <Card className="flex flex-col">
+  <Card className="flex flex-col bg-card/80 backdrop-blur-sm">
     <CardHeader className="p-0">
       {resource.image && (
         <Image
@@ -114,11 +114,11 @@ export default function LoveAndSelfResourcesPage() {
             <span className="sr-only">Back to Dashboard</span>
           </Button>
         </Link>
-        <h1 className="font-headline text-3xl font-bold tracking-tight">
-          Resource & Education Center
+        <h1 className="font-headline text-3xl font-bold tracking-tight text-white">
+          Resource &amp; Education Center
         </h1>
       </div>
-      <p className="text-muted-foreground">
+      <p className="text-muted-foreground text-white/80">
         Explore resources curated for and by the LGBTQIA+ community.
       </p>
       <Tabs defaultValue="All" className="space-y-4">

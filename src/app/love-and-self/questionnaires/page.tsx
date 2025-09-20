@@ -180,10 +180,10 @@ export default function LoveAndSelfQuestionnairesPage() {
           </Button>
         </Link>
         <div className="flex-1">
-          <h1 className="font-headline text-3xl font-bold tracking-tight">
+          <h1 className="font-headline text-3xl font-bold tracking-tight text-white">
             Self-Discovery Questionnaires
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground text-white/80">
             Confidential tools to help you understand yourself better. These are not diagnostic.
           </p>
         </div>
@@ -199,7 +199,7 @@ export default function LoveAndSelfQuestionnairesPage() {
             <CollapsibleTrigger asChild>
               <button
                 className={cn(
-                  'w-full p-4 rounded-lg border flex items-center justify-between transition-colors',
+                  'w-full p-4 rounded-lg border flex items-center justify-between transition-colors bg-card/80 backdrop-blur-sm',
                   openQuestionnaire === q.id ? 'bg-muted' : 'hover:bg-muted/50',
                   q.isCompleted && 'border-green-500/50 bg-green-500/5'
                 )}
@@ -222,14 +222,14 @@ export default function LoveAndSelfQuestionnairesPage() {
               </button>
             </CollapsibleTrigger>
             <CollapsibleContent className="mt-2">
-              <Card>
+              <Card className="bg-card/80 backdrop-blur-sm">
                 <CardContent className="p-6">
                   {/* KINSEY SCALE */}
                   {q.id === 'kinsey' && (
                     <div>
                       <RadioGroup onValueChange={setKinseyScore} value={kinseyScore || ''} className="space-y-4">
                         {kinseyQuestions.map((kq) => (
-                          <Label key={kq.value} className="flex items-start gap-4 rounded-md border p-4 cursor-pointer hover:bg-accent/50 has-[:checked]:bg-accent has-[:checked]:border-primary">
+                          <Label key={kq.value} className="flex items-start gap-4 rounded-md border p-4 cursor-pointer hover:bg-accent/50 has-[:checked]:bg-accent has-[:checked]:border-primary bg-background/50">
                             <RadioGroupItem value={kq.value} id={`kinsey-${kq.value}`} />
                             <div className="grid gap-1.5">
                                 <p className="font-semibold">{kq.label}</p>
@@ -344,4 +344,3 @@ export default function LoveAndSelfQuestionnairesPage() {
     </div>
   );
 }
-
