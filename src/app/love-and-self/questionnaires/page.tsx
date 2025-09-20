@@ -118,12 +118,14 @@ export default function LoveAndSelfQuestionnairesPage() {
   const [kinseyScore, setKinseyScore] = useState<string | null>(null);
   const [kleinScores, setKleinScores] = useState<Record<string, Record<string, number>>>({});
   const [stressScore, setStressScore] = useState<number | null>(null);
+  const [kleinFinished, setKleinFinished] = useState(false);
 
   const toggleQuestionnaire = (id: string) => {
     setOpenQuestionnaire(openQuestionnaire === id ? null : id);
   };
   
   const handleKleinChange = (variable: string, time: string, value: number) => {
+    setKleinFinished(false);
     setKleinScores(prev => ({
         ...prev,
         [variable]: {
@@ -145,6 +147,11 @@ export default function LoveAndSelfQuestionnairesPage() {
     toggleQuestionnaire('minorityStress');
   }
 
+  const handleFinishKlein = () => {
+    setKleinFinished(true);
+    toggleQuestionnaire('klein');
+  }
+
   const [minorityStressFormState, setMinorityStressFormState] = useState<Record<string, string>>({});
 
 
@@ -161,7 +168,7 @@ export default function LoveAndSelfQuestionnairesPage() {
       title: 'Klein Sexual Orientation Grid (KSOG)',
       description:
         'A more detailed look at orientation across different times in your life.',
-      isCompleted: Object.keys(kleinScores).length > 0,
+      isCompleted: kleinFinished,
     },
     {
       id: 'minorityStress',
@@ -293,22 +300,54 @@ export default function LoveAndSelfQuestionnairesPage() {
                           <span>7 = Same Sex Only</span>
                         </div>
                          <CardFooter className="px-0">
-                           <Button onClick={() => toggleQuestionnaire('klein')}>Finish & View Summary</Button>
+                           <Button onClick={handleFinishKlein}>Finish & View Summary</Button>
                          </CardFooter>
-                        {Object.keys(kleinScores).length > 0 && (
+                        {kleinFinished && (
                              <Card className="mt-6 bg-muted/50">
                                 <CardHeader>
-                                    <CardTitle>Your Klein Grid Summary</CardTitle>
-                                    <CardDescription>This grid provides a snapshot, not a diagnosis. It acknowledges that sexuality is complex and can be fluid across different aspects of life and time. The total scores below offer a way to see how your experiences and preferences might shift between your past, present, and ideal self.</CardDescription>
+                                    <CardTitle>Your Detailed Klein Grid Report</CardTitle>
+                                    <CardDescription>This grid provides a snapshot, not a diagnosis. It shows that sexuality is complex and can be fluid across different aspects of life and time. Notice how your scores may differ between variables and across your past, present, and ideal self—this variation is normal and part of self-discovery.</CardDescription>
                                 </CardHeader>
-                                <CardContent className="grid grid-cols-3 gap-4 text-center">
-                                    {kleinTimeFrames.map(time => (
-                                        <div key={time}>
-                                            <p className="font-bold text-lg">{time}</p>
-                                            <p className="text-2xl font-bold text-primary">{calculateKleinTotal(time as any)}</p>
-                                            <p className="text-xs text-muted-foreground">Total Score (out of 49)</p>
-                                        </div>
-                                    ))}
+                                <CardContent className="space-y-4">
+                                     <div className="overflow-x-auto">
+                                        <Table>
+                                            <TableHeader>
+                                                <TableRow>
+                                                    <TableHead>Variable</TableHead>
+                                                    {kleinTimeFrames.map(tf => <TableHead key={tf} className="text-center">{tf}</TableHead>)}
+                                                </TableRow>
+                                            </TableHeader>
+                                            <TableBody>
+                                                {kleinGridVariables.map(variable => (
+                                                    <TableRow key={variable}>
+                                                        <TableCell className="font-medium">{variable}</TableCell>
+                                                        {kleinTimeFrames.map(time => (
+                                                            <TableCell key={time} className="text-center font-bold text-lg text-primary">
+                                                                {kleinScores[variable]?.[time] || '-'}
+                                                            </TableCell>
+                                                        ))}
+                                                    </TableRow>
+                                                ))}
+                                                <TableRow className="bg-accent/20">
+                                                     <TableCell className="font-bold">Total Score</TableCell>
+                                                     {kleinTimeFrames.map(time => (
+                                                        <TableCell key={time} className="text-center font-bold text-lg text-primary">
+                                                            {calculateKleinTotal(time as any)}
+                                                        </TableCell>
+                                                    ))}
+                                                </TableRow>
+                                            </TableBody>
+                                        </Table>
+                                    </div>
+                                    <div>
+                                        <h4 className='font-semibold mt-4'>Interpreting Your Grid:</h4>
+                                        <ul className="text-sm text-muted-foreground list-disc pl-5 mt-2 space-y-1">
+                                            <li><span className='font-bold'>Low scores (1-2)</span> generally indicate a stronger orientation towards the other sex.</li>
+                                            <li><span className='font-bold'>Mid-range scores (3-5)</span> suggest some level of bisexuality or attraction to more than one gender.</li>
+                                            <li><span className='font-bold'>High scores (6-7)</span> generally indicate a stronger orientation towards the same sex.</li>
+                                            <li><span className='font-bold'>Variability is Key:</span> The power of this grid is in seeing the differences. Does your behavior differ from your fantasies? Is your ideal self different from your past? These are all points for personal reflection.</li>
+                                        </ul>
+                                    </div>
                                 </CardContent>
                             </Card>
                         )}
