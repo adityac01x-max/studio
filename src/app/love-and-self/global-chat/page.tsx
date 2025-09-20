@@ -9,26 +9,36 @@ import { Send, Loader2, ArrowLeft } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useChat, Message } from '@/hooks/use-chat';
 import Link from 'next/link';
 
-const communityMembers = [
-  { id: 'user-1', name: 'Alex', avatar: 'https://picsum.photos/seed/Alex/100/100', isOnline: true },
-  { id: 'user-2', name: 'Jordan', avatar: 'https://picsum.photos/seed/Jordan/100/100', isOnline: true },
-  { id: 'user-3', name: 'Kai', avatar: 'https://picsum.photos/seed/Kai/100/100', isOnline: false },
-  { id: 'user-4', name: 'Rowan', avatar: 'https://picsum.photos/seed/Rowan/100/100', isOnline: true },
-  { id: 'user-5', name: 'Sam', avatar: 'https://picsum.photos/seed/Sam/100/100', isOnline: false },
-];
+// In a real app, you would fetch members or have a more robust system
+// For this simulation, we'll create a dynamic list of possible anonymous members.
+const generateCommunityMembers = (count: number) => {
+    return Array.from({ length: count }, (_, i) => ({
+        id: `member-${i + 1}`,
+        name: `Member ${i + 1}`,
+        avatar: `https://picsum.photos/seed/member${i + 1}/100/100`,
+        isOnline: Math.random() > 0.3,
+    }));
+};
+
 
 export default function GlobalChatPage() {
   const [input, setInput] = useState('');
   const [isSending, setIsSending] = useState(false);
+
+  // Each user gets a unique, session-based anonymous ID
+  const currentUserId = useMemo(() => `session-user-${Math.random().toString(36).substring(2, 9)}`, []);
+  const currentUser = useMemo(() => ({ id: currentUserId, name: 'You', avatar: `https://picsum.photos/seed/${currentUserId}/100/100` }), [currentUserId]);
+
   const { messages, loading, sendMessage } = useChat('love-and-self-global-chat');
   const scrollAreaRef = useRef<HTMLDivElement>(null);
-  const currentUser = { id: 'current-user', name: 'You', avatar: 'https://picsum.photos/seed/You/100/100' };
+  
+  const communityMembers = useMemo(() => generateCommunityMembers(10), []);
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -42,15 +52,34 @@ export default function GlobalChatPage() {
   const handleSendMessage = async () => {
     if (input.trim() === '') return;
     setIsSending(true);
-    // In a real global chat, role would be the user's ID
     await sendMessage(input, currentUser.id);
     setInput('');
     setIsSending(false);
   };
   
+  // Create a map to store author details for performance
+  const authorDetails = useMemo(() => {
+    const details = new Map<string, {name: string, avatar: string}>();
+    details.set(currentUser.id, { name: 'You', avatar: currentUser.avatar});
+
+    messages.forEach(message => {
+        if (!details.has(message.role)) {
+            // Assign a persistent "Member X" name if not the current user
+            const memberName = `Member ${ (details.size % 20) + 1}`;
+            details.set(message.role, {
+                name: memberName,
+                avatar: `https://picsum.photos/seed/${message.role}/100/100`
+            });
+        }
+    });
+
+    return details;
+
+  }, [messages, currentUser]);
+
+
   const getMessageAuthor = (role: string) => {
-    if (role === currentUser.id) return currentUser;
-    return communityMembers.find(m => m.id === role) || {id: 'unknown', name: 'Guest', avatar: ''};
+    return authorDetails.get(role) || {name: 'Member', avatar: ''};
   }
 
   return (
@@ -72,7 +101,7 @@ export default function GlobalChatPage() {
                 <h3 className="text-lg font-semibold">
                     #general-discussion
                 </h3>
-                <p className="text-sm text-muted-foreground">A place for the community to connect.</p>
+                <p className="text-sm text-muted-foreground">A place for the community to connect. All messages are anonymous.</p>
             </div>
             <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
                 {loading ? (
@@ -83,7 +112,7 @@ export default function GlobalChatPage() {
                 <div className="space-y-4">
                     {messages.map((message) => {
                         const author = getMessageAuthor(message.role);
-                        const isCurrentUser = author.id === currentUser.id;
+                        const isCurrentUser = message.role === currentUser.id;
                         return (
                              <div
                                 key={message.id}
@@ -126,7 +155,7 @@ export default function GlobalChatPage() {
                     size="icon"
                     className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
                     onClick={handleSendMessage}
-                    disabled={isSending || loading}
+                    disabled={isSending || loading || input.trim() === ''}
                 >
                     {isSending ? <Loader2 className="h-4 w-4 animate-spin"/> :<Send className="h-4 w-4" />}
                 </Button>

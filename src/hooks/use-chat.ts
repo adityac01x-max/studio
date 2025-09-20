@@ -15,7 +15,7 @@ import { db } from '@/lib/firebase';
 
 export type Message = {
   id: string;
-  role: 'student' | 'professional';
+  role: string; // Changed to string to allow any unique user ID
   content: string;
   timestamp: Timestamp;
 };
@@ -49,7 +49,7 @@ export const useChat = (conversationId: string) => {
   }, [conversationId]);
 
   const sendMessage = useCallback(
-    async (content: string, role: 'student' | 'professional') => {
+    async (content: string, role: string) => {
       if (!conversationId || !content.trim()) return;
 
       try {
