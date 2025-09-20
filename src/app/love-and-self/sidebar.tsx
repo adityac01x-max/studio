@@ -14,6 +14,7 @@ import {
   MessageSquare,
   Sparkles,
   LogOut,
+  BookUser,
 } from 'lucide-react';
 import {
   SidebarHeader,
@@ -129,6 +130,12 @@ export function LoveAndSelfSidebar() {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
+               <DropdownMenuItem asChild>
+                <Link href="/profile">
+                    <BookUser className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                </Link>
+              </DropdownMenuItem>
               <DropdownMenuItem asChild>
                  <Link href="/student-login">
                   <LogOut className="mr-2 h-4 w-4" />

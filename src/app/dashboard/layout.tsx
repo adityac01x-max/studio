@@ -16,24 +16,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }>) {
   const pathname = usePathname();
-
-  if (pathname === '/profile') {
-      return (
-         <SidebarProvider>
-            <Sidebar>
-                <AppSidebar />
-            </Sidebar>
-            <SidebarInset>
-                <ScrollArea className="h-full">
-                <div className="p-4 md:p-8 pt-6">
-                    <ProfilePage />
-                </div>
-                </ScrollArea>
-            </SidebarInset>
-            <Toaster />
-        </SidebarProvider>
-      )
-  }
+  const isProfilePage = pathname === '/profile';
 
   return (
     <SidebarProvider>
@@ -42,7 +25,9 @@ export default function DashboardLayout({
       </Sidebar>
       <SidebarInset>
         <ScrollArea className="h-full">
-          <div className="p-4 md:p-8 pt-6">{children}</div>
+          <div className="p-4 md:p-8 pt-6">
+            {isProfilePage ? <ProfilePage /> : children}
+          </div>
         </ScrollArea>
       </SidebarInset>
       <Toaster />

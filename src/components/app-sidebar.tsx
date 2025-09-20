@@ -124,7 +124,6 @@ export function AppSidebar() {
   
   const isAdminRoute = pathname.startsWith('/admin');
   const isProfessionalRoute = pathname.startsWith('/professional');
-  const isProfileRoute = pathname === '/profile';
 
   const studentNavItems = [
     ...navItems,
