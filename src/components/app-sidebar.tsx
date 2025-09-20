@@ -13,7 +13,6 @@ import {
   Home,
   Library,
   Users,
-  Trophy,
   Shield,
   LogOut,
   Siren,
@@ -22,6 +21,7 @@ import {
   Video,
   ClipboardList,
   FileWarning,
+  Activity,
 } from 'lucide-react';
 import { AppLogo } from './icons';
 import {
@@ -58,7 +58,7 @@ const navItems = [
   { href: '/resources', label: 'Resource Hub', icon: Library },
   { href: '/schedule', label: 'My Schedule', icon: Calendar },
   { href: '/chat', label: 'AI First-Aid', icon: Bot },
-  { href: '/progress', label: 'My Progress', icon: Trophy },
+  { href: '/progress', label: 'Health Report', icon: Activity },
   { href: '/projective-tests', label: 'Projective Tests', icon: FileWarning },
 ];
 
