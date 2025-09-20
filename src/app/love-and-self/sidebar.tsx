@@ -40,7 +40,6 @@ import { ThemeToggle } from '@/components/theme-toggle';
 const navItems = [
   { href: '/love-and-self', label: 'Dashboard', icon: Home },
   { href: '/love-and-self/global-chat', label: 'Global Chat', icon: MessageSquare },
-  { href: '/love-and-self/interests', label: 'My Interests', icon: Sparkles },
   { href: '/love-and-self/consultation', label: 'Consultation', icon: Users },
   { href: '/love-and-self/schedule', label: 'My Schedule', icon: Calendar },
   { href: '/love-and-self/resources', label: 'Resource Center', icon: BookOpen },
