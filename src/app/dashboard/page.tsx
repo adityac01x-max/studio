@@ -14,6 +14,7 @@ import {
   FileText,
   Bot,
   Activity,
+  Trophy,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -172,8 +173,8 @@ export default function DashboardPage() {
             <div className="col-span-2">
               <Link href="/progress" passHref>
                 <Button className="w-full">
-                  <Activity className="w-5 h-5 mr-2" />
-                  View My Health Report
+                  <Trophy className="w-5 h-5 mr-2" />
+                  View My Progress
                 </Button>
               </Link>
             </div>

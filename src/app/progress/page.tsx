@@ -40,11 +40,6 @@ import {
   XAxis,
   YAxis,
   Tooltip,
-  LineChart,
-  Line,
-  PieChart,
-  Pie,
-  Cell,
 } from 'recharts';
 import {
   ChartContainer,
@@ -143,39 +138,9 @@ const leaderboardData = [
   { rank: 10, studentId: 'STU-112', points: 480, level: 'Bronze' },
 ];
 
-const surveyHistoryData = [
-  { date: 'Jun 2024', phq9: 7, gad7: 6, userScore: 7, cohortAvg: 9 },
-  { date: 'May 2024', phq9: 5, gad7: 5, userScore: 5, cohortAvg: 8 },
-  { date: 'Apr 2024', phq9: 8, gad7: 7, userScore: 8, cohortAvg: 10 },
-  { date: 'Mar 2024', phq9: 10, gad7: 8, userScore: 10, cohortAvg: 12 },
-  { date: 'Feb 2024', phq9: 14, gad7: 11, userScore: 14, cohortAvg: 13 },
-  { date: 'Jan 2024', phq9: 12, gad7: 10, userScore: 12, cohortAvg: 12 },
-];
-
-const scoreDistribution = [
-  { name: 'Minimal', value: 2, fill: 'hsl(var(--chart-2))' },
-  { name: 'Mild', value: 5, fill: 'hsl(var(--chart-3))' },
-  { name: 'Moderate', value: 8, fill: 'hsl(var(--chart-4))' },
-  { name: 'Severe', value: 3, fill: 'hsl(var(--chart-5))' },
-];
-
 export default function ProgressPage() {
-    const getScoreInterpretation = (score: number | null, type: 'phq9' | 'gad7') => {
-        if (score === null) return { level: 'N/A', color: '' };
-        if (type === 'phq9') {
-            if (score <= 4) return { level: 'Minimal', color: 'text-green-500' };
-            if (score <= 9) return { level: 'Mild', color: 'text-yellow-500' };
-            if (score <= 14) return { level: 'Moderate', color: 'text-orange-500' };
-            return { level: 'Severe', color: 'text-red-500' };
-        } else { // GAD-7
-            if (score <= 4) return { level: 'Minimal', color: 'text-green-500' };
-            if (score <= 9) return { level: 'Mild', color: 'text-yellow-500' };
-            if (score <= 14) return { level: 'Moderate', color: 'text-orange-500' };
-            return { level: 'Severe', color: 'text-red-500' };
-        }
-    };
   return (
-    <>
+    <div className="space-y-4">
       <div className="flex items-center gap-4 mb-6">
         <Link href="/dashboard" passHref>
           <Button variant="outline" size="icon">
@@ -184,24 +149,67 @@ export default function ProgressPage() {
           </Button>
         </Link>
         <h1 className="font-headline text-3xl font-bold tracking-tight flex items-center gap-2">
-          <Activity className="w-8 h-8 text-primary" />
-          My Health Report
+          <Trophy className="w-8 h-8 text-primary" />
+          My Progress
         </h1>
       </div>
-      <div className="space-y-4">
-        <p className="text-muted-foreground">
-          Track your survey history, see your trends, and understand your wellness journey.
-        </p>
+      <p className="text-muted-foreground">
+        Track your activity, earn badges, and see your rank in the community.
+      </p>
 
-        <Tabs defaultValue="overview">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="history">Survey History</TabsTrigger>
-            <TabsTrigger value="cohort">Cohort Analysis</TabsTrigger>
-          </TabsList>
+      <Tabs defaultValue="activity">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="activity">My Activity</TabsTrigger>
+          <TabsTrigger value="badges">Badges</TabsTrigger>
+          <TabsTrigger value="leaderboard">Leaderboard</TabsTrigger>
+        </TabsList>
 
-          <TabsContent value="overview" className="mt-4 space-y-6">
-             <Card>
+        <TabsContent value="activity" className="mt-4">
+          <div className="grid gap-6 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Weekly Activity</CardTitle>
+                <CardDescription>
+                  Points earned this week from wellness activities.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <ChartContainer config={{}} className="h-[250px] w-full">
+                  <ResponsiveContainer>
+                    <BarChart data={activityData}>
+                      <XAxis
+                        dataKey="day"
+                        stroke="hsl(var(--muted-foreground))"
+                        fontSize={12}
+                        tickLine={false}
+                        axisLine={false}
+                      />
+                      <YAxis
+                        stroke="hsl(var(--muted-foreground))"
+                        fontSize={12}
+                        tickLine={false}
+                        axisLine={false}
+                        tickFormatter={(value) => `${value} pts`}
+                      />
+                      <Tooltip
+                        content={
+                          <ChartTooltipContent
+                            formatter={(value) => [`${value} points`, 'Points']}
+                            cursorClassName="fill-muted"
+                          />
+                        }
+                      />
+                      <Bar
+                        dataKey="points"
+                        fill="hsl(var(--primary))"
+                        radius={[4, 4, 0, 0]}
+                      />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </ChartContainer>
+              </CardContent>
+            </Card>
+            <Card>
               <CardHeader>
                 <CardTitle>Recent Activity</CardTitle>
                 <CardDescription>
@@ -209,7 +217,7 @@ export default function ProgressPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-6">
+                <div className="space-y-4">
                   {recentActivities.map((activity, index) => (
                     <div key={index} className="flex items-start gap-4">
                       <div className="mt-1">{activity.icon}</div>
@@ -229,132 +237,99 @@ export default function ProgressPage() {
                 </div>
               </CardContent>
             </Card>
-            <div className="grid gap-6 md:grid-cols-2">
-                 <Card>
-                    <CardHeader>
-                        <CardTitle>Badges Earned</CardTitle>
-                        <CardDescription>
-                            Your collection of achievements.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="grid grid-cols-3 gap-4">
-                        {badges.filter(b => b.unlocked).slice(0, 6).map((badge, index) => (
-                            <div key={index} className="flex flex-col items-center text-center gap-2" title={`${badge.title}: ${badge.description}`}>
-                                {badge.icon}
-                                <p className="text-xs font-semibold">{badge.title}</p>
-                            </div>
-                        ))}
-                    </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Leaderboard Position</CardTitle>
-                    <CardDescription>
-                      Your rank in the wellness community.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                     <div className="flex items-center justify-center gap-4 rounded-lg bg-muted p-6">
-                          <Trophy className="w-12 h-12 text-primary" />
-                          <div>
-                            <p className="text-4xl font-bold">#7</p>
-                            <p className="text-muted-foreground">Top 10%</p>
-                          </div>
-                      </div>
-                  </CardContent>
-                </Card>
-            </div>
-          </TabsContent>
+          </div>
+        </TabsContent>
 
-          <TabsContent value="history" className="mt-4">
-             <Card>
+        <TabsContent value="badges" className="mt-4">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {badges.map((badge, index) => (
+              <Card
+                key={index}
+                className={`flex flex-col items-center text-center ${
+                  badge.unlocked ? '' : 'opacity-50 bg-muted/50'
+                }`}
+              >
                 <CardHeader>
-                    <CardTitle>Survey History Log</CardTitle>
-                    <CardDescription>A detailed record of your past survey results.</CardDescription>
+                  {badge.icon}
+                  <CardTitle className="mt-2">{badge.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                     <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Date</TableHead>
-                                <TableHead>Survey</TableHead>
-                                <TableHead>Score</TableHead>
-                                <TableHead>Interpretation</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {surveyHistoryData.flatMap(entry => [
-                                {survey: 'PHQ-9', score: entry.phq9, date: entry.date, type: 'phq9' as const},
-                                {survey: 'GAD-7', score: entry.gad7, date: entry.date, type: 'gad7' as const}
-                            ]).sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-                            .map((item, index) => {
-                                const interpretation = getScoreInterpretation(item.score, item.type);
-                                return (
-                                <TableRow key={index}>
-                                    <TableCell>{item.date}</TableCell>
-                                    <TableCell>{item.survey}</TableCell>
-                                    <TableCell className="font-bold">{item.score}</TableCell>
-                                    <TableCell>
-                                        <Badge variant={interpretation.level === 'Severe' || interpretation.level === 'Moderate' ? 'destructive' : 'secondary'} className={interpretation.color}>{interpretation.level}</Badge>
-                                    </TableCell>
-                                </TableRow>
-                            )})}
-                        </TableBody>
-                    </Table>
+                  <CardDescription>{badge.description}</CardDescription>
                 </CardContent>
-            </Card>
-          </TabsContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
 
-          <TabsContent value="cohort" className="mt-4 space-y-6">
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Your Score vs. Cohort Average</CardTitle>
-                        <CardDescription>
-                            Comparing your PHQ-9 scores to the anonymized average of your peers.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                         <ChartContainer config={{}} className="h-[300px] w-full">
-                            <ResponsiveContainer>
-                                <LineChart data={surveyHistoryData}>
-                                <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                                <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} domain={[0, 27]} />
-                                <Tooltip content={<ChartTooltipContent />} />
-                                <Line type="monotone" dataKey="userScore" name="Your Score" stroke="hsl(var(--primary))" strokeWidth={2} />
-                                <Line type="monotone" dataKey="cohortAvg" name="Cohort Average" stroke="hsl(var(--chart-2))" strokeDasharray="5 5" />
-                                </LineChart>
-                            </ResponsiveContainer>
-                        </ChartContainer>
-                    </CardContent>
-                </Card>
-                 <Card>
-                    <CardHeader>
-                        <CardTitle>Score Distribution (PHQ-9)</CardTitle>
-                        <CardDescription>
-                            Where your latest score falls within the general distribution of scores in your cohort.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <ChartContainer config={{}} className="h-[300px] w-full">
-                            <ResponsiveContainer>
-                                <BarChart data={scoreDistribution}>
-                                    <XAxis dataKey="name" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
-                                    <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} hide/>
-                                    <Tooltip content={<ChartTooltipContent />} />
-                                    <Bar dataKey="value" name="Number of Students" radius={[4, 4, 0, 0]}>
-                                        {scoreDistribution.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={entry.fill} />
-                                        ))}
-                                    </Bar>
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </ChartContainer>
-                        <div className="text-center mt-4 text-sm text-muted-foreground">Your last score (7) falls into the 'Mild' category.</div>
-                    </CardContent>
-                </Card>
-          </TabsContent>
-        </Tabs>
-      </div>
-    </>
+        <TabsContent value="leaderboard" className="mt-4">
+          <Card>
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[80px]">Rank</TableHead>
+                    <TableHead>Member</TableHead>
+                    <TableHead>Level</TableHead>
+                    <TableHead className="text-right">Points</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {leaderboardData.map((user) => (
+                    <TableRow
+                      key={user.rank}
+                      className={
+                        user.studentId === 'You' ? 'bg-accent' : ''
+                      }
+                    >
+                      <TableCell className="font-medium text-lg">
+                        {user.rank}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-3">
+                          <Avatar className="h-9 w-9">
+                            <AvatarImage
+                              src={`https://picsum.photos/seed/${user.studentId}/100/100`}
+                            />
+                            <AvatarFallback>
+                              {user.studentId.slice(4, 6)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="font-medium">
+                            {user.studentId}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={
+                            user.level === 'Gold'
+                              ? 'default'
+                              : user.level === 'Silver'
+                              ? 'secondary'
+                              : 'outline'
+                          }
+                          className={
+                            user.level === 'Gold'
+                              ? 'bg-yellow-500 text-white'
+                              : user.level === 'Silver'
+                              ? 'bg-slate-400 text-white'
+                              : ''
+                          }
+                        >
+                          {user.level}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right font-bold">
+                        {user.points}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 }
