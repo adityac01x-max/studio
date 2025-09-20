@@ -1,6 +1,16 @@
 
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import {
+  collection,
+  onSnapshot,
+  doc,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+  Timestamp,
+} from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 import {
   Card,
   CardContent,
@@ -30,16 +40,14 @@ const communityStats = [
     { label: 'Community Events', value: '50+', icon: <Calendar className="w-6 h-6 text-primary" /> },
 ];
 
-const allEvents = [
-    { title: 'Virtual Queer Coffee Hour', date: 'August 5, 2024', tags: ['Queer', 'Social'] },
-    { title: 'Workshop: Navigating Relationships', date: 'August 12, 2024', tags: ['All'] },
-    { title: 'Guest Speaker: A Transgender Journey', date: 'August 20, 2024', tags: ['Transgender', 'Intersex'] },
-    { title: 'Book Club: "Giovanni\'s Room"', date: 'August 22, 2024', tags: ['Literature', 'Gay'] },
-    { title: 'Art & Activism Night', date: 'August 25, 2024', tags: ['Art & Culture', 'Activism'] },
-    { title: 'Gaming Guild: LGBTQ+ Indie Games', date: 'August 28, 2024', tags: ['Gaming'] },
-    { title: 'Bisexual+ Community Check-in', date: 'September 2, 2024', tags: ['Bisexual', 'Pansexual', 'Social'] },
-    { title: 'Asexual/Aromantic Spectrum Discussion', date: 'September 9, 2024', tags: ['Asexual', 'Social'] },
-];
+type Event = {
+  id: string;
+  title: string;
+  date: Timestamp;
+  tags: string[];
+  rsvps?: string[];
+};
+
 
 const identities = [
   'Lesbian', 'Gay', 'Bisexual', 'Transgender', 'Queer', 'Questioning',
@@ -57,6 +65,26 @@ export default function LoveAndSelfPage() {
     const { toast } = useToast();
     const [selectedIdentities, setSelectedIdentities] = useState<string[]>(['Queer', 'Non-binary']);
     const [selectedInterests, setSelectedInterests] = useState<string[]>(['Art & Culture', 'Music']);
+    const [allEvents, setAllEvents] = useState<Event[]>([]);
+    const [loadingEvents, setLoadingEvents] = useState(true);
+
+    // Mock current user ID
+    const currentUserId = 'student-user-1';
+
+    useEffect(() => {
+        setLoadingEvents(true);
+        const q = collection(db, 'community-events');
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const eventsData: Event[] = [];
+            querySnapshot.forEach((doc) => {
+                eventsData.push({ id: doc.id, ...doc.data() } as Event);
+            });
+            setAllEvents(eventsData);
+            setLoadingEvents(false);
+        });
+
+        return () => unsubscribe();
+    }, []);
 
     const toggleSelection = (category: 'identities' | 'interests', value: string) => {
         const selections = category === 'identities' ? selectedIdentities : selectedInterests;
@@ -76,7 +104,29 @@ export default function LoveAndSelfPage() {
         });
     }
 
+    const handleRSVP = async (eventId: string, hasRsvpd: boolean) => {
+        const eventRef = doc(db, 'community-events', eventId);
+        try {
+            if (hasRsvpd) {
+                await updateDoc(eventRef, {
+                    rsvps: arrayRemove(currentUserId)
+                });
+                toast({ title: "RSVP Canceled", description: "You are no longer registered for this event."});
+            } else {
+                await updateDoc(eventRef, {
+                    rsvps: arrayUnion(currentUserId)
+                });
+                toast({ title: "RSVP'd!", description: "You're registered for the event."});
+            }
+        } catch (error) {
+            console.error("Error updating RSVP: ", error);
+            toast({ variant: "destructive", title: "Error", description: "Could not update RSVP. Please try again." });
+        }
+    };
+
+
     const getCuratedEvents = () => {
+        if (loadingEvents) return [];
         const userTags = new Set([...selectedIdentities, ...selectedInterests]);
         if (userTags.size === 0) {
             return allEvents.filter(event => event.tags.includes('All'));
@@ -194,21 +244,30 @@ export default function LoveAndSelfPage() {
                 <CardDescription>Join our upcoming events to connect and learn.</CardDescription>
             </CardHeader>
             <CardContent>
+                {loadingEvents ? (
+                    <p>Loading events...</p>
+                ) : (
                 <ul className="space-y-4">
-                    {upcomingEvents.map(event => (
-                        <li key={event.title} className="flex items-center justify-between">
+                    {upcomingEvents.map(event => {
+                        const hasRsvpd = event.rsvps?.includes(currentUserId) ?? false;
+                        return (
+                        <li key={event.id} className="flex items-center justify-between">
                             <div>
                                 <p className="font-medium">{event.title}</p>
-                                <p className="text-sm text-muted-foreground">{event.date}</p>
+                                <p className="text-sm text-muted-foreground">{event.date.toDate().toLocaleDateString()}</p>
                             </div>
-                            <Button size="sm">RSVP</Button>
+                            <Button size="sm" onClick={() => handleRSVP(event.id, hasRsvpd)} disabled={hasRsvpd}>
+                                {hasRsvpd ? "RSVP'd" : "RSVP"}
+                            </Button>
                         </li>
-                    ))}
+                    )})}
                 </ul>
+                )}
             </CardContent>
         </Card>
       </div>
 
     </div>
   );
-}
+
+    
