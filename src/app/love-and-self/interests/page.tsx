@@ -10,7 +10,8 @@ import { useToast } from '@/hooks/use-toast';
 
 const identities = [
   'Lesbian', 'Gay', 'Bisexual', 'Transgender', 'Queer', 'Questioning',
-  'Intersex', 'Asexual', 'Pansexual', 'Non-binary', 'Genderqueer', 'Two-spirit'
+  'Intersex', 'Asexual', 'Pansexual', 'Non-binary', 'Genderqueer', 'Two-spirit',
+  'Heterosexual', 'Others'
 ];
 
 const interests = [
