@@ -1,9 +1,9 @@
+'use client';
 import { AppSidebar } from '@/components/app-sidebar';
 import {
   SidebarProvider,
   Sidebar,
   SidebarInset,
-  SidebarContent,
 } from '@/components/ui/sidebar';
 import { Toaster } from '@/components/ui/toaster';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -49,5 +49,3 @@ export default function DashboardLayout({
     </SidebarProvider>
   );
 }
-
-    
