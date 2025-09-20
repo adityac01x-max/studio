@@ -335,7 +335,7 @@ const BreathingExercise = () => {
 
 const MindfulPuzzleGame = () => {
     const gridSize = 3;
-    const imageUrl = "https://picsum.photos/seed/puzzle-nature/300/300";
+    const [imageUrl, setImageUrl] = useState("https://picsum.photos/seed/puzzle-nature/300/300");
 
     const shuffle = (array: number[]) => {
         for (let i = array.length - 1; i > 0; i--) {
@@ -348,6 +348,14 @@ const MindfulPuzzleGame = () => {
     const [tiles, setTiles] = useState(() => shuffle([...Array(gridSize * gridSize).keys()]));
     const [selectedTile, setSelectedTile] = useState<number | null>(null);
     const [isWon, setIsWon] = useState(false);
+    
+    const resetGame = useCallback(() => {
+        const newSeed = Math.floor(Math.random() * 1000);
+        setImageUrl(`https://picsum.photos/seed/puzzle-${newSeed}/300/300`);
+        setTiles(shuffle([...Array(gridSize * gridSize).keys()]));
+        setIsWon(false);
+        setSelectedTile(null);
+    }, []);
 
     useEffect(() => {
         const checkWin = tiles.every((tile, index) => tile === index);
@@ -366,12 +374,6 @@ const MindfulPuzzleGame = () => {
             setSelectedTile(null);
         }
     };
-    
-    const resetGame = () => {
-        setTiles(shuffle([...Array(gridSize * gridSize).keys()]));
-        setIsWon(false);
-        setSelectedTile(null);
-    }
 
     return (
         <div className="flex flex-col items-center gap-4">
