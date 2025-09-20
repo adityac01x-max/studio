@@ -54,6 +54,42 @@
       "description": "A person jogging on a path in a park.",
       "imageUrl": "https://picsum.photos/seed/lifestyle3/600/400",
       "imageHint": "jogging park"
+    },
+    {
+      "id": "health-sleep",
+      "description": "A person sleeping peacefully in a bed.",
+      "imageUrl": "https://picsum.photos/seed/sleep/600/400",
+      "imageHint": "person sleeping"
+    },
+    {
+      "id": "health-steps",
+      "description": "A pair of sneakers on a running track.",
+      "imageUrl": "https://picsum.photos/seed/steps/600/400",
+      "imageHint": "sneakers track"
+    },
+    {
+      "id": "health-heart",
+      "description": "A heart rate monitor showing a steady pulse.",
+      "imageUrl": "https://picsum.photos/seed/heart/600/400",
+      "imageHint": "heartbeat monitor"
+    },
+    {
+      "id": "activity-games",
+      "description": "A simple and colorful puzzle game.",
+      "imageUrl": "https://picsum.photos/seed/games/600/400",
+      "imageHint": "puzzle game"
+    },
+    {
+      "id": "activity-drawing",
+      "description": "A hand drawing with colored pencils on a piece of paper.",
+      "imageUrl": "https://picsum.photos/seed/drawing/600/400",
+      "imageHint": "drawing pencils"
+    },
+    {
+      "id": "hobby-planting",
+      "description": "A person potting a small plant in a pot.",
+      "imageUrl": "https://picsum.photos/seed/planting/600/400",
+      "imageHint": "potting plant"
     }
   ]
 }
