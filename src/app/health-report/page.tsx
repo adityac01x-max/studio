@@ -168,7 +168,7 @@ export default function HealthReportPage() {
                     <CardHeader>
                         <CardTitle>Score Distribution (PHQ-9)</CardTitle>
                         <CardDescription>
-                            Where your latest score falls within the general distribution of scores in your cohort.
+                            This chart shows how many students in the cohort fall into each category. Your category is highlighted.
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -180,13 +180,17 @@ export default function HealthReportPage() {
                                     <Tooltip content={<ChartTooltipContent />} />
                                     <Bar dataKey="value" name="Number of Students" radius={[4, 4, 0, 0]}>
                                         {scoreDistribution.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={entry.fill} />
+                                            <Cell 
+                                                key={`cell-${index}`} 
+                                                fill={entry.fill}
+                                                opacity={entry.name === latestPhq9Interpretation.level ? 1 : 0.4}
+                                            />
                                         ))}
                                     </Bar>
                                 </BarChart>
                             </ResponsiveContainer>
                         </ChartContainer>
-                        <div className="text-center mt-4 text-sm text-muted-foreground">Your last score ({latestPhq9Score}) falls into the '{latestPhq9Interpretation.level}' category.</div>
+                        <div className="text-center mt-4 text-sm text-muted-foreground">Your last score of <span className="font-bold text-primary">{latestPhq9Score}</span> falls into the <span className="font-bold text-primary">{latestPhq9Interpretation.level}</span> category.</div>
                     </CardContent>
                 </Card>
           </TabsContent>
