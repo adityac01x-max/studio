@@ -1,4 +1,3 @@
-
 'use client';
 import { useState, useEffect } from 'react';
 import {
@@ -63,13 +62,24 @@ const interests = [
 
 export default function LoveAndSelfPage() {
     const { toast } = useToast();
-    const [selectedIdentities, setSelectedIdentities] = useState<string[]>(['Queer', 'Non-binary']);
-    const [selectedInterests, setSelectedInterests] = useState<string[]>(['Art & Culture', 'Music']);
+    const [selectedIdentities, setSelectedIdentities] = useState<string[]>([]);
+    const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
     const [allEvents, setAllEvents] = useState<Event[]>([]);
     const [loadingEvents, setLoadingEvents] = useState(true);
 
     // Mock current user ID
     const currentUserId = 'student-user-1';
+
+     useEffect(() => {
+        const savedIdentities = localStorage.getItem('love-and-self-identities');
+        const savedInterests = localStorage.getItem('love-and-self-interests');
+        if (savedIdentities) {
+            setSelectedIdentities(JSON.parse(savedIdentities));
+        }
+        if (savedInterests) {
+            setSelectedInterests(JSON.parse(savedInterests));
+        }
+    }, []);
 
     useEffect(() => {
         setLoadingEvents(true);
@@ -98,6 +108,8 @@ export default function LoveAndSelfPage() {
     }
 
     const handleSaveChanges = () => {
+        localStorage.setItem('love-and-self-identities', JSON.stringify(selectedIdentities));
+        localStorage.setItem('love-and-self-interests', JSON.stringify(selectedInterests));
         toast({
             title: 'Preferences Saved!',
             description: 'Your dashboard content has been updated.',

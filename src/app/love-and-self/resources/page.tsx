@@ -1,6 +1,7 @@
 
 'use client';
 import Image from 'next/image';
+import { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -26,12 +27,13 @@ const placeholderImages = [
 const getImage = (id: string) => placeholderImages.find(img => img.id === id);
 
 
-const resources = [
+const allResources = [
   {
     id: 'vid1',
     title: 'Understanding Gender Identity',
     description: 'A short animated video explaining the basics of gender identity.',
     type: 'Videos',
+    tags: ['Transgender', 'Genderqueer', 'Non-binary', 'All'],
     image: getImage('lgbtq-vid1'),
   },
   {
@@ -39,6 +41,7 @@ const resources = [
     title: 'The Queer Joy Podcast',
     description: 'Listen to stories of resilience and joy from the community.',
     type: 'Audio',
+    tags: ['Art & Culture', 'Music', 'Literature', 'All'],
     image: getImage('lgbtq-aud1'),
   },
   {
@@ -46,6 +49,7 @@ const resources = [
     title: 'Guide to Coming Out',
     description: 'A supportive guide on navigating the coming out process at your own pace.',
     type: 'Guides',
+    tags: ['Questioning', 'All'],
     image: getImage('lgbtq-gui1'),
   },
   {
@@ -53,6 +57,7 @@ const resources = [
     title: 'A History of Pride',
     description: 'Learn about the history of the LGBTQ+ rights movement.',
     type: 'Videos',
+    tags: ['History', 'Activism', 'All'],
     image: getImage('lgbtq-vid2'),
   },
   {
@@ -60,6 +65,7 @@ const resources = [
     title: 'Chosen Family Stories',
     description: 'Heartwarming stories about the importance of chosen family.',
     type: 'Audio',
+    tags: ['Art & Culture', 'All'],
     image: getImage('lgbtq-aud2'),
   },
   {
@@ -67,11 +73,12 @@ const resources = [
     title: 'Healthy Relationships in Queer Communities',
     description: 'Tips for building and maintaining healthy relationships.',
     type: 'Guides',
+    tags: ['All'],
     image: getImage('lgbtq-gui2'),
   },
 ];
 
-const ResourceCard = ({ resource }: { resource: (typeof resources)[0] }) => (
+const ResourceCard = ({ resource }: { resource: (typeof allResources)[0] }) => (
   <Card className="flex flex-col bg-card/80 backdrop-blur-sm">
     <CardHeader className="p-0">
       {resource.image && (
@@ -103,6 +110,27 @@ const ResourceCard = ({ resource }: { resource: (typeof resources)[0] }) => (
 );
 
 export default function LoveAndSelfResourcesPage() {
+  const [userInterests, setUserInterests] = useState<string[]>([]);
+
+  useEffect(() => {
+    const savedInterests = localStorage.getItem('love-and-self-interests');
+    const savedIdentities = localStorage.getItem('love-and-self-identities');
+    const interests = savedInterests ? JSON.parse(savedInterests) : [];
+    const identities = savedIdentities ? JSON.parse(savedIdentities) : [];
+    setUserInterests([...interests, ...identities]);
+  }, []);
+
+  const getCuratedResources = () => {
+    if (userInterests.length === 0) {
+      return allResources.filter(resource => resource.tags.includes('All'));
+    }
+    const curated = allResources.filter(resource =>
+      resource.tags.includes('All') || resource.tags.some(tag => userInterests.includes(tag))
+    );
+    return curated.length > 0 ? curated : allResources.slice(0, 3);
+  };
+  
+  const resources = getCuratedResources();
   const resourceTypes = ['All', 'Videos', 'Audio', 'Guides'];
 
   return (
@@ -119,7 +147,7 @@ export default function LoveAndSelfResourcesPage() {
         </h1>
       </div>
       <p className="text-muted-foreground text-white/80">
-        Explore resources curated for and by the LGBTQIA+ community.
+        Explore resources curated for and by the LGBTQIA+ community, personalized to your interests.
       </p>
       <Tabs defaultValue="All" className="space-y-4">
         <TabsList>
@@ -140,6 +168,12 @@ export default function LoveAndSelfResourcesPage() {
                   <ResourceCard key={resource.id} resource={resource} />
                 ))}
             </div>
+            {resources.filter(resource => type === 'All' || resource.type === type).length === 0 && (
+                <div className="text-center py-12 text-white/80">
+                    <p>No {type.toLowerCase()} match your selected interests right now.</p>
+                    <p className="text-sm">Check back later for more curated content!</p>
+                </div>
+            )}
           </TabsContent>
         ))}
       </Tabs>
