@@ -32,6 +32,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
+import { Badge } from '@/components/ui/badge';
 
 
 const moods = [
@@ -521,8 +529,23 @@ const ZenGarden = () => {
     );
 };
 
-const plantTypes = ['Snake Plant', 'Succulent', 'Spider Plant', 'Pothos', 'Mint', 'Basil'];
-type Plant = { id: number, name: string, type: string };
+const plantTypes = [
+    { name: 'Snake Plant', water: 'Low', sun: 'Indirect' },
+    { name: 'Succulent', water: 'Low', sun: 'Direct' },
+    { name: 'Spider Plant', water: 'Medium', sun: 'Indirect' },
+    { name: 'Pothos', water: 'Medium', sun: 'Indirect' },
+    { name: 'Mint', water: 'High', sun: 'Direct' },
+    { name: 'Basil', water: 'High', sun: 'Direct' },
+];
+const plantGuideCarouselItems = [
+    { name: 'Snake Plant', description: 'Extremely hardy and great for beginners. Purifies the air.', imageHint: 'snake plant' },
+    { name: 'Pothos', description: 'A forgiving and fast-growing vine. Thrives in various light conditions.', imageHint: 'pothos plant' },
+    { name: 'Succulent', description: 'Loves sun and requires minimal watering. Comes in many shapes.', imageHint: 'succulent plant' },
+    { name: 'Spider Plant', description: 'Produces "spiderettes" that can be repotted. Very easy to care for.', imageHint: 'spider plant' },
+    { name: 'Mint', description: 'Aromatic and fast-growing. Great for teas and cooking.', imageHint: 'mint plant' },
+]
+
+type Plant = { id: number, name: string, type: string, water: string, sun: string };
 
 const VirtualGreenhouse = () => {
     const [plants, setPlants] = useState<Plant[]>([]);
@@ -534,8 +557,11 @@ const VirtualGreenhouse = () => {
         const name = formData.get('plantName') as string;
         const type = formData.get('plantType') as string;
         if (name && type) {
-            setPlants([...plants, { id: Date.now(), name, type }]);
-            setAddPlantOpen(false);
+            const plantInfo = plantTypes.find(p => p.name === type);
+            if (plantInfo) {
+                setPlants([...plants, { id: Date.now(), name, type, ...plantInfo }]);
+                setAddPlantOpen(false);
+            }
         }
     };
 
@@ -580,7 +606,7 @@ const VirtualGreenhouse = () => {
                                                     <SelectValue placeholder="Select a type" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {plantTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
+                                                    {plantTypes.map(type => <SelectItem key={type.name} value={type.name}>{type.name}</SelectItem>)}
                                                 </SelectContent>
                                             </Select>
                                         </div>
@@ -594,24 +620,43 @@ const VirtualGreenhouse = () => {
                         {plants.length > 0 ? (
                              <div className="grid md:grid-cols-2 gap-4">
                                 {plants.map(plant => (
-                                    <Card key={plant.id} className="p-4 flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
-                                             <Image src={`https://picsum.photos/seed/${plant.type}/100/100`} alt={plant.type} data-ai-hint="potted plant" width={60} height={60} className="rounded-md" />
-                                             <div>
-                                                <p className="font-bold">{plant.name}</p>
-                                                <p className="text-sm text-muted-foreground">{plant.type}</p>
-                                             </div>
-                                        </div>
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button variant="ghost" size="icon"><MoreHorizontal /></Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent>
-                                                <DropdownMenuItem onClick={() => handleDeletePlant(plant.id)} className="text-destructive">
-                                                    <Trash2 className="mr-2"/> Remove
-                                                </DropdownMenuItem>
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
+                                    <Card key={plant.id}>
+                                        <CardHeader className="flex flex-row items-center justify-between">
+                                            <div className="flex items-center gap-3">
+                                                <Image src={`https://picsum.photos/seed/${plant.type}/100/100`} alt={plant.type} data-ai-hint="potted plant" width={60} height={60} className="rounded-md" />
+                                                <div>
+                                                    <p className="font-bold">{plant.name}</p>
+                                                    <p className="text-sm text-muted-foreground">{plant.type}</p>
+                                                </div>
+                                            </div>
+                                             <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button variant="ghost" size="icon"><MoreHorizontal /></Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent>
+                                                    <DropdownMenuItem onClick={() => handleDeletePlant(plant.id)} className="text-destructive">
+                                                        <Trash2 className="mr-2"/> Remove
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        </CardHeader>
+                                        <CardContent className="space-y-2">
+                                            <div className="flex justify-around text-center">
+                                                <div>
+                                                    <Sun className="mx-auto text-yellow-500"/>
+                                                    <p className="text-xs font-bold">{plant.sun}</p>
+                                                    <p className="text-xs text-muted-foreground">Sunlight</p>
+                                                </div>
+                                                <div>
+                                                    <Droplets className="mx-auto text-blue-500"/>
+                                                    <p className="text-xs font-bold">{plant.water}</p>
+                                                    <p className="text-xs text-muted-foreground">Water</p>
+                                                </div>
+                                            </div>
+                                        </CardContent>
+                                        <CardFooter>
+                                            <Button variant="outline" className="w-full"><Droplets className="mr-2" /> Water Plant</Button>
+                                        </CardFooter>
                                     </Card>
                                 ))}
                             </div>
@@ -622,15 +667,39 @@ const VirtualGreenhouse = () => {
                             </div>
                         )}
                     </TabsContent>
-                    <TabsContent value="guide" className="mt-4 prose prose-sm dark:prose-invert">
-                        <h4>Getting Started with Planting</h4>
-                        <ol>
-                            <li><strong>Choose Your Pot:</strong> Select a pot with drainage holes to prevent root rot.</li>
-                            <li><strong>Pick Your Soil:</strong> Use a quality potting mix suitable for your chosen plant.</li>
-                            <li><strong>Planting:</strong> Gently place your plant in the pot, and fill with soil, leaving a little space at the top.</li>
-                            <li><strong>Watering:</strong> Water thoroughly after planting. Let the soil dry out slightly between waterings.</li>
-                            <li><strong>Sunlight:</strong> Place your plant in a spot with the right amount of light for its needs (check the plant's tag!).</li>
-                        </ol>
+                    <TabsContent value="guide" className="mt-4 space-y-6">
+                        <div>
+                             <h4 className="font-semibold mb-2">Beginner Plant Carousel</h4>
+                             <Carousel className="w-full max-w-lg mx-auto">
+                                <CarouselContent>
+                                    {plantGuideCarouselItems.map((item, index) => (
+                                    <CarouselItem key={index}>
+                                        <Card>
+                                            <CardHeader className="flex-row gap-4 items-center">
+                                                 <Image src={`https://picsum.photos/seed/${item.imageHint}/150/150`} alt={item.name} data-ai-hint={item.imageHint} width={100} height={100} className="rounded-lg"/>
+                                                <div>
+                                                    <CardTitle>{item.name}</CardTitle>
+                                                    <CardDescription>{item.description}</CardDescription>
+                                                </div>
+                                            </CardHeader>
+                                        </Card>
+                                    </CarouselItem>
+                                    ))}
+                                </CarouselContent>
+                                <CarouselPrevious />
+                                <CarouselNext />
+                            </Carousel>
+                        </div>
+                        <div className="prose prose-sm dark:prose-invert">
+                            <h4 className="mt-6">Getting Started with Planting</h4>
+                            <ol>
+                                <li><strong>Choose Your Pot:</strong> Select a pot with drainage holes to prevent root rot.</li>
+                                <li><strong>Pick Your Soil:</strong> Use a quality potting mix suitable for your chosen plant.</li>
+                                <li><strong>Planting:</strong> Gently place your plant in the pot, and fill with soil, leaving a little space at the top.</li>
+                                <li><strong>Watering:</strong> Water thoroughly after planting. Let the soil dry out slightly between waterings.</li>
+                                <li><strong>Sunlight:</strong> Place your plant in a spot with the right amount of light for its needs (check the plant's tag!).</li>
+                            </ol>
+                        </div>
                     </TabsContent>
                     <TabsContent value="benefits" className="mt-4 prose prose-sm dark:prose-invert">
                          <h4>The Benefits of Planting</h4>
@@ -808,5 +877,3 @@ export default function LifestylePage() {
     </div>
   );
 }
-
-    
