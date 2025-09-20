@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -24,24 +23,24 @@ const moods = [
 
 const exercises = {
   Stressed: [
-    { title: '15-Min Stress Relief Yoga', videoUrl: 'https://www.youtube.com/embed/sJ0StD0eCxE', imageId: 'video-1' },
-    { title: 'High-Intensity Interval Training (HIIT)', videoUrl: 'https://www.youtube.com/embed/ml6cT4AZdqI', imageId: 'video-2' },
-    { title: 'Mindful Walking Meditation', videoUrl: 'https://www.youtube.com/embed/O_6KHzq3fMU', imageId: 'guide-1' },
+    { title: '15-Min Stress Relief Yoga', videoUrl: 'https://www.youtube.com/embed/sJ0StD0eCxE?autoplay=1', imageId: 'video-1' },
+    { title: 'High-Intensity Interval Training (HIIT)', videoUrl: 'https://www.youtube.com/embed/ml6cT4AZdqI?autoplay=1', imageId: 'video-2' },
+    { title: 'Mindful Walking Meditation', videoUrl: 'https://www.youtube.com/embed/O_6KHzq3fMU?autoplay=1', imageId: 'guide-1' },
   ],
   Anxious: [
-    { title: '20-Min Calming Pilates', videoUrl: 'https://www.youtube.com/embed/vlv8Y6b-1sM', imageId: 'video-2' },
-    { title: 'Guided Breathing for Anxiety', videoUrl: 'https://www.youtube.com/embed/F28MGLlpP90', imageId: 'guide-2' },
-    { title: 'Gentle Stretching Routine', videoUrl: 'https://www.youtube.com/embed/50kH47ZztHs', imageId: 'video-1' },
+    { title: '20-Min Calming Pilates', videoUrl: 'https://www.youtube.com/embed/vlv8Y6b-1sM?autoplay=1', imageId: 'video-2' },
+    { title: 'Guided Breathing for Anxiety', videoUrl: 'https://www.youtube.com/embed/F28MGLlpP90?autoplay=1', imageId: 'guide-2' },
+    { title: 'Gentle Stretching Routine', videoUrl: 'https://www.youtube.com/embed/50kH47ZztHs?autoplay=1', imageId: 'video-1' },
   ],
   Sad: [
-    { title: '30-Min Feel-Good Dance Cardio', videoUrl: 'https://www.youtube.com/embed/T44x9t2-Szc', imageId: 'lifestyle-1' },
-    { title: 'Uplifting Full Body Workout', videoUrl: 'https://www.youtube.com/embed/9PO3p1gLpZ4', imageId: 'lifestyle-2' },
-    { title: 'Outdoor Jogging Inspiration', videoUrl: 'https://www.youtube.com/embed/R4i-4f2tIxE', imageId: 'lifestyle-3' },
+    { title: '30-Min Feel-Good Dance Cardio', videoUrl: 'https://www.youtube.com/embed/T44x9t2-Szc?autoplay=1', imageId: 'lifestyle-1' },
+    { title: 'Uplifting Full Body Workout', videoUrl: 'https://www.youtube.com/embed/9PO3p1gLpZ4?autoplay=1', imageId: 'lifestyle-2' },
+    { title: 'Outdoor Jogging Inspiration', videoUrl: 'https://www.youtube.com/embed/R4i-4f2tIxE?autoplay=1', imageId: 'lifestyle-3' },
   ],
   Tired: [
-    { title: '10-Min Energizing Morning Yoga', videoUrl: 'https://www.youtube.com/embed/V-Sj-vI2b3Y', imageId: 'guide-1' },
-    { title: 'Quick & Effective Energy Boosting Workout', videoUrl: 'https://www.youtube.com/embed/P_S6bV2o6a4', imageId: 'video-2' },
-    { title: 'Low-Impact Cardio for a Gentle Boost', videoUrl: 'https://www.youtube.com/embed/50kH47ZztHs', imageId: 'video-1' },
+    { title: '10-Min Energizing Morning Yoga', videoUrl: 'https://www.youtube.com/embed/V-Sj-vI2b3Y?autoplay=1', imageId: 'guide-1' },
+    { title: 'Quick & Effective Energy Boosting Workout', videoUrl: 'https://www.youtube.com/embed/P_S6bV2o6a4?autoplay=1', imageId: 'video-2' },
+    { title: 'Low-Impact Cardio for a Gentle Boost', videoUrl: 'https://www.youtube.com/embed/50kH47ZztHs?autoplay=1', imageId: 'video-1' },
   ],
 };
 
@@ -56,12 +55,12 @@ export default function LifestylePage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="p-4 md:p-8 pt-6">
       <div className="flex items-center gap-4 mb-6">
-        <Link href="/dashboard" passHref>
+        <Link href="/student-login" passHref>
           <Button variant="outline" size="icon">
             <ArrowLeft />
-            <span className="sr-only">Back to Dashboard</span>
+            <span className="sr-only">Back</span>
           </Button>
         </Link>
         <h1 className="font-headline text-3xl font-bold tracking-tight">
@@ -97,7 +96,7 @@ export default function LifestylePage() {
       </Card>
 
       <div>
-        <h2 className="text-2xl font-bold font-headline mb-4">
+        <h2 className="text-2xl font-bold font-headline my-6">
           Exercises for when you're feeling {selectedMood.toLowerCase()}
         </h2>
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -111,7 +110,7 @@ export default function LifestylePage() {
                     {isVideoActive ? (
                       <iframe
                           className="w-full h-full rounded-t-lg"
-                          src={`${exercise.videoUrl}?autoplay=1`}
+                          src={exercise.videoUrl}
                           title={exercise.title}
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                           allowFullScreen

@@ -53,7 +53,7 @@ export default function LandingPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Link href="/dashboard" className="w-full" passHref>
+                <Link href="/student-login" className="w-full" passHref>
                   <Button className="w-full">Login as Student</Button>
                 </Link>
               </CardContent>
