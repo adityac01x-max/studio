@@ -179,7 +179,7 @@ export default function LoveAndSelfProgressPage() {
                 <CardHeader>
                   <CardTitle>Weekly Activity</CardTitle>
                   <CardDescription>
-                    Points earned this week in the Love & Self space.
+                    Points earned this week in the Love &amp; Self space.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -364,5 +364,3 @@ export default function LoveAndSelfProgressPage() {
     </div>
   );
 }
-
-    
