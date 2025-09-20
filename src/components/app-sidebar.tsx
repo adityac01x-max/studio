@@ -58,7 +58,6 @@ const navItems = [
   { href: '/schedule', label: 'My Schedule', icon: Calendar },
   { href: '/chat', label: 'AI First-Aid', icon: Bot },
   { href: '/progress', label: 'My Progress', icon: Trophy },
-  { href: '/profile', label: 'Profile', icon: BookUser },
 ];
 
 const adminNavItems = [
