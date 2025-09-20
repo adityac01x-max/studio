@@ -5,7 +5,7 @@ import {
   Card,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Send, Loader2, ArrowLeft } from 'lucide-react';
+import { Send, Loader2, ArrowLeft, MessageSquare } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -14,6 +14,8 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useChat, Message } from '@/hooks/use-chat';
 import Link from 'next/link';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+
 
 // In a real app, you would fetch members or have a more robust system
 // For this simulation, we'll create a dynamic list of possible anonymous members.
@@ -121,10 +123,21 @@ export default function GlobalChatPage() {
                                 )}
                             >
                                 {!isCurrentUser && (
-                                    <Avatar className='h-8 w-8'>
-                                        <AvatarImage src={author.avatar} />
-                                        <AvatarFallback>{author.name.charAt(0)}</AvatarFallback>
-                                    </Avatar>
+                                     <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Avatar className='h-8 w-8 cursor-pointer'>
+                                                <AvatarImage src={author.avatar} />
+                                                <AvatarFallback>{author.name.charAt(0)}</AvatarFallback>
+                                            </Avatar>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent>
+                                            <DropdownMenuItem asChild>
+                                                 <Link href={`/love-and-self/private-chat?userId=${message.role}`}>
+                                                    <MessageSquare className="mr-2"/> Start Private Chat
+                                                 </Link>
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
                                 )}
                                 <div className={cn('rounded-lg p-3 max-w-[70%]', isCurrentUser ? 'bg-primary text-primary-foreground' : 'bg-muted')}>
                                      {!isCurrentUser && <p className="text-xs font-bold mb-1">{author.name}</p>}
@@ -168,16 +181,30 @@ export default function GlobalChatPage() {
                 <ScrollArea className="h-[calc(100vh-12rem)]">
                     <div className="space-y-4">
                         {communityMembers.map(member => (
-                            <div key={member.id} className="flex items-center gap-3">
-                                <Avatar className="h-10 w-10 relative">
-                                    <AvatarImage src={member.avatar} />
-                                    <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
-                                    {member.isOnline && <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-background" />}
-                                </Avatar>
-                                <div>
-                                    <p className="font-medium">{member.name}</p>
-                                    <p className="text-xs text-muted-foreground">{member.isOnline ? 'Online' : 'Offline'}</p>
+                            <div key={member.id} className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <Avatar className="h-10 w-10 relative">
+                                        <AvatarImage src={member.avatar} />
+                                        <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
+                                        {member.isOnline && <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-background" />}
+                                    </Avatar>
+                                    <div>
+                                        <p className="font-medium">{member.name}</p>
+                                        <p className="text-xs text-muted-foreground">{member.isOnline ? 'Online' : 'Offline'}</p>
+                                    </div>
                                 </div>
+                                 <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="ghost" size="sm">Chat</Button>
+                                    </DropdownMenuTrigger>
+                                     <DropdownMenuContent>
+                                        <DropdownMenuItem asChild>
+                                             <Link href={`/love-and-self/private-chat?userId=${member.id}`}>
+                                                <MessageSquare className="mr-2"/> Start Private Chat
+                                             </Link>
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
                             </div>
                         ))}
                     </div>
