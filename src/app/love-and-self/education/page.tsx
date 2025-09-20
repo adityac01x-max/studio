@@ -10,7 +10,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { PlayCircle, Headphones, BookOpen, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -109,7 +108,7 @@ const ResourceCard = ({ resource }: { resource: (typeof allResources)[0] }) => (
   </Card>
 );
 
-export default function LoveAndSelfResourcesPage() {
+export default function LoveAndSelfEducationPage() {
   const [userInterests, setUserInterests] = useState<string[]>([]);
 
   useEffect(() => {
@@ -130,8 +129,7 @@ export default function LoveAndSelfResourcesPage() {
     return curated.length > 0 ? curated : allResources.slice(0, 3);
   };
   
-  const resources = getCuratedResources();
-  const resourceTypes = ['All', 'Videos', 'Audio'];
+  const resources = getCuratedResources().filter(r => r.type === 'Guides');
 
   return (
     <div className="space-y-4">
@@ -143,40 +141,23 @@ export default function LoveAndSelfResourcesPage() {
           </Button>
         </Link>
         <h1 className="font-headline text-3xl font-bold tracking-tight text-white">
-          Resource Hub
+          Education Center
         </h1>
       </div>
       <p className="text-muted-foreground text-white/80">
-        Explore multimedia resources curated for and by the LGBTQIA+ community, personalized to your interests.
+        Explore guides and articles curated for and by the LGBTQIA+ community, personalized to your interests.
       </p>
-      <Tabs defaultValue="All" className="space-y-4">
-        <TabsList>
-          {resourceTypes.map((type) => (
-            <TabsTrigger key={type} value={type}>
-              {type}
-            </TabsTrigger>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {resources.map((resource) => (
+              <ResourceCard key={resource.id} resource={resource} />
           ))}
-        </TabsList>
-        {resourceTypes.map((type) => (
-          <TabsContent key={type} value={type} className="mt-0">
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {resources
-                .filter(
-                  (resource) => type === 'All' || resource.type === type
-                )
-                .map((resource) => (
-                  <ResourceCard key={resource.id} resource={resource} />
-                ))}
-            </div>
-            {resources.filter(resource => type === 'All' || resource.type === type).length === 0 && (
-                <div className="text-center py-12 text-white/80">
-                    <p>No {type.toLowerCase()} match your selected interests right now.</p>
-                    <p className="text-sm">Check back later for more curated content!</p>
-                </div>
-            )}
-          </TabsContent>
-        ))}
-      </Tabs>
+      </div>
+       {resources.length === 0 && (
+          <div className="text-center py-12 text-white/80">
+              <p>No guides match your selected interests right now.</p>
+              <p className="text-sm">Check back later for more curated content!</p>
+          </div>
+      )}
     </div>
   );
 }
