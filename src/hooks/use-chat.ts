@@ -10,6 +10,7 @@ import {
   onSnapshot,
   Timestamp,
   DocumentData,
+  limit,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { moderateChatContent } from '@/ai/flows/moderate-chat-content';
@@ -33,14 +34,17 @@ export const useChat = (conversationId: string) => {
     setLoading(true);
     const q = query(
       collection(db, 'conversations', conversationId, 'messages'),
-      orderBy('timestamp', 'asc')
+      orderBy('timestamp', 'desc'),
+      limit(50)
     );
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const msgs = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      } as Message));
+      const msgs = querySnapshot.docs
+        .map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+        } as Message))
+        .reverse(); // Reverse to show oldest first
       setMessages(msgs);
       setLoading(false);
     }, (error) => {
