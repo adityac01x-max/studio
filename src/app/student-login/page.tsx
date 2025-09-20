@@ -7,14 +7,14 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Heart, BrainCircuit, Bike } from 'lucide-react';
+import { Heart, BrainCircuit, Bike, ArrowLeft } from 'lucide-react';
 import Image from 'next/image';
 import { AppLogo } from '@/components/icons';
 
 export default function StudentLoginPage() {
   return (
     <div className="flex h-screen">
-       <div className="relative w-1/2 hidden md:block">
+      <div className="relative w-1/2 hidden md:block">
         <Image
           src="https://picsum.photos/seed/student-login/1200/1600"
           alt="A person looking at a sunset"
@@ -30,7 +30,13 @@ export default function StudentLoginPage() {
           </p>
         </div>
       </div>
-      <div className="w-full md:w-1/2 flex flex-col items-center justify-center p-8 bg-background overflow-auto">
+      <div className="w-full md:w-1/2 flex flex-col items-center justify-center p-8 bg-background overflow-auto relative">
+        <Link href="/" passHref>
+            <Button variant="outline" size="icon" className="absolute top-8 left-8">
+                <ArrowLeft />
+                <span className="sr-only">Back</span>
+            </Button>
+        </Link>
         <div className="max-w-md w-full text-center">
           <h2 className="font-headline text-4xl font-bold text-primary mb-4">
             How can we help you today?
