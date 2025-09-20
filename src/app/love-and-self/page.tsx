@@ -30,10 +30,15 @@ const communityStats = [
     { label: 'Community Events', value: '50+', icon: <Calendar className="w-6 h-6 text-primary" /> },
 ];
 
-const upcomingEvents = [
-    { title: 'Virtual Queer Coffee Hour', date: 'August 5, 2024' },
-    { title: 'Workshop: Navigating Relationships', date: 'August 12, 2024' },
-    { title: 'Guest Speaker: A Transgender Journey', date: 'August 20, 2024' },
+const allEvents = [
+    { title: 'Virtual Queer Coffee Hour', date: 'August 5, 2024', tags: ['Queer', 'Social'] },
+    { title: 'Workshop: Navigating Relationships', date: 'August 12, 2024', tags: ['All'] },
+    { title: 'Guest Speaker: A Transgender Journey', date: 'August 20, 2024', tags: ['Transgender', 'Intersex'] },
+    { title: 'Book Club: "Giovanni\'s Room"', date: 'August 22, 2024', tags: ['Literature', 'Gay'] },
+    { title: 'Art & Activism Night', date: 'August 25, 2024', tags: ['Art & Culture', 'Activism'] },
+    { title: 'Gaming Guild: LGBTQ+ Indie Games', date: 'August 28, 2024', tags: ['Gaming'] },
+    { title: 'Bisexual+ Community Check-in', date: 'September 2, 2024', tags: ['Bisexual', 'Pansexual', 'Social'] },
+    { title: 'Asexual/Aromantic Spectrum Discussion', date: 'September 9, 2024', tags: ['Asexual', 'Social'] },
 ];
 
 const identities = [
@@ -67,9 +72,22 @@ export default function LoveAndSelfPage() {
     const handleSaveChanges = () => {
         toast({
             title: 'Preferences Saved!',
-            description: 'Your profile has been updated.',
+            description: 'Your dashboard content has been updated.',
         });
     }
+
+    const getCuratedEvents = () => {
+        const userTags = new Set([...selectedIdentities, ...selectedInterests]);
+        if (userTags.size === 0) {
+            return allEvents.filter(event => event.tags.includes('All'));
+        }
+        const curated = allEvents.filter(event => 
+            event.tags.includes('All') || event.tags.some(tag => userTags.has(tag))
+        );
+        return curated.length > 0 ? curated : allEvents.slice(0, 3);
+    }
+
+    const upcomingEvents = getCuratedEvents();
 
   return (
     <div className="space-y-6">
