@@ -1,3 +1,4 @@
+
 'use client';
 import { useState, useEffect } from 'react';
 import {
@@ -23,15 +24,17 @@ import {
   Users,
   Heart,
   Calendar,
-  MessageSquare,
   Shield,
   BarChart2,
   Sparkles,
   Check,
+  Bot,
+  ClipboardList,
+  Library,
+  BookOpen,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 
 const communityStats = [
@@ -100,7 +103,7 @@ export default function LoveAndSelfPage() {
 
     const toggleSelection = (category: 'identities' | 'interests', value: string) => {
         const selections = category === 'identities' ? selectedIdentities : selectedInterests;
-        const setSelections = category === 'identities' ? setSelectedIdentities : setInterests;
+        const setSelections = category === 'identities' ? setSelectedIdentities : setSelectedInterests;
         
         if (selections.includes(value)) {
             setSelections(selections.filter(item => item !== value));
@@ -235,8 +238,14 @@ export default function LoveAndSelfPage() {
                 </Link>
                  <Link href="/love-and-self/resources" passHref>
                     <Button variant="outline" className="w-full h-20 flex-col gap-1">
-                        <Shield />
-                        <span>Resources</span>
+                        <Library />
+                        <span>Resource Hub</span>
+                    </Button>
+                </Link>
+                 <Link href="/love-and-self/education" passHref>
+                    <Button variant="outline" className="w-full h-20 flex-col gap-1">
+                        <BookOpen />
+                        <span>Education</span>
                     </Button>
                 </Link>
                  <Link href="/love-and-self/mood-mapping" passHref>
@@ -247,8 +256,14 @@ export default function LoveAndSelfPage() {
                 </Link>
                  <Link href="/love-and-self/ai-chat" passHref>
                     <Button variant="outline" className="w-full h-20 flex-col gap-1">
-                        <MessageSquare />
+                        <Bot />
                         <span>AI Chat</span>
+                    </Button>
+                </Link>
+                 <Link href="/love-and-self/questionnaires" passHref>
+                    <Button variant="outline" className="w-full h-20 flex-col gap-1">
+                        <ClipboardList />
+                        <span>Questionnaires</span>
                     </Button>
                 </Link>
             </CardContent>
