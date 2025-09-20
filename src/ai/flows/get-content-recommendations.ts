@@ -49,13 +49,16 @@ const prompt = ai.definePrompt({
   name: 'getContentRecommendationsPrompt',
   input: {schema: GetContentRecommendationsInputSchema},
   output: {schema: GetContentRecommendationsOutputSchema},
-  prompt: `You are a content recommendation engine. Based on the user's mood and preferred language, provide a list of 3 music playlists, 3 books, and 3 movies.
+  prompt: `You are a nuanced content recommendation engine. Based on the user's mood and preferred language, provide a list of 3 music playlists, 3 books, and 3 movies.
+
+Your recommendations should follow a two-stage approach:
+1.  **Acknowledge & Match:** The first 1-2 recommendations in each category should match the user's current mood. For example, if the user is sad, recommend something melancholic or introspective. This validates their feelings.
+2.  **Gently Uplift:** The remaining recommendations should be designed to gently shift the user's mood towards a more positive state. For example, after a sad movie, suggest a hopeful or lighthearted one.
 
 Mood: {{{mood}}}
 Language: {{{language}}}
 
-Provide diverse recommendations that are suitable for the given mood. For each item, provide a title, a brief description or author/year where applicable, and a valid URL to access the content. 
-For music, provide direct URLs to public playlists on streaming services like Spotify or YouTube Music that can be played in real-time. For books and movies, provide links to a store or streaming service where they can be accessed.
+Provide diverse recommendations. For each item, include a title, a brief description (or author/year where applicable), and a valid URL. For music, link to public playlists on services like Spotify or YouTube Music. For books and movies, link to a store or streaming service.
 `,
 });
 
