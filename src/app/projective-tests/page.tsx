@@ -124,10 +124,16 @@ export default function ProjectiveTestsPage() {
     const [tatStory, setTatStory] = useState('');
     const [tatIsLoading, setTatIsLoading] = useState(false);
     const [tatResult, setTatResult] = useState<AnalyzeTatStoryOutput | null>(null);
+    const [tatImageUrl, setTatImageUrl] = useState("https://picsum.photos/seed/tat-image/600/400");
 
     const [dapDrawing, setDapDrawing] = useState<string>('');
     const [dapIsLoading, setDapIsLoading] = useState(false);
     const [dapResult, setDapResult] = useState<AnalyzeDapDrawingOutput | null>(null);
+
+    useEffect(() => {
+        const seed = Math.floor(Math.random() * 1000);
+        setTatImageUrl(`https://picsum.photos/seed/tat-image-${seed}/600/400`);
+    }, []);
     
 
     const handleTatSubmit = async () => {
@@ -210,11 +216,11 @@ export default function ProjectiveTestsPage() {
         <Card>
             <CardHeader>
                 <CardTitle className="flex items-center gap-2"><ImageIcon/> Thematic Apperception Test (TAT)</CardTitle>
-                <CardDescription>Look at the image below. What is happening? What led to this scene, and what will happen next? Write a brief story.</CardDescription>
+                <CardDescription>Instructions: Look at the image below. What is happening? What led to this scene, and what will happen next? Write a brief story based on your interpretation.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
                 <div className="relative aspect-video w-full">
-                    <Image src="https://picsum.photos/seed/tat-image/600/400" alt="Ambiguous scene for TAT" layout="fill" objectFit="cover" className="rounded-md" data-ai-hint="man woman bed" />
+                    <Image src={tatImageUrl} alt="Ambiguous scene for TAT" layout="fill" objectFit="cover" className="rounded-md" data-ai-hint="man woman bed" />
                 </div>
                 <Textarea 
                     placeholder="Once upon a time..." 
@@ -238,7 +244,7 @@ export default function ProjectiveTestsPage() {
                         <p><strong>Primary Character's Needs:</strong> {tatResult.primaryCharacterNeeds.join(', ')}</p>
                         <p><strong>Potential Conflicts:</strong> {tatResult.potentialConflicts.join(', ')}</p>
                         <p><strong>Outcome:</strong> {tatResult.outcome}</p>
-                        <p><strong>Summary:</strong> {tatResult.summary}</p>
+                        <p><strong>Interpretive Summary:</strong> {tatResult.summary}</p>
                     </div>
                 </CardContent>
             )}
@@ -247,7 +253,7 @@ export default function ProjectiveTestsPage() {
         <Card>
             <CardHeader>
                 <CardTitle className="flex items-center gap-2"><Palette/> Draw-A-Person (DAP) Test</CardTitle>
-                <CardDescription>Use the canvas below to draw a person. It doesn't have to be perfect. Once you're done, the AI will provide a gentle interpretation.</CardDescription>
+                <CardDescription>Instructions: Use the canvas below to draw a person. It doesn't have to be perfect; just draw whatever comes to mind. Once you're done, the AI will provide a gentle, non-diagnostic interpretation for self-reflection.</CardDescription>
             </CardHeader>
              <CardContent>
                 <DrawingCanvas onDrawingChange={setDapDrawing} />
@@ -271,7 +277,7 @@ export default function ProjectiveTestsPage() {
                        <ul>
                            {dapResult.emotionalIndicators.map((indicator, i) => <li key={i}>{indicator}</li>)}
                        </ul>
-                       <p><strong>Summary:</strong> {dapResult.summary}</p>
+                       <p><strong>Interpretive Summary:</strong> {dapResult.summary}</p>
                     </div>
                 </CardContent>
             )}
