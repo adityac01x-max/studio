@@ -11,7 +11,7 @@ import {
   CardFooter
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Wind, Droplets, Flame, Mountain, PlayCircle, Bed, Footprints, HeartPulse, Brain, Palette, Sprout, Check, X, RefreshCw, Hand, Waves, Sun, Flower, Rock } from 'lucide-react';
+import { ArrowLeft, Wind, Droplets, Flame, Mountain, PlayCircle, Bed, Footprints, HeartPulse, Brain, Palette, Sprout, Check, X, RefreshCw, Hand, Waves, Sun, Flower, Gem } from 'lucide-react';
 import Link from 'next/link';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Image from 'next/image';
@@ -470,7 +470,7 @@ const ZenGarden = () => {
             <p className="text-muted-foreground">Create your own peaceful space. Select a tool and interact with the garden.</p>
             <div className="flex gap-2">
                 <Button variant={tool === 'rake' ? 'default' : 'outline'} onClick={() => setTool('rake')}><Hand className="mr-2"/>Rake</Button>
-                <Button variant={tool === 'rock' ? 'default' : 'outline'} onClick={() => setTool('rock')}><Rock className="mr-2"/>Place Rock</Button>
+                <Button variant={tool === 'rock' ? 'default' : 'outline'} onClick={() => setTool('rock')}><Gem className="mr-2"/>Place Rock</Button>
                 <Button variant="destructive" onClick={clearGarden}><X className="mr-2"/>Clear Garden</Button>
             </div>
             <canvas
@@ -664,3 +664,5 @@ export default function LifestylePage() {
     </div>
   );
 }
+
+    
