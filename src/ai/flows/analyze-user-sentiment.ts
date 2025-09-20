@@ -38,11 +38,31 @@ export type AnalyzeUserSentimentInput = z.infer<
 >;
 
 // Define the output schema
+const EmotionScoreSchema = z.object({
+  emotion: z
+    .string()
+    .describe(
+      'The detected emotion (e.g., Happiness, Sadness, Anger, Neutral, Surprise).'
+    ),
+  score: z
+    .number()
+    .min(0)
+    .max(100)
+    .describe('The confidence score for this emotion, from 0 to 100.'),
+});
+
 const AnalyzeUserSentimentOutputSchema = z.object({
   overallSentiment: z
     .string()
     .describe(
-      'The overall sentiment of the user (positive, negative, or neutral).'
+      'The overall dominant sentiment of the user (e.g., Positive, Negative, Neutral, Mixed).'
+    ),
+  emotionRatings: z
+    .array(EmotionScoreSchema)
+    .min(3)
+    .max(5)
+    .describe(
+      'A list of 3-5 detected emotions and their corresponding scores from 0-100.'
     ),
   facialExpressionSentiment: z
     .string()
@@ -77,11 +97,11 @@ Video: {{media url=videoDataUri}}
 {{/if}}
 Text: {{{text}}}
 
-Determine the sentiment from each modality (facial expression, voice tone, and text) and provide an overall sentiment. If a video is provided, use it to enhance the analysis of facial expression and voice tone.
+1.  **Individual Analysis**: Determine the sentiment from each modality (facial expression, voice tone, and text).
+2.  **Emotion Ratings**: Based on all inputs, identify a list of 3 to 5 primary emotions (e.g., Happiness, Sadness, Anger, Neutral, Surprise, Anxiety). For each emotion, provide a confidence score on a scale of 0 to 100 representing how strongly that emotion is present.
+3.  **Overall Sentiment**: Based on the emotion ratings, determine the single, dominant overall sentiment (e.g., Positive, Negative, Neutral, Mixed).
 
-Consider all factors and use a confidence level for each one.
-
-Output the overall sentiment, facial expression sentiment, voice tone sentiment, and text sentiment.`, // MUST be valid Handlebars syntax
+Provide a JSON output with the overall sentiment, the detailed emotion ratings, and the individual sentiment analysis for each modality.`,
 });
 
 // Define the flow
@@ -96,5 +116,3 @@ const analyzeUserSentimentFlow = ai.defineFlow(
     return output!;
   }
 );
-
-    

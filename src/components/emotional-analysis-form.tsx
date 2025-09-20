@@ -59,6 +59,7 @@ import {
   SelectValue,
 } from './ui/select';
 import Link from 'next/link';
+import { Progress } from './ui/progress';
 
 const formSchema = z.object({
   text: z.string().min(10, {
@@ -98,9 +99,9 @@ const fileToDataUri = (file: File) =>
 
 const SentimentIcon = ({ sentiment }: { sentiment: string }) => {
   const lowerSentiment = sentiment.toLowerCase();
-  if (lowerSentiment.includes('positive'))
+  if (lowerSentiment.includes('positive') || lowerSentiment.includes('happiness'))
     return <Smile className="text-green-500" />;
-  if (lowerSentiment.includes('negative'))
+  if (lowerSentiment.includes('negative') || lowerSentiment.includes('sadness') || lowerSentiment.includes('anger'))
     return <Frown className="text-red-500" />;
   return <Meh className="text-yellow-500" />;
 };
@@ -113,6 +114,7 @@ export function EmotionalAnalysisForm() {
     useState<AnalyzeUserSentimentOutput | null>(null);
   const [recommendations, setRecommendations] =
     useState<GetContentRecommendationsOutput | null>(null);
+  const [selectedEmotion, setSelectedEmotion] = useState<string>('');
   const [selectedLanguage, setSelectedLanguage] = useState<string>('');
   const { toast } = useToast();
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -250,27 +252,34 @@ export function EmotionalAnalysisForm() {
     }
   }
 
-  const handleLanguageChange = async (language: string) => {
-    setSelectedLanguage(language);
-    if (analysisResult) {
-      setIsFetchingRecommendations(true);
-      setRecommendations(null);
-      try {
-        const result = await getContentRecommendations({
-          mood: analysisResult.overallSentiment,
-          language: language,
-        });
-        setRecommendations(result);
-      } catch (error) {
-        console.error('Failed to get recommendations:', error);
-        toast({
-          title: 'Failed to Get Recommendations',
-          description: 'Please try again later.',
-          variant: 'destructive',
-        });
-      } finally {
-        setIsFetchingRecommendations(false);
-      }
+  const handleEmotionSelect = async (emotion: string) => {
+    setSelectedEmotion(emotion);
+    if (!selectedLanguage) {
+      toast({
+        variant: 'destructive',
+        title: 'Language Not Selected',
+        description: 'Please select a language for recommendations.',
+      });
+      return;
+    }
+
+    setIsFetchingRecommendations(true);
+    setRecommendations(null);
+    try {
+      const result = await getContentRecommendations({
+        mood: emotion,
+        language: selectedLanguage,
+      });
+      setRecommendations(result);
+    } catch (error) {
+      console.error('Failed to get recommendations:', error);
+      toast({
+        title: 'Failed to Get Recommendations',
+        description: 'Please try again later.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsFetchingRecommendations(false);
     }
   };
 
@@ -453,7 +462,7 @@ export function EmotionalAnalysisForm() {
               </Badge>
             </CardContent>
           </Card>
-          <div className="grid md:grid-cols-3 gap-4">
+          <div className="grid md:grid-cols-3 gap-4 mb-8">
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
@@ -496,112 +505,138 @@ export function EmotionalAnalysisForm() {
               </CardContent>
             </Card>
           </div>
+          
+          <Card>
+            <CardHeader>
+              <CardTitle>Emotion Ratings</CardTitle>
+              <CardDescription>Select an emotion to get content recommendations. First, choose a language.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+                 <div className="mb-6 max-w-sm">
+                    <Select onValueChange={setSelectedLanguage} value={selectedLanguage}>
+                    <SelectTrigger>
+                        <SelectValue placeholder="Select a language for recommendations" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="English">English</SelectItem>
+                        <SelectItem value="Hindi">Hindi</SelectItem>
+                        <SelectItem value="Spanish">Spanish</SelectItem>
+                        <SelectItem value="French">French</SelectItem>
+                        <SelectItem value="German">German</SelectItem>
+                        <SelectItem value="Mandarin">Mandarin</SelectItem>
+                    </SelectContent>
+                    </Select>
+                </div>
+                <div className="space-y-4">
+                {analysisResult.emotionRatings.map(rating => (
+                    <button
+                        key={rating.emotion}
+                        className={cn(
+                            "w-full text-left p-4 rounded-lg border transition-all",
+                            selectedEmotion === rating.emotion ? "bg-primary/20 border-primary" : "hover:bg-muted/50"
+                        )}
+                        onClick={() => handleEmotionSelect(rating.emotion)}
+                        disabled={!selectedLanguage}
+                    >
+                    <div className="flex items-center justify-between mb-1">
+                        <span className="font-semibold flex items-center gap-2">
+                            <SentimentIcon sentiment={rating.emotion} />
+                            {rating.emotion}
+                        </span>
+                        <span className="font-mono text-sm">{rating.score} / 100</span>
+                    </div>
+                    <Progress value={rating.score} />
+                    </button>
+                ))}
+                </div>
+            </CardContent>
+          </Card>
         </div>
       )}
 
-      {analysisResult && (
-        <div className="mt-8">
-          <h3 className="text-2xl font-bold font-headline mb-4 text-center">
-            Content Recommendations
-          </h3>
-          <div className="mb-6 max-w-sm mx-auto">
-            <Select onValueChange={handleLanguageChange} value={selectedLanguage}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a language for recommendations" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="English">English</SelectItem>
-                <SelectItem value="Hindi">Hindi</SelectItem>
-                <SelectItem value="Spanish">Spanish</SelectItem>
-                <SelectItem value="French">French</SelectItem>
-                <SelectItem value="German">German</SelectItem>
-                <SelectItem value="Mandarin">Mandarin</SelectItem>
-              </SelectContent>
-            </Select>
+      {isFetchingRecommendations && (
+        <div className="flex justify-center items-center p-8 mt-8">
+          <Loader2 className="h-8 w-8 animate-spin" />
+        </div>
+      )}
+
+      {recommendations && (
+        <div className="mt-8 space-y-8">
+            <h3 className="text-2xl font-bold font-headline mb-4 text-center">
+              Content for '{selectedEmotion}' in {selectedLanguage}
+            </h3>
+          <div>
+            <h4 className="text-xl font-bold font-headline mb-4 flex items-center gap-2">
+              <Music /> Music Playlists
+            </h4>
+            <div className="grid md:grid-cols-3 gap-4">
+              {recommendations.music.map((item, index) => (
+                <Card key={index} className="flex flex-col">
+                  <CardHeader>
+                    <CardTitle className="text-lg">{item.title}</CardTitle>
+                    <CardDescription>{item.description}</CardDescription>
+                  </CardHeader>
+                  <CardFooter className="mt-auto">
+                    <Button asChild className="w-full">
+                      <Link href={item.url} target="_blank">
+                        <PlayCircle className="mr-2" /> Listen
+                      </Link>
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ))}
+            </div>
           </div>
 
-          {isFetchingRecommendations && (
-            <div className="flex justify-center items-center p-8">
-              <Loader2 className="h-8 w-8 animate-spin" />
+          <div>
+            <h4 className="text-xl font-bold font-headline mb-4 flex items-center gap-2">
+              <Book /> Books
+            </h4>
+            <div className="grid md:grid-cols-3 gap-4">
+              {recommendations.books.map((item, index) => (
+                <Card key={index} className="flex flex-col">
+                  <CardHeader>
+                    <CardTitle className="text-lg">{item.title}</CardTitle>
+                    <CardDescription>
+                      {item.author}
+                    </CardDescription>
+                  </CardHeader>
+                    <CardFooter className="mt-auto">
+                    <Button asChild className="w-full">
+                      <Link href={item.url} target="_blank">
+                        <Book className="mr-2" /> Read
+                      </Link>
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ))}
             </div>
-          )}
+          </div>
 
-          {recommendations && (
-            <div className="space-y-8">
-              <div>
-                <h4 className="text-xl font-bold font-headline mb-4 flex items-center gap-2">
-                  <Music /> Music Playlists
-                </h4>
-                <div className="grid md:grid-cols-3 gap-4">
-                  {recommendations.music.map((item, index) => (
-                    <Card key={index} className="flex flex-col">
-                      <CardHeader>
-                        <CardTitle className="text-lg">{item.title}</CardTitle>
-                        <CardDescription>{item.description}</CardDescription>
-                      </CardHeader>
-                      <CardFooter className="mt-auto">
-                        <Button asChild className="w-full">
-                          <Link href={item.url} target="_blank">
-                            <PlayCircle className="mr-2" /> Listen
-                          </Link>
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <h4 className="text-xl font-bold font-headline mb-4 flex items-center gap-2">
-                  <Book /> Books
-                </h4>
-                <div className="grid md:grid-cols-3 gap-4">
-                  {recommendations.books.map((item, index) => (
-                    <Card key={index} className="flex flex-col">
-                      <CardHeader>
-                        <CardTitle className="text-lg">{item.title}</CardTitle>
-                        <CardDescription>
-                          {item.author}
-                        </CardDescription>
-                      </CardHeader>
-                       <CardFooter className="mt-auto">
-                        <Button asChild className="w-full">
-                          <Link href={item.url} target="_blank">
-                            <Book className="mr-2" /> Read
-                          </Link>
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                  ))}
-                </div>
-              </div>
-
-              <div>
-                <h4 className="text-xl font-bold font-headline mb-4 flex items-center gap-2">
-                  <Film /> Movies
-                </h4>
-                <div className="grid md:grid-cols-3 gap-4">
-                  {recommendations.movies.map((item, index) => (
-                    <Card key={index} className="flex flex-col">
-                      <CardHeader>
-                        <CardTitle className="text-lg">{item.title}</CardTitle>
-                        <CardDescription>
-                          {item.year}
-                        </CardDescription>
-                      </CardHeader>
-                       <CardFooter className="mt-auto">
-                        <Button asChild className="w-full">
-                          <Link href={item.url} target="_blank">
-                            <Film className="mr-2" /> Watch
-                          </Link>
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                  ))}
-                </div>
-              </div>
+          <div>
+            <h4 className="text-xl font-bold font-headline mb-4 flex items-center gap-2">
+              <Film /> Movies
+            </h4>
+            <div className="grid md:grid-cols-3 gap-4">
+              {recommendations.movies.map((item, index) => (
+                <Card key={index} className="flex flex-col">
+                  <CardHeader>
+                    <CardTitle className="text-lg">{item.title}</CardTitle>
+                    <CardDescription>
+                      {item.year}
+                    </CardDescription>
+                  </CardHeader>
+                    <CardFooter className="mt-auto">
+                    <Button asChild className="w-full">
+                      <Link href={item.url} target="_blank">
+                        <Film className="mr-2" /> Watch
+                      </Link>
+                    </Button>
+                  </CardFooter>
+                </Card>
+              ))}
             </div>
-          )}
+          </div>
         </div>
       )}
     </>
