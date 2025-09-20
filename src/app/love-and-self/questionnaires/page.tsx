@@ -247,7 +247,7 @@ export default function LoveAndSelfQuestionnairesPage() {
                                 <CardDescription>Your selection corresponds to: <span className="font-bold text-primary">{kinseyQuestions.find(kq => kq.value === kinseyScore)?.label}</span>.</CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <p className="text-sm text-muted-foreground">This scale is a tool for self-exploration and represents a snapshot in time. Your position on it can change. It is not a rigid label, but rather a way to describe the complex and fluid nature of human sexuality.</p>
+                                <p className="text-sm text-muted-foreground">The Kinsey Scale was revolutionary for its time, challenging the simple heterosexual/homosexual binary. It introduced the idea that sexuality can be a fluid spectrum. Your result is a snapshot of your feelings and experiences, not a fixed identity. It's a tool to help you reflect on the diverse and personal nature of human sexuality.</p>
                             </CardContent>
                         </Card>
                       )}
@@ -299,7 +299,7 @@ export default function LoveAndSelfQuestionnairesPage() {
                              <Card className="mt-6 bg-muted/50">
                                 <CardHeader>
                                     <CardTitle>Your Klein Grid Summary</CardTitle>
-                                    <CardDescription>This grid provides a snapshot, not a diagnosis. It acknowledges that sexuality is complex and can be fluid across different aspects of life and time.</CardDescription>
+                                    <CardDescription>This grid provides a snapshot, not a diagnosis. It acknowledges that sexuality is complex and can be fluid across different aspects of life and time. The total scores below offer a way to see how your experiences and preferences might shift between your past, present, and ideal self.</CardDescription>
                                 </CardHeader>
                                 <CardContent className="grid grid-cols-3 gap-4 text-center">
                                     {kleinTimeFrames.map(time => (
@@ -340,8 +340,8 @@ export default function LoveAndSelfQuestionnairesPage() {
                                         <CardDescription>Your score is <span className="font-bold text-primary">{stressScore}</span> out of {minorityStressQuestions.length * 3}.</CardDescription>
                                     </CardHeader>
                                     <CardContent className="space-y-2">
-                                        <p className="text-sm text-muted-foreground">A higher score can indicate greater exposure to minority stress. This is not a measure of your personal resilience or a mental health diagnosis, but rather a reflection of societal pressures you may be facing.</p>
-                                        <p className="text-sm text-muted-foreground">Understanding these external stressors can be a powerful first step toward developing effective coping strategies. Consider discussing these results with a counselor to explore ways to navigate these challenges.</p>
+                                        <p className="text-sm text-muted-foreground">A higher score can indicate greater exposure to minority stress. This is not a measure of your personal resilience or a mental health diagnosis. Instead, it is a reflection of the societal pressures you may be facing due to your identity. Recognizing these external stressors is a crucial first step toward developing effective coping mechanisms and building resilience.</p>
+                                        <p className="text-sm text-muted-foreground">This tool can help you understand the unique challenges you might be navigating. If your score is high, it may be beneficial to discuss these results with a counselor or a peer supporter. They can help you explore strategies for managing this stress and fostering a strong sense of self-worth.</p>
                                     </CardContent>
                                      <CardFooter>
                                         <Button asChild variant="secondary">
