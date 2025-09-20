@@ -11,7 +11,7 @@ import {
   CardFooter
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Wind, Droplets, Flame, Mountain, PlayCircle, Bed, Footprints, HeartPulse, Brain, Palette, Sprout, Check, X, RefreshCw, Hand, Waves, Sun, Flower, Gem } from 'lucide-react';
+import { ArrowLeft, Wind, Droplets, Flame, Mountain, PlayCircle, Bed, Footprints, HeartPulse, Brain, Palette, Sprout, Check, X, RefreshCw, Hand, Waves, Sun, Flower, Gem, Eraser, Pen } from 'lucide-react';
 import Link from 'next/link';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Image from 'next/image';
@@ -25,6 +25,8 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
+import { Slider } from '@/components/ui/slider';
+import { Label } from '@/components/ui/label';
 
 
 const moods = [
@@ -71,65 +73,92 @@ const HealthStatCard = ({ icon, title, value, goal, unit, color }: { icon: React
 
 const DrawingCanvas = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const contextRef = useRef<CanvasRenderingContext2D | null>(null);
     const [isDrawing, setIsDrawing] = useState(false);
+    const [tool, setTool] = useState<'pen' | 'eraser'>('pen');
     const [color, setColor] = useState('#000000');
+    const [lineWidth, setLineWidth] = useState(5);
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (canvas) {
+            const context = canvas.getContext('2d');
+            if (context) {
+                context.lineCap = 'round';
+                context.lineJoin = 'round';
+                contextRef.current = context;
+            }
+        }
+    }, []);
+
+    useEffect(() => {
+        if (contextRef.current) {
+            contextRef.current.strokeStyle = color;
+            contextRef.current.lineWidth = lineWidth;
+            if (tool === 'eraser') {
+                 contextRef.current.globalCompositeOperation = 'destination-out';
+            } else {
+                contextRef.current.globalCompositeOperation = 'source-over';
+            }
+        }
+    }, [color, lineWidth, tool]);
 
     const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
-        const context = canvasRef.current?.getContext('2d');
-        if (context) {
-            context.beginPath();
-            context.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+        if (contextRef.current) {
+            contextRef.current.beginPath();
+            contextRef.current.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
             setIsDrawing(true);
         }
     };
 
     const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
-        if (!isDrawing || !canvasRef.current) return;
-        const context = canvasRef.current.getContext('2d');
-        if (context) {
-            context.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
-            context.strokeStyle = color;
-            context.lineWidth = 3;
-            context.stroke();
-        }
+        if (!isDrawing || !contextRef.current) return;
+        contextRef.current.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+        contextRef.current.stroke();
     };
 
     const stopDrawing = () => {
-        const context = canvasRef.current?.getContext('2d');
-        if (context) {
-            context.closePath();
+        if (contextRef.current) {
+            contextRef.current.closePath();
             setIsDrawing(false);
         }
     };
 
     const clearCanvas = () => {
         const canvas = canvasRef.current;
-        if (canvas) {
-            const context = canvas.getContext('2d');
-            if (context) {
-                context.clearRect(0, 0, canvas.width, canvas.height);
-            }
+        if (canvas && contextRef.current) {
+            contextRef.current.clearRect(0, 0, canvas.width, canvas.height);
         }
     };
 
     return (
         <div className="space-y-4">
-             <div className="flex justify-between items-center">
-                <div className="flex gap-2">
-                    <input type="color" value={color} onChange={(e) => setColor(e.target.value)} className="w-10 h-10" />
+            <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center gap-2 rounded-md border p-2">
+                    <Label>Tool</Label>
+                    <Button variant={tool === 'pen' ? 'secondary' : 'ghost'} size="icon" onClick={() => setTool('pen')}><Pen/></Button>
+                    <Button variant={tool === 'eraser' ? 'secondary' : 'ghost'} size="icon" onClick={() => setTool('eraser')}><Eraser/></Button>
                 </div>
-                <Button onClick={clearCanvas} variant="outline">Clear</Button>
+                <div className="flex items-center gap-2 rounded-md border p-2">
+                    <Label>Color</Label>
+                     <input type="color" value={color} onChange={(e) => setColor(e.target.value)} className="w-8 h-8" />
+                </div>
+                <div className="col-span-2 space-y-2 rounded-md border p-2">
+                    <Label>Brush Size: {lineWidth}</Label>
+                    <Slider defaultValue={[lineWidth]} max={50} step={1} onValueChange={(value) => setLineWidth(value[0])} />
+                </div>
             </div>
             <canvas
                 ref={canvasRef}
                 width="500"
-                height="400"
+                height="350"
                 className="rounded-lg border bg-white cursor-crosshair"
                 onMouseDown={startDrawing}
                 onMouseMove={draw}
                 onMouseUp={stopDrawing}
                 onMouseLeave={stopDrawing}
             />
+            <Button onClick={clearCanvas} variant="outline" className="w-full">Clear Canvas</Button>
         </div>
     );
 };
@@ -559,7 +588,7 @@ export default function LifestylePage() {
          <Card>
             <CardHeader>
                 <CardTitle className="flex items-center gap-2"><Palette className="w-6 h-6 text-primary"/>Creative Corner</CardTitle>
-                <CardDescription>Unleash your creativity with drawing and coloring activities.</CardDescription>
+                <CardDescription>Unleash your creativity with a digital drawing canvas.</CardDescription>
             </CardHeader>
             <CardContent>
                 <DrawingCanvas />
