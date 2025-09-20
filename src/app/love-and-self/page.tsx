@@ -101,7 +101,7 @@ export default function LoveAndSelfPage() {
 
     const toggleSelection = (category: 'identities' | 'interests', value: string) => {
         const selections = category === 'identities' ? selectedIdentities : selectedInterests;
-        const setSelections = category === 'identities' ? setSelectedIdentities : setSelectedInterests;
+        const setSelections = category === 'identities' ? setSelectedIdentities : setInterests;
         
         if (selections.includes(value)) {
             setSelections(selections.filter(item => item !== value));
@@ -285,7 +285,4 @@ export default function LoveAndSelfPage() {
 
     </div>
   );
-
-    
-
-    
+}
