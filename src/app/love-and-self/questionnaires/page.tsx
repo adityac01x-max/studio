@@ -8,6 +8,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -226,8 +227,9 @@ export default function LoveAndSelfQuestionnairesPage() {
                 <CardContent className="p-6">
                   {/* KINSEY SCALE */}
                   {q.id === 'kinsey' && (
-                    <div>
-                      <RadioGroup onValueChange={setKinseyScore} value={kinseyScore || ''} className="space-y-4">
+                    <div className="space-y-6">
+                      <p className="text-sm text-muted-foreground">This scale was developed to show that sexuality is not a binary. Reflect on your history of sexual attraction, behavior, and fantasies, and select the one statement that best describes you.</p>
+                      <RadioGroup onValueChange={(value) => { setKinseyScore(value); toggleQuestionnaire('kinsey'); }} value={kinseyScore || ''} className="space-y-4">
                         {kinseyQuestions.map((kq) => (
                           <Label key={kq.value} className="flex items-start gap-4 rounded-md border p-4 cursor-pointer hover:bg-accent/50 has-[:checked]:bg-accent has-[:checked]:border-primary bg-background/50">
                             <RadioGroupItem value={kq.value} id={`kinsey-${kq.value}`} />
@@ -241,11 +243,11 @@ export default function LoveAndSelfQuestionnairesPage() {
                       {kinseyScore !== null && (
                          <Card className="mt-6 bg-muted/50">
                             <CardHeader>
-                                <CardTitle>Your Kinsey Scale Result</CardTitle>
-                                <CardDescription>Your selection suggests you identify as: <span className="font-bold text-primary">{kinseyQuestions.find(kq => kq.value === kinseyScore)?.label}</span>.</CardDescription>
+                                <CardTitle>Your Kinsey Scale Result: {kinseyScore}</CardTitle>
+                                <CardDescription>Your selection corresponds to: <span className="font-bold text-primary">{kinseyQuestions.find(kq => kq.value === kinseyScore)?.label}</span>.</CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <p className="text-sm text-muted-foreground">This scale is a tool for self-exploration. Your position on it can change over time. It's a way to describe your experiences, not a rigid label.</p>
+                                <p className="text-sm text-muted-foreground">This scale is a tool for self-exploration and represents a snapshot in time. Your position on it can change. It is not a rigid label, but rather a way to describe the complex and fluid nature of human sexuality.</p>
                             </CardContent>
                         </Card>
                       )}
@@ -254,8 +256,8 @@ export default function LoveAndSelfQuestionnairesPage() {
 
                   {/* KLEIN GRID */}
                   {q.id === 'klein' && (
-                     <div className="space-y-4">
-                        <p className="text-sm text-muted-foreground">For each variable, choose one number from 1 to 7 to describe yourself for each of the three periods in your life.</p>
+                     <div className="space-y-6">
+                        <p className="text-sm text-muted-foreground">The Klein Grid expands on the Kinsey Scale by looking at seven different dimensions of sexuality over three different time periods. For each variable, choose one number from 1 (Other Sex Only) to 7 (Same Sex Only) to describe yourself for your Past, Present, and Ideal future.</p>
                         <div className="overflow-x-auto">
                             <Table>
                                 <TableHeader>
@@ -269,13 +271,14 @@ export default function LoveAndSelfQuestionnairesPage() {
                                         <TableRow key={variable}>
                                             <TableCell className="font-medium">{variable}</TableCell>
                                             {kleinTimeFrames.map(time => (
-                                                 <TableCell key={time}>
-                                                    <RadioGroup onValueChange={(val) => handleKleinChange(variable, time, parseInt(val))} value={String(kleinScores[variable]?.[time] || '')}>
-                                                        <div className="flex justify-around">
+                                                 <TableCell key={time} className="min-w-[200px]">
+                                                    <RadioGroup onValueChange={(val) => handleKleinChange(variable, time, parseInt(val))} value={String(kleinScores[variable]?.[time] || '')} className="flex justify-around">
                                                         {kleinOptions.slice(0, 7).map(opt => (
-                                                            <RadioGroupItem key={opt.value} value={String(opt.value)} id={`${variable}-${time}-${opt.value}`} className="h-5 w-5"/>
+                                                          <div key={opt.value} className="flex flex-col items-center">
+                                                            <RadioGroupItem value={String(opt.value)} id={`${variable}-${time}-${opt.value}`} />
+                                                            <Label htmlFor={`${variable}-${time}-${opt.value}`} className="text-xs mt-1">{opt.value}</Label>
+                                                          </div>
                                                         ))}
-                                                        </div>
                                                     </RadioGroup>
                                                  </TableCell>
                                             ))}
@@ -284,19 +287,26 @@ export default function LoveAndSelfQuestionnairesPage() {
                                 </TableBody>
                             </Table>
                         </div>
-                        <p className="text-xs text-muted-foreground text-center">1 = Other Sex Only, 4 = Both Sexes Equally, 7 = Same Sex Only</p>
+                        <div className="flex justify-between text-xs text-muted-foreground text-center">
+                          <span>1 = Other Sex Only</span>
+                          <span>4 = Both Sexes Equally</span>
+                          <span>7 = Same Sex Only</span>
+                        </div>
+                         <CardFooter className="px-0">
+                           <Button onClick={() => toggleQuestionnaire('klein')}>Finish & View Summary</Button>
+                         </CardFooter>
                         {Object.keys(kleinScores).length > 0 && (
                              <Card className="mt-6 bg-muted/50">
                                 <CardHeader>
                                     <CardTitle>Your Klein Grid Summary</CardTitle>
-                                    <CardDescription>This grid provides a snapshot, not a diagnosis. It acknowledges that sexuality can be fluid.</CardDescription>
+                                    <CardDescription>This grid provides a snapshot, not a diagnosis. It acknowledges that sexuality is complex and can be fluid across different aspects of life and time.</CardDescription>
                                 </CardHeader>
                                 <CardContent className="grid grid-cols-3 gap-4 text-center">
                                     {kleinTimeFrames.map(time => (
                                         <div key={time}>
                                             <p className="font-bold text-lg">{time}</p>
                                             <p className="text-2xl font-bold text-primary">{calculateKleinTotal(time as any)}</p>
-                                            <p className="text-xs text-muted-foreground">Total Score</p>
+                                            <p className="text-xs text-muted-foreground">Total Score (out of 49)</p>
                                         </div>
                                     ))}
                                 </CardContent>
@@ -308,6 +318,7 @@ export default function LoveAndSelfQuestionnairesPage() {
                    {/* MINORITY STRESS SCALE */}
                    {q.id === 'minorityStress' && (
                         <div className="space-y-6">
+                             <p className="text-sm text-muted-foreground">This scale helps you reflect on potential experiences of social stress related to your identity as a member of a minority group. Please answer based on your experiences over the past year.</p>
                             {minorityStressQuestions.map((msq, index) => (
                                 <div key={msq.id} className="border-b pb-4">
                                      <p className="font-medium mb-2">{index + 1}. {msq.text}</p>
@@ -321,16 +332,22 @@ export default function LoveAndSelfQuestionnairesPage() {
                                     </RadioGroup>
                                 </div>
                             ))}
-                            <Button onClick={handleStressSubmit}>Calculate My Score</Button>
+                            <Button onClick={handleStressSubmit} disabled={Object.keys(minorityStressFormState).length < minorityStressQuestions.length}>Calculate My Score</Button>
                             {stressScore !== null && (
                                 <Card className="mt-6 bg-muted/50">
                                     <CardHeader>
-                                        <CardTitle>Your Minority Stress Score</CardTitle>
-                                        <CardDescription>Your score is <span className="font-bold text-primary">{stressScore}</span> out of 15.</CardDescription>
+                                        <CardTitle>Your Minority Stress Result</CardTitle>
+                                        <CardDescription>Your score is <span className="font-bold text-primary">{stressScore}</span> out of {minorityStressQuestions.length * 3}.</CardDescription>
                                     </CardHeader>
-                                    <CardContent>
-                                        <p className="text-sm text-muted-foreground">A higher score can indicate greater exposure to minority stress. This is not a measure of your personal resilience, but a reflection of societal pressures. Understanding this can be a first step toward finding coping strategies. Consider discussing these results with a counselor.</p>
+                                    <CardContent className="space-y-2">
+                                        <p className="text-sm text-muted-foreground">A higher score can indicate greater exposure to minority stress. This is not a measure of your personal resilience or a mental health diagnosis, but rather a reflection of societal pressures you may be facing.</p>
+                                        <p className="text-sm text-muted-foreground">Understanding these external stressors can be a powerful first step toward developing effective coping strategies. Consider discussing these results with a counselor to explore ways to navigate these challenges.</p>
                                     </CardContent>
+                                     <CardFooter>
+                                        <Button asChild variant="secondary">
+                                            <Link href="/love-and-self/consultation">Find Support</Link>
+                                        </Button>
+                                    </CardFooter>
                                 </Card>
                             )}
                         </div>
