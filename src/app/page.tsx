@@ -48,13 +48,16 @@ export default function LandingPage() {
                 </div>
                 <CardTitle>For Students</CardTitle>
                 <CardDescription>
-                  Create an account to access resources, track your progress, and connect with
+                  Access resources, track your progress, and connect with
                   support.
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="grid grid-cols-2 gap-4">
                 <Link href="/student-signup" className="w-full" passHref>
                   <Button className="w-full">Create Account</Button>
+                </Link>
+                <Link href="/student-login" className="w-full" passHref>
+                  <Button variant="outline" className="w-full">Login</Button>
                 </Link>
               </CardContent>
             </Card>
