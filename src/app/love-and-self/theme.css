@@ -6,7 +6,7 @@
 
     --background: transparent;
     --foreground: 240 10% 98%;
-    --card: 240 10% 10% / 0.75;
+    --card: 240 10% 10% / 0.85;
     --card-foreground: 240 10% 98%;
     --popover: 240 10% 10%;
     --popover-foreground: 240 10% 98%;
@@ -25,9 +25,14 @@
     --ring: 340 90% 60%;
 }
 
+.love-and-self-theme * {
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+}
+
+
 .dark .love-and-self-theme {
     --foreground: 240 10% 98%;
-    --card: 240 10% 10% / 0.8;
+    --card: 240 10% 10% / 0.85;
     --card-foreground: 240 10% 98%;
     --popover: 240 10% 10%;
     --popover-foreground: 240 10% 98%;
