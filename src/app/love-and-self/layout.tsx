@@ -15,16 +15,18 @@ export default function LoveAndSelfLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <SidebarProvider>
-      <Sidebar>
-        <LoveAndSelfSidebar />
-      </Sidebar>
-      <SidebarInset className="love-and-self-theme">
-        <ScrollArea className="h-full">
-          <div className="p-4 md:p-8 pt-6">{children}</div>
-        </ScrollArea>
-      </SidebarInset>
-      <Toaster />
-    </SidebarProvider>
+    <div className="love-and-self-theme">
+      <SidebarProvider>
+        <Sidebar>
+          <LoveAndSelfSidebar />
+        </Sidebar>
+        <SidebarInset>
+          <ScrollArea className="h-full">
+            <div className="p-4 md:p-8 pt-6">{children}</div>
+          </ScrollArea>
+        </SidebarInset>
+        <Toaster />
+      </SidebarProvider>
+    </div>
   );
 }
