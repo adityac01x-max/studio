@@ -690,24 +690,24 @@ const VirtualGreenhouse = () => {
                                 <CarouselNext />
                             </Carousel>
                         </div>
-                        <div className="prose prose-sm dark:prose-invert">
-                            <h4 className="mt-6">Getting Started with Planting</h4>
-                            <ol>
-                                <li><strong>Choose Your Pot:</strong> Select a pot with drainage holes to prevent root rot.</li>
-                                <li><strong>Pick Your Soil:</strong> Use a quality potting mix suitable for your chosen plant.</li>
-                                <li><strong>Planting:</strong> Gently place your plant in the pot, and fill with soil, leaving a little space at the top.</li>
-                                <li><strong>Watering:</strong> Water thoroughly after planting. Let the soil dry out slightly between waterings.</li>
-                                <li><strong>Sunlight:</strong> Place your plant in a spot with the right amount of light for its needs (check the plant's tag!).</li>
+                        <div className="prose prose-sm dark:prose-invert max-w-none">
+                            <h4 className="mt-6 font-semibold">Getting Started with Planting</h4>
+                            <ol className="list-decimal list-inside space-y-2">
+                                <li><strong>Choose Your Pot:</strong> Your pot is your plant's home. Ensure it has drainage holes at the bottom to prevent water from pooling, which can cause root rot. The size should be appropriate for your plant—not too big, not too small.</li>
+                                <li><strong>Pick Your Soil:</strong> Good soil is crucial. Use a quality potting mix, as garden soil is too heavy. Different plants have different needs; for example, succulents prefer a well-draining cactus mix.</li>
+                                <li><strong>Planting:</strong> Gently remove the plant from its nursery pot. Place it in the new pot, and fill the surrounding space with soil, patting it down gently. Leave about an inch of space from the rim.</li>
+                                <li><strong>Watering:</strong> After planting, give it a good drink of water. Moving forward, the "when" and "how much" will depend on the plant. A general rule is to let the top inch of soil dry out before watering again.</li>
+                                <li><strong>Sunlight:</strong> Light is food for plants. Check your plant's tag for its preference—"direct sun," "indirect light," or "low light"—and place it in a spot that meets those needs.</li>
                             </ol>
                         </div>
                     </TabsContent>
-                    <TabsContent value="benefits" className="mt-4 prose prose-sm dark:prose-invert">
-                         <h4>The Benefits of Planting</h4>
-                         <ul>
-                            <li>Reduces stress and promotes relaxation.</li>
-                            <li>Improves air quality in your home.</li>
-                            <li>Provides a sense of accomplishment.</li>
-                            <li>Encourages mindfulness and patience.</li>
+                    <TabsContent value="benefits" className="mt-4 prose prose-sm dark:prose-invert max-w-none">
+                         <h4 className="font-semibold">The Mental and Physical Benefits of Gardening</h4>
+                         <ul className="list-disc list-inside space-y-2">
+                            <li><strong>Stress Reduction:</strong> Interacting with plants can lower cortisol levels, the body's primary stress hormone. The repetitive, gentle nature of gardening is inherently calming.</li>
+                            <li><strong>Improved Air Quality:</strong> Many common houseplants are natural air purifiers. They absorb toxins and release oxygen, creating a healthier indoor environment.</li>
+                            <li><strong>Sense of Accomplishment:</strong> Watching a plant grow and thrive from your care provides a powerful sense of purpose and achievement, boosting self-esteem.</li>
+                            <li><strong>Mindfulness and Patience:</strong> Gardening encourages you to be present. It's a practice in patience, as growth takes time, teaching you to appreciate the slow and steady process of development.</li>
                         </ul>
                     </TabsContent>
                 </Tabs>
