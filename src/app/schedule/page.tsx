@@ -92,6 +92,45 @@ const scheduledSessions = [
       followUp: 'N/A',
     },
   },
+  {
+    id: 'session-6',
+    title: 'Group Therapy: Stress Management',
+    counselor: 'Dr. Sunita Sharma',
+    date: '2024-08-05',
+    time: '03:00 PM - 04:00 PM',
+    location: 'Health Services Building, Group Room A',
+    type: 'Workshop',
+    report: {
+      notes: 'Upcoming group session focused on cognitive-behavioral techniques for stress.',
+      followUp: 'An email with pre-session materials will be sent out 24 hours prior.',
+    },
+  },
+  {
+    id: 'session-7',
+    title: 'Check-in with Priya Singh',
+    counselor: 'Priya Singh',
+    date: '2024-08-06',
+    time: '11:00 AM - 11:30 AM',
+    location: 'Virtual Coffee Chat',
+    type: 'Peer Support',
+    report: {
+      notes: 'Informal check-in to discuss weekly progress and challenges.',
+      followUp: 'N/A',
+    },
+  },
+  {
+    id: 'session-8',
+    title: 'Follow-up with Dr. Rohan Mehra',
+    counselor: 'Dr. Rohan Mehra',
+    date: '2024-08-09',
+    time: '09:00 AM - 10:00 AM',
+    location: 'Counseling Center, Room 1',
+    type: 'Consultation',
+    report: {
+      notes: 'Follow-up session to review progress on anxiety management techniques.',
+      followUp: 'Please complete the GAD-7 survey before this session.',
+    },
+  },
 ];
 
 type Session = (typeof scheduledSessions)[0];
