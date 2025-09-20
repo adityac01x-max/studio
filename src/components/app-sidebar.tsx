@@ -124,8 +124,13 @@ export function AppSidebar() {
   
   const isAdminRoute = pathname.startsWith('/admin');
   const isProfessionalRoute = pathname.startsWith('/professional');
+  const isProfileRoute = pathname === '/profile';
 
-  const currentNavItems = isAdminRoute ? adminNavItems : isProfessionalRoute ? professionalNavItems : navItems;
+  const studentNavItems = [
+    ...navItems,
+  ]
+
+  const currentNavItems = isAdminRoute ? adminNavItems : isProfessionalRoute ? professionalNavItems : studentNavItems;
   const currentUser = isAdminRoute
     ? { name: 'Admin User', email: 'admin@college.ac.in', avatarSeed: 'admin' }
     : isProfessionalRoute
@@ -268,9 +273,11 @@ export function AppSidebar() {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <BookUser className="mr-2 h-4 w-4" />
-                <span>Profile</span>
+              <DropdownMenuItem asChild>
+                <Link href="/profile">
+                    <BookUser className="mr-2 h-4 w-4" />
+                    <span>Profile</span>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href="/">
