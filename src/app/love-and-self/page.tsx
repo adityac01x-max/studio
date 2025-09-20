@@ -33,6 +33,7 @@ import {
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { useRouter } from 'next/navigation';
 
 const communityStats = [
     { label: 'Active Members', value: '1,200+', icon: <Users className="w-6 h-6 text-primary" /> },
@@ -63,6 +64,7 @@ const interests = [
 
 export default function LoveAndSelfPage() {
     const { toast } = useToast();
+    const router = useRouter();
     const [selectedIdentities, setSelectedIdentities] = useState<string[]>([]);
     const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
     const [allEvents, setAllEvents] = useState<Event[]>([]);
@@ -115,6 +117,7 @@ export default function LoveAndSelfPage() {
             title: 'Personalized!',
             description: 'Your dashboard content has been updated.',
         });
+        router.push('/love-and-self/resources');
     }
 
     const handleRSVP = async (eventId: string, hasRsvpd: boolean) => {
