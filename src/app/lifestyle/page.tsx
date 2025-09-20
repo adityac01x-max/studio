@@ -11,7 +11,7 @@ import {
   CardFooter
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Wind, Droplets, Flame, Mountain, PlayCircle, Bed, Footprints, HeartPulse, Brain, Palette, Sprout, Check, X, RefreshCw, Hand, Waves, Sun, Flower, Gem, Eraser, Pen } from 'lucide-react';
+import { ArrowLeft, Wind, Droplets, Flame, Mountain, PlayCircle, Bed, Footprints, HeartPulse, Brain, Palette, Sprout, Check, X, RefreshCw, Hand, Waves, Sun, Flower, Gem, Eraser, Pen, Plus, Trash2, MoreHorizontal } from 'lucide-react';
 import Link from 'next/link';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Image from 'next/image';
@@ -23,10 +23,15 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 
 const moods = [
@@ -516,6 +521,132 @@ const ZenGarden = () => {
     );
 };
 
+const plantTypes = ['Snake Plant', 'Succulent', 'Spider Plant', 'Pothos', 'Mint', 'Basil'];
+type Plant = { id: number, name: string, type: string };
+
+const VirtualGreenhouse = () => {
+    const [plants, setPlants] = useState<Plant[]>([]);
+    const [isAddPlantOpen, setAddPlantOpen] = useState(false);
+
+    const handleAddPlant = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        const formData = new FormData(event.currentTarget);
+        const name = formData.get('plantName') as string;
+        const type = formData.get('plantType') as string;
+        if (name && type) {
+            setPlants([...plants, { id: Date.now(), name, type }]);
+            setAddPlantOpen(false);
+        }
+    };
+
+    const handleDeletePlant = (id: number) => {
+        setPlants(plants.filter(p => p.id !== id));
+    };
+
+    return (
+        <Card>
+            <CardHeader>
+                <CardTitle className="flex items-center gap-2"><Sprout className="w-6 h-6 text-primary"/>My Virtual Greenhouse</CardTitle>
+                <CardDescription>Connect with nature by cultivating your own digital (or real) garden.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Tabs defaultValue="my-plants">
+                    <TabsList className="grid w-full grid-cols-3">
+                        <TabsTrigger value="my-plants">My Plants</TabsTrigger>
+                        <TabsTrigger value="guide">Planting Guide</TabsTrigger>
+                        <TabsTrigger value="benefits">Benefits</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="my-plants" className="mt-4">
+                        <div className="flex justify-between items-center mb-4">
+                            <h3 className="font-semibold">Your Plant Collection</h3>
+                            <Dialog open={isAddPlantOpen} onOpenChange={setAddPlantOpen}>
+                                <DialogTrigger asChild>
+                                    <Button size="sm"><Plus className="mr-2" /> Add Plant</Button>
+                                </DialogTrigger>
+                                <DialogContent>
+                                    <DialogHeader>
+                                        <DialogTitle>Add a New Plant</DialogTitle>
+                                        <DialogDescription>Give your new plant a name and select its type.</DialogDescription>
+                                    </DialogHeader>
+                                    <form onSubmit={handleAddPlant} className="space-y-4">
+                                        <div className="space-y-2">
+                                            <Label htmlFor="plantName">Plant Name</Label>
+                                            <Input id="plantName" name="plantName" placeholder="e.g., Sunny" required />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="plantType">Plant Type</Label>
+                                            <Select name="plantType" required>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select a type" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {plantTypes.map(type => <SelectItem key={type} value={type}>{type}</SelectItem>)}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                        <DialogFooter>
+                                            <Button type="submit">Add to Greenhouse</Button>
+                                        </DialogFooter>
+                                    </form>
+                                </DialogContent>
+                            </Dialog>
+                        </div>
+                        {plants.length > 0 ? (
+                             <div className="grid md:grid-cols-2 gap-4">
+                                {plants.map(plant => (
+                                    <Card key={plant.id} className="p-4 flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                             <Image src={`https://picsum.photos/seed/${plant.type}/100/100`} alt={plant.type} data-ai-hint="potted plant" width={60} height={60} className="rounded-md" />
+                                             <div>
+                                                <p className="font-bold">{plant.name}</p>
+                                                <p className="text-sm text-muted-foreground">{plant.type}</p>
+                                             </div>
+                                        </div>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button variant="ghost" size="icon"><MoreHorizontal /></Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent>
+                                                <DropdownMenuItem onClick={() => handleDeletePlant(plant.id)} className="text-destructive">
+                                                    <Trash2 className="mr-2"/> Remove
+                                                </DropdownMenuItem>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </Card>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center py-12 border-dashed border-2 rounded-lg">
+                                <p className="text-muted-foreground">Your greenhouse is empty.</p>
+                                <p className="text-sm text-muted-foreground">Click "Add Plant" to get started!</p>
+                            </div>
+                        )}
+                    </TabsContent>
+                    <TabsContent value="guide" className="mt-4 prose prose-sm dark:prose-invert">
+                        <h4>Getting Started with Planting</h4>
+                        <ol>
+                            <li><strong>Choose Your Pot:</strong> Select a pot with drainage holes to prevent root rot.</li>
+                            <li><strong>Pick Your Soil:</strong> Use a quality potting mix suitable for your chosen plant.</li>
+                            <li><strong>Planting:</strong> Gently place your plant in the pot, and fill with soil, leaving a little space at the top.</li>
+                            <li><strong>Watering:</strong> Water thoroughly after planting. Let the soil dry out slightly between waterings.</li>
+                            <li><strong>Sunlight:</strong> Place your plant in a spot with the right amount of light for its needs (check the plant's tag!).</li>
+                        </ol>
+                    </TabsContent>
+                    <TabsContent value="benefits" className="mt-4 prose prose-sm dark:prose-invert">
+                         <h4>The Benefits of Planting</h4>
+                         <ul>
+                            <li>Reduces stress and promotes relaxation.</li>
+                            <li>Improves air quality in your home.</li>
+                            <li>Provides a sense of accomplishment.</li>
+                            <li>Encourages mindfulness and patience.</li>
+                        </ul>
+                    </TabsContent>
+                </Tabs>
+            </CardContent>
+        </Card>
+    )
+}
+
 
 export default function LifestylePage() {
   const [selectedMood, setSelectedMood] = useState<Mood>('Stressed');
@@ -598,6 +729,8 @@ export default function LifestylePage() {
         </Card>
       </div>
 
+       <VirtualGreenhouse />
+
       <Card>
         <CardHeader>
           <CardTitle>How are you feeling today?</CardTitle>
@@ -624,26 +757,6 @@ export default function LifestylePage() {
           </div>
         </CardContent>
       </Card>
-      
-       <Card>
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2"><Sprout className="w-6 h-6 text-primary"/>Green Hobbies</CardTitle>
-                <CardDescription>Connect with nature by starting your own little garden.</CardDescription>
-            </CardHeader>
-            <CardContent className="grid md:grid-cols-2 gap-6">
-                <Image src="https://picsum.photos/seed/gardening/600/400" alt="Person gardening" data-ai-hint="gardening hands" width={600} height={400} className="rounded-lg object-cover aspect-video" />
-                <div className="space-y-4">
-                    <h3 className="font-bold">The Benefits of Planting</h3>
-                    <ul className="list-disc list-inside text-muted-foreground space-y-2">
-                        <li>Reduces stress and promotes relaxation.</li>
-                        <li>Improves air quality in your home.</li>
-                        <li>Provides a sense of accomplishment.</li>
-                        <li>Encourages mindfulness and patience.</li>
-                    </ul>
-                    <Button>Get Started with Planting</Button>
-                </div>
-            </CardContent>
-        </Card>
 
       <div>
         <h2 className="text-2xl font-bold font-headline my-6">
