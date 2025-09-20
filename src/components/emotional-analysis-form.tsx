@@ -508,14 +508,14 @@ export function EmotionalAnalysisForm() {
           
           <Card>
             <CardHeader>
-              <CardTitle>Emotion Ratings</CardTitle>
-              <CardDescription>Select an emotion to get content recommendations. First, choose a language.</CardDescription>
+              <CardTitle>Content Recommendations</CardTitle>
+              <CardDescription>Select a language, then choose an emotion or use the overall analysis to get content recommendations.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-                 <div className="mb-6 max-w-sm">
+                 <div className="flex flex-col sm:flex-row gap-4 items-center max-w-lg">
                     <Select onValueChange={setSelectedLanguage} value={selectedLanguage}>
                     <SelectTrigger>
-                        <SelectValue placeholder="Select a language for recommendations" />
+                        <SelectValue placeholder="1. Select a language" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="English">English</SelectItem>
@@ -526,7 +526,16 @@ export function EmotionalAnalysisForm() {
                         <SelectItem value="Mandarin">Mandarin</SelectItem>
                     </SelectContent>
                     </Select>
+                     <Button 
+                        onClick={() => handleEmotionSelect(analysisResult.overallSentiment)} 
+                        disabled={!selectedLanguage || isFetchingRecommendations}
+                        className="w-full sm:w-auto"
+                    >
+                        Get Recommendations for '{analysisResult.overallSentiment}'
+                    </Button>
                 </div>
+                <div>
+                <p className="text-sm font-medium text-muted-foreground mb-2">Or, select a specific emotion for more tailored recommendations:</p>
                 <div className="space-y-4">
                 {analysisResult.emotionRatings.map(rating => (
                     <button
@@ -536,7 +545,7 @@ export function EmotionalAnalysisForm() {
                             selectedEmotion === rating.emotion ? "bg-primary/20 border-primary" : "hover:bg-muted/50"
                         )}
                         onClick={() => handleEmotionSelect(rating.emotion)}
-                        disabled={!selectedLanguage}
+                        disabled={!selectedLanguage || isFetchingRecommendations}
                     >
                     <div className="flex items-center justify-between mb-1">
                         <span className="font-semibold flex items-center gap-2">
@@ -548,6 +557,7 @@ export function EmotionalAnalysisForm() {
                     <Progress value={rating.score} />
                     </button>
                 ))}
+                </div>
                 </div>
             </CardContent>
           </Card>
