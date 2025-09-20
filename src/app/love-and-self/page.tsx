@@ -1,3 +1,4 @@
+
 'use client';
 import { useState, useEffect } from 'react';
 import {
@@ -107,11 +108,11 @@ export default function LoveAndSelfPage() {
         }
     }
 
-    const handleSaveChanges = () => {
+    const handlePersonalize = () => {
         localStorage.setItem('love-and-self-identities', JSON.stringify(selectedIdentities));
         localStorage.setItem('love-and-self-interests', JSON.stringify(selectedInterests));
         toast({
-            title: 'Preferences Saved!',
+            title: 'Personalized!',
             description: 'Your dashboard content has been updated.',
         });
     }
@@ -198,7 +199,7 @@ export default function LoveAndSelfPage() {
             </div>
         </CardContent>
          <CardFooter className="justify-end">
-            <Button onClick={handleSaveChanges}>Save Preferences</Button>
+            <Button onClick={handlePersonalize}>Personalize</Button>
         </CardFooter>
       </Card>
 
@@ -281,5 +282,7 @@ export default function LoveAndSelfPage() {
 
     </div>
   );
+
+    
 
     
