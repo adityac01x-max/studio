@@ -17,6 +17,7 @@ import {
   BookUser,
   ClipboardList,
   Library,
+  Trophy,
 } from 'lucide-react';
 import {
   SidebarHeader,
@@ -42,6 +43,7 @@ import { ThemeToggle } from '@/components/theme-toggle';
 
 const navItems = [
   { href: '/love-and-self', label: 'Dashboard', icon: Home },
+  { href: '/love-and-self/progress', label: 'My Progress', icon: Trophy },
   { href: '/love-and-self/consultation', label: 'Consultation', icon: Users },
   { href: '/love-and-self/schedule', label: 'My Schedule', icon: Calendar },
   { href: '/love-and-self/resources', label: 'Resource Hub', icon: Library },
@@ -153,3 +155,5 @@ export function LoveAndSelfSidebar() {
     </>
   );
 }
+
+    
