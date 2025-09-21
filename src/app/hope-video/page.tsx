@@ -63,23 +63,8 @@ export default function HopeVideoPage() {
 
         const result = await generateHopeVideo({ positiveMemories });
 
-        const fetchAsDataUrl = async (url: string, apiKey: string, contentType: string) => {
-            const response = await fetch(`${url}&key=${apiKey}`);
-            if (!response.ok) {
-                 throw new Error(`Failed to fetch video data: ${response.statusText}`);
-            }
-            const blob = await response.blob();
-            return new Promise<string>((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onloadend = () => resolve(reader.result as string);
-                reader.onerror = reject;
-                reader.readAsDataURL(blob);
-            });
-        }
-        
-        const videoDataUrl = await fetchAsDataUrl(result.videoUrl, process.env.NEXT_PUBLIC_GEMINI_API_KEY!, 'video/mp4');
-        setVideoUrl(videoDataUrl);
-        setAudioUrl(result.audioUrl);
+        setVideoUrl(result.videoDataUrl);
+        setAudioUrl(result.audioDataUrl);
 
       } catch (e: any) {
         console.error('Video generation failed:', e);

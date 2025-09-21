@@ -1,3 +1,4 @@
+
 'use server';
 /**
  * @fileOverview A Genkit flow for generating a short, uplifting video from positive journal entries.
@@ -18,8 +19,8 @@ const GenerateHopeVideoInputSchema = z.object({
 export type GenerateHopeVideoInput = z.infer<typeof GenerateHopeVideoInputSchema>;
 
 const GenerateHopeVideoOutputSchema = z.object({
-  videoUrl: z.string().url().describe("The data URI of the generated video."),
-  audioUrl: z.string().url().describe("The data URI of the generated audio."),
+  videoDataUrl: z.string().describe("The data URI of the generated video."),
+  audioDataUrl: z.string().describe("The data URI of the generated audio."),
 });
 export type GenerateHopeVideoOutput = z.infer<typeof GenerateHopeVideoOutputSchema>;
 
@@ -94,6 +95,17 @@ const generateHopeVideoFlow = ai.defineFlow(
         throw new Error('Failed to find the generated video in the operation output.');
     }
 
+    // Fetch the video on the server and convert to data URI
+    const videoResponse = await fetch(`${video.media.url}&key=${process.env.GEMINI_API_KEY}`);
+    if (!videoResponse.ok) {
+        throw new Error(`Failed to fetch video: ${videoResponse.statusText}`);
+    }
+    const videoBlob = await videoResponse.blob();
+    const videoBuffer = await videoBlob.arrayBuffer();
+    const videoBase64 = Buffer.from(videoBuffer).toString('base64');
+    const videoDataUrl = `data:${video.media.contentType || 'video/mp4'};base64,${videoBase64}`;
+
+
     const audioBuffer = Buffer.from(
       audioMedia.url.substring(audioMedia.url.indexOf(',') + 1),
       'base64'
@@ -102,8 +114,8 @@ const generateHopeVideoFlow = ai.defineFlow(
 
 
     return {
-        videoUrl: video.media.url,
-        audioUrl: `data:audio/wav;base64,${audioWavBase64}`,
+        videoDataUrl: videoDataUrl,
+        audioDataUrl: `data:audio/wav;base64,${audioWavBase64}`,
     };
   }
 );
