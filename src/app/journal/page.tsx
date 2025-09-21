@@ -99,6 +99,30 @@ const mockEntries: JournalEntry[] = [
         mood: 'Positive',
         imageUrl: 'https://picsum.photos/seed/kindness/600/400'
     },
+    {
+        id: 6,
+        title: 'Frustrated with my progress',
+        content: "I feel like I'm not making any progress on my goals. It's frustrating to put in the effort and not see results. I feel stuck.",
+        date: new Date(Date.now() - 86400000 * 5).toISOString(),
+        mood: 'Negative',
+        imageUrl: 'https://picsum.photos/seed/frustrated/600/400'
+    },
+    {
+        id: 7,
+        title: 'An uneventful evening',
+        content: "Spent the evening watching a movie. It was okay, but not memorable. Just a quiet night in. Nothing special to report.",
+        date: new Date(Date.now() - 86400000 * 6).toISOString(),
+        mood: 'Neutral',
+        imageUrl: 'https://picsum.photos/seed/uneventful/600/400'
+    },
+    {
+        id: 8,
+        title: 'Argument with a friend',
+        content: "Had a disagreement with a close friend today. It left me feeling really upset and drained. I hope we can work it out soon.",
+        date: new Date().toISOString(),
+        mood: 'Negative',
+        imageUrl: 'https://picsum.photos/seed/argument/600/400'
+    }
 ];
 
 const fileToDataURL = (file: File): Promise<string> => {
