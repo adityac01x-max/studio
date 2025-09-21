@@ -41,14 +41,15 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import Image from 'next/image';
 
 type JournalEntry = {
   id: number;
   title: string;
   content: string;
   date: string;
+  imageUrl?: string;
 };
 
 const mockEntries: JournalEntry[] = [
@@ -57,20 +58,33 @@ const mockEntries: JournalEntry[] = [
         title: 'A Moment of Peace',
         content: 'Today, I took a walk in the park during my lunch break. The sun was warm, and a gentle breeze was blowing. I sat on a bench and just watched the leaves dance in the wind. It was a simple moment, but it brought me a profound sense of calm and gratitude. I felt disconnected from my worries, even if just for a little while. I want to remember this feeling.',
         date: new Date(Date.now() - 86400000 * 2).toISOString(), // 2 days ago
+        imageUrl: 'https://picsum.photos/seed/peace/600/400'
     },
     {
         id: 2,
         title: 'Tackled a Difficult Task',
         content: "I finally finished the project I've been procrastinating on for weeks. It wasn't as bad as I thought it would be once I got started. I feel a huge weight off my shoulders. It's a good reminder that often, the anticipation is worse than the reality. I feel accomplished and motivated to keep this momentum going.",
         date: new Date(Date.now() - 86400000).toISOString(), // Yesterday
+        imageUrl: 'https://picsum.photos/seed/task/600/400'
     },
     {
         id: 3,
         title: 'A Small Act of Kindness',
         content: 'I complimented a stranger on their jacket today, and their face lit up. It was a small interaction, but it made both of us smile. It costs nothing to be kind, and it made my whole day better. It\'s amazing how a few positive words can change the energy around you.',
         date: new Date().toISOString(), // Today
+        imageUrl: 'https://picsum.photos/seed/kindness/600/400'
     },
 ];
+
+const fileToDataURL = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = (error) => reject(error);
+        reader.readAsDataURL(file);
+    });
+};
+
 
 export default function JournalPage() {
   const { toast } = useToast();
@@ -107,18 +121,30 @@ export default function JournalPage() {
     }
   }, [entries, isLoading]);
 
-  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const title = formData.get('title') as string;
     const content = formData.get('content') as string;
+    const imageFile = formData.get('image') as File;
+
+    let imageUrl = entryToEdit?.imageUrl;
+    if (imageFile && imageFile.size > 0) {
+        try {
+            imageUrl = await fileToDataURL(imageFile);
+        } catch (error) {
+            toast({ title: 'Error', description: 'Could not upload image.', variant: 'destructive'});
+            return;
+        }
+    }
+
 
     if (entryToEdit) {
       // Editing existing entry
       setEntries(
         entries.map((entry) =>
           entry.id === entryToEdit.id
-            ? { ...entry, title, content, date: new Date().toISOString() }
+            ? { ...entry, title, content, imageUrl, date: new Date().toISOString() }
             : entry
         )
       );
@@ -129,6 +155,7 @@ export default function JournalPage() {
         id: Date.now(),
         title,
         content,
+        imageUrl,
         date: new Date().toISOString(),
       };
       setEntries([newEntry, ...entries]);
@@ -208,8 +235,18 @@ export default function JournalPage() {
                   defaultValue={entryToEdit?.content || ''}
                   placeholder="What's on your mind?"
                   required
-                  rows={15}
+                  rows={10}
                 />
+              </div>
+               <div className="space-y-2">
+                <Label htmlFor="image">Image (Optional)</Label>
+                <Input id="image" name="image" type="file" accept="image/*" />
+                 {entryToEdit?.imageUrl && (
+                    <div className="mt-2">
+                        <p className="text-sm text-muted-foreground">Current image:</p>
+                        <Image src={entryToEdit.imageUrl} alt="Current journal image" width={100} height={100} className="rounded-md mt-1" />
+                    </div>
+                )}
               </div>
               <DialogFooter>
                 <Button type="submit">
@@ -233,6 +270,11 @@ export default function JournalPage() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {entries.map((entry) => (
             <Card key={entry.id} className="flex flex-col">
+              {entry.imageUrl && (
+                  <div className="relative w-full h-48">
+                    <Image src={entry.imageUrl} alt={entry.title} layout="fill" objectFit="cover" className="rounded-t-lg" data-ai-hint="journal image" />
+                  </div>
+              )}
               <CardHeader>
                 <CardTitle className="truncate">{entry.title}</CardTitle>
                 <CardDescription>
@@ -279,7 +321,12 @@ export default function JournalPage() {
               {entryToView ? new Date(entryToView.date).toLocaleString() : ''}
             </DialogDescription>
           </DialogHeader>
-          <div className="prose dark:prose-invert max-h-[60vh] overflow-y-auto p-1">
+          <div className="prose dark:prose-invert max-h-[60vh] overflow-y-auto p-1 space-y-4">
+            {entryToView?.imageUrl && (
+                 <div className="relative w-full aspect-video">
+                    <Image src={entryToView.imageUrl} alt={entryToView.title} layout="fill" objectFit="contain" className="rounded-md" />
+                 </div>
+            )}
             <p style={{ whiteSpace: 'pre-wrap' }}>{entryToView?.content}</p>
           </div>
         </DialogContent>
