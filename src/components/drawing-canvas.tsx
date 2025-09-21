@@ -4,13 +4,13 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { Pen, Eraser, Trash2, MousePointer, RectangleHorizontal, Circle, PaintBucket } from 'lucide-react';
+import { Pen, Eraser, Trash2, RectangleHorizontal, Circle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 
-type Tool = 'pen' | 'eraser' | 'rectangle' | 'circle' | 'fill';
+type Tool = 'pen' | 'eraser' | 'rectangle' | 'circle';
 
-export const DrawingCanvas = ({ onDrawingChange, initialImage }: { onDrawingChange: (dataUrl: string) => void, initialImage?: string }) => {
+export const DrawingCanvas = ({ onDrawingChange, initialImage }: { onDrawingChange: (dataUrl: string) => void, initialImage?: string | null }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const contextRef = useRef<CanvasRenderingContext2D | null>(null);
     const [isDrawing, setIsDrawing] = useState(false);
@@ -27,16 +27,22 @@ export const DrawingCanvas = ({ onDrawingChange, initialImage }: { onDrawingChan
             const context = canvas.getContext('2d');
             if (context) {
                 contextRef.current = context;
+                 context.fillStyle = '#FFFFFF';
+                 context.fillRect(0, 0, canvas.width, canvas.height);
                 if (initialImage) {
                     const image = new window.Image();
+                    image.crossOrigin = 'anonymous';
                     image.src = initialImage;
                     image.onload = () => {
                         context.drawImage(image, 0, 0, canvas.width, canvas.height);
                         onDrawingChange(canvas.toDataURL('image/png'));
                     };
+                     image.onerror = () => { // Handle image load errors (e.g. CORS)
+                        context.fillStyle = '#FFFFFF';
+                        context.fillRect(0, 0, canvas.width, canvas.height);
+                        onDrawingChange(canvas.toDataURL('image/png'));
+                    }
                 } else {
-                    context.fillStyle = '#FFFFFF';
-                    context.fillRect(0, 0, canvas.width, canvas.height);
                     onDrawingChange(canvas.toDataURL('image/png'));
                 }
             }

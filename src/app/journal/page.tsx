@@ -23,7 +23,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Plus, Trash2, Edit, MoreHorizontal, Loader2, BookOpen, Smile, Frown, Meh } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Edit, MoreHorizontal, Loader2, BookOpen, Smile, Frown, Meh, Camera, Upload as UploadIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -47,6 +47,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
 import dynamic from 'next/dynamic';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 const DrawingCanvas = dynamic(() => import('@/components/drawing-canvas').then(mod => mod.DrawingCanvas), {
   ssr: false,
@@ -132,6 +133,14 @@ const mockEntries: JournalEntry[] = [
     }
 ];
 
+const fileToDataUri = (file: File) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+
 const JournalGrid = ({ entries, onEdit, onView, onDelete }: { entries: JournalEntry[], onEdit: (e: JournalEntry) => void, onView: (e: JournalEntry) => void, onDelete: (e: JournalEntry) => void }) => {
   if (entries.length === 0) {
     return (
@@ -201,7 +210,17 @@ export default function JournalPage() {
   const [entryToEdit, setEntryToEdit] = useState<JournalEntry | null>(null);
   const [entryToView, setEntryToView] = useState<JournalEntry | null>(null);
   const [entryToDelete, setEntryToDelete] = useState<JournalEntry | null>(null);
-  const [tempDrawing, setTempDrawing] = useState<string>('');
+  const [imageSource, setImageSource] = useState<string | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | undefined>(undefined);
+  
+  useEffect(() => {
+    if (isDialogOpen && !entryToEdit) {
+      setImageSource(null);
+    } else if (isDialogOpen && entryToEdit) {
+      setImageSource(entryToEdit.imageUrl || null);
+    }
+  }, [isDialogOpen, entryToEdit]);
 
   useEffect(() => {
     try {
@@ -240,25 +259,25 @@ export default function JournalPage() {
         toast({ title: 'Error', description: 'Please select a mood for your entry.', variant: 'destructive'});
         return;
     }
+    
+    let finalImageUrl = imageSource;
 
     if (entryToEdit) {
-      // Editing existing entry
       setEntries(
         entries.map((entry) =>
           entry.id === entryToEdit.id
-            ? { ...entry, title, content, mood, imageUrl: tempDrawing || entry.imageUrl, date: new Date().toISOString() }
+            ? { ...entry, title, content, mood, imageUrl: finalImageUrl || undefined, date: new Date().toISOString() }
             : entry
         )
       );
       toast({ title: 'Success', description: 'Journal entry updated.' });
     } else {
-      // Adding new entry
       const newEntry: JournalEntry = {
         id: Date.now(),
         title,
         content,
         mood,
-        imageUrl: tempDrawing,
+        imageUrl: finalImageUrl || undefined,
         date: new Date().toISOString(),
       };
       setEntries([newEntry, ...entries]);
@@ -266,18 +285,18 @@ export default function JournalPage() {
     }
     setDialogOpen(false);
     setEntryToEdit(null);
-    setTempDrawing('');
+    setImageSource(null);
   };
 
   const openEditDialog = (entry: JournalEntry) => {
     setEntryToEdit(entry);
-    setTempDrawing(entry.imageUrl || '');
+    setImageSource(entry.imageUrl || null);
     setDialogOpen(true);
   };
   
   const openNewDialog = () => {
     setEntryToEdit(null);
-    setTempDrawing('');
+    setImageSource(null);
     setDialogOpen(true);
   }
 
@@ -291,6 +310,57 @@ export default function JournalPage() {
       setEntryToDelete(null);
     }
   };
+  
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const dataUri = await fileToDataUri(file);
+      setImageSource(dataUri);
+    }
+  };
+
+  const setupCamera = async () => {
+    if (!navigator.mediaDevices?.getUserMedia) {
+        setHasCameraPermission(false);
+        console.error("Camera not supported on this browser.");
+        return;
+    }
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+        }
+        setHasCameraPermission(true);
+    } catch (err) {
+        setHasCameraPermission(false);
+        console.error("Error accessing camera: ", err);
+    }
+  };
+
+  const takePicture = () => {
+    if (videoRef.current) {
+      const canvas = document.createElement('canvas');
+      canvas.width = videoRef.current.videoWidth;
+      canvas.height = videoRef.current.videoHeight;
+      canvas.getContext('2d')?.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+      const dataUri = canvas.toDataURL('image/png');
+      setImageSource(dataUri);
+      toast({ title: "Image Captured" });
+    }
+  };
+
+  useEffect(() => {
+    if(isDialogOpen) {
+        // Stop camera when dialog closes
+        return () => {
+            if (videoRef.current && videoRef.current.srcObject) {
+                const stream = videoRef.current.srcObject as MediaStream;
+                stream.getTracks().forEach(track => track.stop());
+            }
+        }
+    }
+  }, [isDialogOpen])
+
   
   const positiveEntries = entries.filter(e => e.mood === 'Positive');
   const negativeEntries = entries.filter(e => e.mood === 'Negative');
@@ -377,8 +447,39 @@ export default function JournalPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                     <Label>Creative Canvas</Label>
-                     <DrawingCanvas onDrawingChange={setTempDrawing} initialImage={entryToEdit?.imageUrl} />
+                    <Tabs defaultValue="canvas">
+                        <TabsList className="grid w-full grid-cols-3">
+                            <TabsTrigger value="canvas">Canvas</TabsTrigger>
+                            <TabsTrigger value="upload">Upload</TabsTrigger>
+                            <TabsTrigger value="camera" onClick={setupCamera}>Camera</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="canvas">
+                            <DrawingCanvas onDrawingChange={setImageSource} initialImage={entryToEdit?.imageUrl} />
+                        </TabsContent>
+                        <TabsContent value="upload">
+                            <div className="space-y-4 p-4 border rounded-md">
+                                <Label htmlFor="image-upload">Upload an Image</Label>
+                                <Input id="image-upload" type="file" accept="image/*" onChange={handleFileUpload} />
+                                {imageSource && <Image src={imageSource} alt="Uploaded preview" width={200} height={150} className="rounded-md mx-auto" />}
+                            </div>
+                        </TabsContent>
+                        <TabsContent value="camera">
+                            <div className="space-y-4 p-4 border rounded-md">
+                                {hasCameraPermission === false ? (
+                                    <Alert variant="destructive">
+                                        <AlertTitle>Camera Access Denied</AlertTitle>
+                                        <AlertDescription>Please enable camera permissions in your browser settings.</AlertDescription>
+                                    </Alert>
+                                ) : (
+                                    <>
+                                        <video ref={videoRef} className="w-full aspect-video rounded-md bg-muted" autoPlay muted />
+                                        <Button type="button" onClick={takePicture} className="w-full"><Camera className="mr-2"/>Capture</Button>
+                                    </>
+                                )}
+                                {imageSource && <Image src={imageSource} alt="Captured preview" width={200} height={150} className="rounded-md mx-auto" />}
+                            </div>
+                        </TabsContent>
+                    </Tabs>
                 </div>
               </div>
               <DialogFooter className="mt-6 pt-4 border-t">
