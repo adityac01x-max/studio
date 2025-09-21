@@ -49,6 +49,7 @@ import {
 } from '@/components/ui/dialog';
 import React, { useState } from 'react';
 import { useUserRole } from '@/hooks/use-user-role.tsx';
+import { Label } from '@/components/ui/label';
 
 const ages = ['Under 18', '19-25', '26-40', '41-55', '56 and above'];
 const genders = ['Male', 'Female', 'Non-binary', 'Other'];
@@ -135,7 +136,7 @@ export default function ProfilePage() {
   return (
     <div>
         <div className="flex items-center gap-4 mb-6">
-        <Link href="/dashboard" passHref>
+        <Link href="/dashboard">
           <Button variant="outline" size="icon">
             <ArrowLeft />
             <span className="sr-only">Back to Dashboard</span>
