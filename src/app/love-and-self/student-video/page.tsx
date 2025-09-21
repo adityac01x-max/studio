@@ -122,7 +122,7 @@ function VideoCallContent() {
   if (!isCallActive) {
     return (
       <div className="flex flex-col items-center justify-center h-full gap-6">
-        <Card className="max-w-md w-full">
+        <Card className="max-w-md w-full bg-card/80 backdrop-blur-sm">
             <CardHeader>
                 <CardTitle>Start a Video Call</CardTitle>
             </CardHeader>
@@ -155,7 +155,7 @@ function VideoCallContent() {
   }
 
   return (
-    <Card className="flex-1 relative overflow-hidden">
+    <Card className="flex-1 relative overflow-hidden bg-card/80 backdrop-blur-sm">
       <CardHeader className="absolute top-0 left-0 z-10 bg-gradient-to-b from-black/50 to-transparent p-4 w-full">
         <div className="flex items-center gap-3 text-white">
           <Avatar>
@@ -241,7 +241,7 @@ export default function StudentVideoPage() {
             <span className="sr-only">Back to Consultation</span>
           </Button>
         </Link>
-        <h1 className="font-headline text-3xl font-bold tracking-tight">
+        <h1 className="font-headline text-3xl font-bold tracking-tight text-white">
             Video Call
         </h1>
       </div>

@@ -49,6 +49,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Checkbox } from './ui/checkbox';
 import { Input } from './ui/input';
+import { usePathname } from 'next/navigation';
 
 const consultationSchema = z.object({
   date: z.date({
@@ -257,10 +258,17 @@ const CounselorBookingForm = ({ counselorId }: { counselorId: string }) => {
 
 export function CounselorConsultation() {
   const { toast } = useToast();
+  const pathname = usePathname();
   const [useGeolocation, setUseGeolocation] = useState(false);
   const [activeTab, setActiveTab] = useState('peer');
   const [bookingCounselor, setBookingCounselor] = useState<string | null>(null);
 
+  const getBasePath = () => {
+    if (pathname.startsWith('/love-and-self')) return '/love-and-self';
+    if (pathname.startsWith('/lifestyle')) return '/lifestyle';
+    return '';
+  };
+  const basePath = getBasePath();
 
   const handleGeolocation = () => {
     if (!useGeolocation) {
@@ -312,7 +320,7 @@ export function CounselorConsultation() {
                                     </div>
                                 </div>
                                 <div className="text-right">
-                                    <Link href={`/student-chat?professionalId=${peer.id}`} passHref>
+                                    <Link href={`${basePath}/student-chat?professionalId=${peer.id}`} passHref>
                                         <Button>Chat Now</Button>
                                     </Link>
                                 </div>
