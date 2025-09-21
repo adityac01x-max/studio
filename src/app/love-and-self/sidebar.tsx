@@ -19,6 +19,7 @@ import {
   Library,
   Trophy,
   NotebookText,
+  Milestone,
 } from 'lucide-react';
 import {
   SidebarHeader,
@@ -60,6 +61,7 @@ const navItems = {
     { href: '/love-and-self/education', label: 'Education Center', icon: BookOpen },
     { href: '/love-and-self/consultation', label: 'Consultation', icon: Users },
     { href: '/love-and-self/ai-chat', label: 'AI First-Aid', icon: Bot },
+    { href: '/love-and-self/be-your-own-voice', label: 'Be Your Own Voice', icon: Milestone },
   ]
 };
 
@@ -168,5 +170,3 @@ export function LoveAndSelfSidebar() {
     </>
   );
 }
-
-    

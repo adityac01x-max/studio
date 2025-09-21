@@ -24,6 +24,7 @@ import {
   Activity,
   Trophy,
   NotebookText,
+  Milestone,
 } from 'lucide-react';
 import { AppLogo } from './icons';
 import {
@@ -89,6 +90,7 @@ const professionalNavItems = [
     { href: '/professional/chat', label: 'Chat', icon: MessageSquare },
     { href: '/professional/video', label: 'Video Calls', icon: Video },
     { href: '/professional/questionnaires', label: 'Questionnaires', icon: ClipboardList },
+    { href: '/professional/rooms', label: 'Community Rooms', icon: Milestone },
 ]
 
 
@@ -187,7 +189,7 @@ export function AppSidebar() {
             <SidebarMenuItem key={item.href}>
               <Link href={item.href}>
                 <SidebarMenuButton
-                  isActive={pathname === item.href}
+                  isActive={pathname.startsWith(item.href)}
                   tooltip={{
                     children: item.label,
                     className: 'group-data-[collapsible=icon]:block hidden',
