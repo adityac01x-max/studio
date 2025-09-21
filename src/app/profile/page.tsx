@@ -76,8 +76,6 @@ const profileSchema = z.object({
     path: ['occupationOther'],
 });
 
-const VALID_PEER_ID = "PEER-2024-01"; // Hardcoded for demonstration
-
 export default function ProfilePage() {
   const { toast } = useToast();
   const router = useRouter();
@@ -114,7 +112,10 @@ export default function ProfilePage() {
     setIsCheckingId(true);
     // Simulate checking the ID with a timeout
     setTimeout(() => {
-        if (peerId === VALID_PEER_ID) {
+        const storedPeers = JSON.parse(localStorage.getItem('peerSupporters') || '[]');
+        const isValid = storedPeers.some((p: { peerId: string }) => p.peerId === peerId);
+
+        if (isValid) {
             setUserRole('peer');
             toast({
                 title: 'Congratulations!',
