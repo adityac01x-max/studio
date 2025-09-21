@@ -18,6 +18,7 @@ import {
   ClipboardList,
   Library,
   Trophy,
+  NotebookText,
 } from 'lucide-react';
 import {
   SidebarHeader,
@@ -51,6 +52,7 @@ const navItems = [
   { href: '/love-and-self/questionnaires', label: 'Questionnaires', icon: ClipboardList },
   { href: '/love-and-self/ai-chat', label: 'AI First-Aid', icon: Bot },
   { href: '/love-and-self/mood-mapping', label: 'Mood Mapping', icon: BarChart2 },
+  { href: '/journal', label: 'Memory Journal', icon: NotebookText },
 ];
 
 

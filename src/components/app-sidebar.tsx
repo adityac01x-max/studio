@@ -23,6 +23,7 @@ import {
   FileWarning,
   Activity,
   Trophy,
+  NotebookText,
 } from 'lucide-react';
 import { AppLogo } from './icons';
 import {
@@ -62,6 +63,7 @@ const navItems = [
   { href: '/progress', label: 'My Progress', icon: Trophy },
   { href: '/health-report', label: 'Health Report', icon: Activity },
   { href: '/projective-tests', label: 'Projective Tests', icon: FileWarning },
+  { href: '/journal', label: 'Memory Journal', icon: NotebookText },
 ];
 
 const adminNavItems = [
