@@ -55,6 +55,8 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { useSidebar } from './ui/sidebar';
 import { ThemeToggle } from './theme-toggle';
+import { useUserRole } from '@/hooks/use-user-role.tsx';
+import { cn } from '@/lib/utils';
 
 const studentNavItems = {
     'Core Tools': [
@@ -149,11 +151,13 @@ function FlameIcon(props: React.SVGProps<SVGSVGElement>) {
 export function AppSidebar() {
   const pathname = usePathname();
   const { state } = useSidebar();
+  const { userRole } = useUserRole();
   const isCollapsed = state === 'collapsed';
   
   const isAdminRoute = pathname.startsWith('/admin');
   const isProfessionalRoute = pathname.startsWith('/professional');
   const isLifestyleRoute = pathname.startsWith('/lifestyle');
+  const isPeer = userRole === 'peer';
 
   let currentUser;
   let homeLink;
@@ -324,10 +328,12 @@ export function AppSidebar() {
                   isCollapsed ? 'justify-center' : 'justify-start'
                 } items-center gap-2 p-2 h-auto w-full`}
               >
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={`https://picsum.photos/seed/${currentUser.avatarSeed}/100/100`} />
-                  <AvatarFallback>{currentUser.name.charAt(0)}</AvatarFallback>
-                </Avatar>
+                <div className={cn("relative rounded-full", isPeer && "ring-2 ring-offset-2 ring-offset-background ring-primary")}>
+                    <Avatar className="h-8 w-8">
+                    <AvatarImage src={`https://picsum.photos/seed/${currentUser.avatarSeed}/100/100`} />
+                    <AvatarFallback>{currentUser.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                </div>
                 {!isCollapsed && (
                   <div className="text-left">
                     <p className="text-sm font-medium">{currentUser.name}</p>

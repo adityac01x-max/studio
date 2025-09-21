@@ -21,6 +21,9 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { useSearchParams } from 'next/navigation';
 import { useChat } from '@/hooks/use-chat';
+import { useUserRole } from '@/hooks/use-user-role.tsx';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
 
 const professionals = [
   {
@@ -61,13 +64,40 @@ const professionals = [
   },
 ];
 
+const peerSupportInbox = [
+    {
+        id: 'student-inbox-1',
+        name: 'Student ABC',
+        avatar: 'https://picsum.photos/seed/student-abc/100/100',
+        lastMessage: "Hi, I'm feeling really overwhelmed and was hoping to talk.",
+        timestamp: '2:30 PM',
+        unread: 1,
+        conversationId: 'student-abc_peer-supporter-1'
+    },
+    {
+        id: 'student-inbox-2',
+        name: 'Student XYZ',
+        avatar: 'https://picsum.photos/seed/student-xyz/100/100',
+        lastMessage: "Thanks for offering to help. I'm struggling with exam stress.",
+        timestamp: '1:05 PM',
+        unread: 0,
+        conversationId: 'student-xyz_peer-supporter-1'
+    }
+];
+
+
 function StudentChatContent() {
+  const { userRole } = useUserRole();
   const searchParams = useSearchParams();
   const professionalIdFromParams = searchParams.get('professionalId');
+  const isPeer = userRole === 'peer';
+
+  const [activeTab, setActiveTab] = useState(isPeer ? 'peer-inbox' : 'my-chats');
 
   const getInitialConversation = () => {
-      const prof = professionals.find(p => p.id === professionalIdFromParams);
-      return prof || professionals[0];
+      const currentList = activeTab === 'peer-inbox' ? peerSupportInbox : professionals;
+      const prof = currentList.find(p => p.id === professionalIdFromParams);
+      return prof || currentList[0];
   }
 
   const [selectedConversation, setSelectedConversation] = useState(getInitialConversation());
@@ -75,6 +105,11 @@ function StudentChatContent() {
   const [isSending, setIsSending] = useState(false);
   const { messages, loading, sendMessage } = useChat(selectedConversation.conversationId);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const currentList = activeTab === 'peer-inbox' ? peerSupportInbox : professionals;
+    setSelectedConversation(currentList[0]);
+  }, [activeTab]);
 
   useEffect(() => {
     if (scrollAreaRef.current) {
@@ -89,10 +124,13 @@ function StudentChatContent() {
   const handleSendMessage = async () => {
     if (input.trim() === '') return;
     setIsSending(true);
-    await sendMessage(input, 'student');
+    const role = activeTab === 'peer-inbox' ? 'peer' : 'student';
+    await sendMessage(input, role);
     setInput('');
     setIsSending(false);
   };
+
+  const currentConversationList = activeTab === 'peer-inbox' ? peerSupportInbox : professionals;
 
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)]">
@@ -107,14 +145,36 @@ function StudentChatContent() {
           My Chats
         </h1>
       </div>
-      <Card className="flex-1">
+       <Card className="flex-1">
+        {isPeer ? (
+             <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
+                <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="peer-inbox">Peer Support Inbox</TabsTrigger>
+                    <TabsTrigger value="my-chats">My Personal Chats</TabsTrigger>
+                </TabsList>
+                <TabsContent value="peer-inbox" className="flex-1 mt-0">
+                    <ChatInterface />
+                </TabsContent>
+                <TabsContent value="my-chats" className="flex-1 mt-0">
+                     <ChatInterface />
+                </TabsContent>
+            </Tabs>
+        ) : (
+            <ChatInterface />
+        )}
+      </Card>
+    </div>
+  );
+
+  function ChatInterface() {
+    return (
         <ResizablePanelGroup direction="horizontal" className="h-full">
           <ResizablePanel defaultSize={30} minSize={25}>
             <div className="p-4">
               <h2 className="text-xl font-bold mb-4">Conversations</h2>
               <ScrollArea className="h-[calc(100vh-12rem)]">
                 <div className="space-y-2">
-                  {professionals.map((convo) => (
+                  {currentConversationList.map((convo) => (
                     <Button
                       key={convo.id}
                       variant="ghost"
@@ -226,9 +286,8 @@ function StudentChatContent() {
             )}
           </ResizablePanel>
         </ResizablePanelGroup>
-      </Card>
-    </div>
-  );
+    );
+  }
 }
 
 export default function StudentChatPage() {

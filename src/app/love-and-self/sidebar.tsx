@@ -43,6 +43,8 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useSidebar } from '@/components/ui/sidebar';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { useUserRole } from '@/hooks/use-user-role.tsx';
+import { cn } from '@/lib/utils';
 
 const navItems = {
   'Core Tools': [
@@ -69,7 +71,9 @@ const navItems = {
 export function LoveAndSelfSidebar() {
   const pathname = usePathname();
   const { state } = useSidebar();
+  const { userRole } = useUserRole();
   const isCollapsed = state === 'collapsed';
+  const isPeer = userRole === 'peer';
 
   return (
     <>
@@ -130,10 +134,12 @@ export function LoveAndSelfSidebar() {
                   isCollapsed ? 'justify-center' : 'justify-start'
                 } items-center gap-2 p-2 h-auto w-full`}
               >
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={'https://picsum.photos/seed/lgbtq-user/100/100'} />
-                  <AvatarFallback>U</AvatarFallback>
-                </Avatar>
+                <div className={cn("relative rounded-full", isPeer && "ring-2 ring-offset-2 ring-offset-background ring-primary")}>
+                    <Avatar className="h-8 w-8">
+                        <AvatarImage src={'https://picsum.photos/seed/lgbtq-user/100/100'} />
+                        <AvatarFallback>U</AvatarFallback>
+                    </Avatar>
+                </div>
                 {!isCollapsed && (
                   <div className="text-left">
                     <p className="text-sm font-medium">Community Member</p>

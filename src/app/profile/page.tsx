@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -29,13 +30,25 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter
 } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { AppLogo } from '@/components/icons';
 import { MultiSelect } from '@/components/ui/multi-select';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Award, UserCheck, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import React, { useState } from 'react';
+import { useUserRole } from '@/hooks/use-user-role.tsx';
 
 const ages = ['Under 18', '19-25', '26-40', '41-55', '56 and above'];
 const genders = ['Male', 'Female', 'Non-binary', 'Other'];
@@ -62,9 +75,15 @@ const profileSchema = z.object({
     path: ['occupationOther'],
 });
 
+const VALID_PEER_ID = "PEER-2024-01"; // Hardcoded for demonstration
+
 export default function ProfilePage() {
   const { toast } = useToast();
   const router = useRouter();
+  const { userRole, setUserRole } = useUserRole();
+  const [peerId, setPeerId] = useState('');
+  const [isCheckingId, setIsCheckingId] = useState(false);
+  const [isEnlistDialogOpen, setEnlistDialogOpen] = useState(false);
 
   const form = useForm<z.infer<typeof profileSchema>>({
     resolver: zodResolver(profileSchema),
@@ -88,6 +107,29 @@ export default function ProfilePage() {
       title: 'Profile Updated!',
       description: 'Your profile has been successfully updated.',
     });
+  }
+
+  const handleEnlistAsPeer = () => {
+    setIsCheckingId(true);
+    // Simulate checking the ID with a timeout
+    setTimeout(() => {
+        if (peerId === VALID_PEER_ID) {
+            setUserRole('peer');
+            toast({
+                title: 'Congratulations!',
+                description: 'You have been successfully enlisted as a Peer Supporter.',
+            });
+            setEnlistDialogOpen(false);
+        } else {
+            toast({
+                variant: 'destructive',
+                title: 'Invalid ID',
+                description: 'The peer ID you entered is not valid. Please check and try again.',
+            });
+        }
+        setIsCheckingId(false);
+        setPeerId('');
+    }, 1000);
   }
 
   return (
@@ -290,6 +332,34 @@ export default function ProfilePage() {
             </form>
           </Form>
         </CardContent>
+         <CardFooter className="flex flex-col items-center gap-4 border-t pt-6">
+            <p className="text-sm text-muted-foreground">Want to help others?</p>
+            <Dialog open={isEnlistDialogOpen} onOpenChange={setEnlistDialogOpen}>
+            <DialogTrigger asChild>
+                 <Button variant="link" className="text-primary p-0 h-auto">
+                    <Award className="mr-2 h-4 w-4" /> Enlist as a Peer Supporter
+                </Button>
+            </DialogTrigger>
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Become a Peer Supporter</DialogTitle>
+                    <DialogDescription>
+                        Enter the unique ID provided by the administration to upgrade your account to a Peer Supporter role.
+                    </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-2">
+                    <Label htmlFor="peer-id">Peer Supporter ID</Label>
+                    <Input id="peer-id" value={peerId} onChange={(e) => setPeerId(e.target.value)} placeholder="Enter your unique ID"/>
+                </div>
+                <DialogFooter>
+                    <Button onClick={handleEnlistAsPeer} disabled={isCheckingId || !peerId}>
+                        {isCheckingId && <Loader2 className="mr-2 h-4 w-4 animate-spin"/>}
+                        Verify and Enlist
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+            </Dialog>
+        </CardFooter>
       </Card>
     </div>
   );

@@ -1,12 +1,14 @@
+
+'use client';
+
 import type { Metadata } from 'next';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
+import { UserRoleProvider } from '@/hooks/use-user-role';
 
-export const metadata: Metadata = {
-  title: 'Anubhuti',
-  description:
-    'A mental wellness platform for students offering multi-modal emotional analysis and support.',
-};
+// This is a client component, so we can't export metadata from here.
+// It should be defined in a parent layout or the page itself if they are server components.
+// For this root layout, we can keep it simple.
 
 export default function RootLayout({
   children,
@@ -28,14 +30,16 @@ export default function RootLayout({
         />
       </head>
       <body className="font-body antialiased">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
+        <UserRoleProvider>
+            <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+            >
+            {children}
+            </ThemeProvider>
+        </UserRoleProvider>
       </body>
     </html>
   );
