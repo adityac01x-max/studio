@@ -35,7 +35,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Plus, ArrowLeft, MoreVertical, Trash2, Edit, Eye, Loader2 } from 'lucide-react';
+import { Plus, ArrowLeft, MoreVertical, Trash2, Edit, Eye, Loader2, Pen, Eraser } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Masonry from 'masonry-layout';
@@ -45,6 +45,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Slider } from '@/components/ui/slider';
+
 
 type JournalEntry = {
   id: number;
@@ -92,14 +94,110 @@ const initialEntries: JournalEntry[] = [
 ];
 
 
-const fileToDataURL = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-    });
+const DrawingCanvas = ({ onDrawingChange, initialDrawing }: { onDrawingChange: (dataUrl: string) => void, initialDrawing?: string }) => {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const contextRef = useRef<CanvasRenderingContext2D | null>(null);
+    const [isDrawing, setIsDrawing] = useState(false);
+    const [tool, setTool] = useState<'pen' | 'eraser'>('pen');
+    const [color, setColor] = useState('#000000');
+    const [lineWidth, setLineWidth] = useState(5);
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (canvas) {
+            const context = canvas.getContext('2d');
+            if (context) {
+                context.lineCap = 'round';
+                context.lineJoin = 'round';
+                contextRef.current = context;
+
+                if (initialDrawing) {
+                    const image = new window.Image();
+                    image.src = initialDrawing;
+                    image.onload = () => {
+                        context.drawImage(image, 0, 0);
+                    }
+                }
+            }
+        }
+    }, [initialDrawing]);
+
+    useEffect(() => {
+        if (contextRef.current) {
+            contextRef.current.strokeStyle = color;
+            contextRef.current.lineWidth = lineWidth;
+            if (tool === 'eraser') {
+                 contextRef.current.globalCompositeOperation = 'destination-out';
+            } else {
+                contextRef.current.globalCompositeOperation = 'source-over';
+            }
+        }
+    }, [color, lineWidth, tool]);
+
+    const startDrawing = (e: React.MouseEvent<HTMLCanvasElement>) => {
+        if (contextRef.current) {
+            contextRef.current.beginPath();
+            contextRef.current.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+            setIsDrawing(true);
+        }
+    };
+
+    const draw = (e: React.MouseEvent<HTMLCanvasElement>) => {
+        if (!isDrawing || !contextRef.current) return;
+        contextRef.current.lineTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
+        contextRef.current.stroke();
+    };
+    
+    const stopDrawing = () => {
+        if (contextRef.current) {
+            contextRef.current.closePath();
+            setIsDrawing(false);
+            if (canvasRef.current) {
+                onDrawingChange(canvasRef.current.toDataURL());
+            }
+        }
+    };
+
+    const clearCanvas = () => {
+        const canvas = canvasRef.current;
+        if (canvas && contextRef.current) {
+            contextRef.current.clearRect(0, 0, canvas.width, canvas.height);
+            onDrawingChange(canvas.toDataURL());
+        }
+    };
+
+    return (
+        <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center gap-2 rounded-md border p-2">
+                    <Label>Tool</Label>
+                    <Button type="button" variant={tool === 'pen' ? 'secondary' : 'ghost'} size="icon" onClick={() => setTool('pen')}><Pen/></Button>
+                    <Button type="button" variant={tool === 'eraser' ? 'secondary' : 'ghost'} size="icon" onClick={() => setTool('eraser')}><Eraser/></Button>
+                </div>
+                <div className="flex items-center gap-2 rounded-md border p-2">
+                    <Label>Color</Label>
+                     <input type="color" value={color} onChange={(e) => setColor(e.target.value)} className="w-8 h-8" />
+                </div>
+                <div className="col-span-2 space-y-2 rounded-md border p-2">
+                    <Label>Brush Size: {lineWidth}</Label>
+                    <Slider defaultValue={[lineWidth]} max={50} step={1} onValueChange={(value) => setLineWidth(value[0])} />
+                </div>
+            </div>
+            <canvas
+                ref={canvasRef}
+                width="500"
+                height="350"
+                className="rounded-lg border bg-white cursor-crosshair w-full"
+                onMouseDown={startDrawing}
+                onMouseMove={draw}
+                onMouseUp={stopDrawing}
+                onMouseLeave={stopDrawing}
+            />
+            <Button type="button" onClick={clearCanvas} variant="outline" className="w-full">Clear Canvas</Button>
+        </div>
+    );
 };
+
 
 export default function JournalPage() {
   const [entries, setEntries] = useState<JournalEntry[]>([]);
@@ -108,6 +206,7 @@ export default function JournalPage() {
   const [isEditDialogOpen, setEditDialogOpen] = useState(false);
   const [isViewDialogOpen, setViewDialogOpen] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
+  const [drawingData, setDrawingData] = useState<string | undefined>(undefined);
 
   const gridRef = useRef(null);
 
@@ -152,12 +251,6 @@ export default function JournalPage() {
     const formData = new FormData(form);
     const title = formData.get('title') as string;
     const content = formData.get('content') as string;
-    const imageFile = formData.get('image') as File;
-
-    let imageUrl: string | undefined = undefined;
-    if (imageFile && imageFile.size > 0) {
-        imageUrl = await fileToDataURL(imageFile);
-    }
     
     if (title && content) {
       const newEntry: JournalEntry = {
@@ -165,10 +258,11 @@ export default function JournalPage() {
         title,
         content,
         date: new Date().toISOString().split('T')[0],
-        image: imageUrl
+        image: drawingData
       };
       setEntries([newEntry, ...entries]);
       setAddDialogOpen(false);
+      setDrawingData(undefined);
     }
   };
 
@@ -180,18 +274,13 @@ export default function JournalPage() {
     const formData = new FormData(form);
     const title = formData.get('title') as string;
     const content = formData.get('content') as string;
-    const imageFile = formData.get('image') as File;
-
-    let imageUrl = selectedEntry.image;
-     if (imageFile && imageFile.size > 0) {
-        imageUrl = await fileToDataURL(imageFile);
-    }
-
+    
     if (title && content) {
-        const updatedEntry = { ...selectedEntry, title, content, image: imageUrl };
+        const updatedEntry = { ...selectedEntry, title, content, image: drawingData };
         setEntries(entries.map(e => e.id === selectedEntry.id ? updatedEntry : e));
         setEditDialogOpen(false);
         setSelectedEntry(null);
+        setDrawingData(undefined);
     }
   };
 
@@ -206,6 +295,7 @@ export default function JournalPage() {
 
   const openEditDialog = (entry: JournalEntry) => {
       setSelectedEntry(entry);
+      setDrawingData(entry.image);
       setEditDialogOpen(true);
   }
 
@@ -237,33 +327,35 @@ export default function JournalPage() {
             </p>
             </div>
         </div>
-        <Dialog open={isAddDialogOpen} onOpenChange={setAddDialogOpen}>
+        <Dialog open={isAddDialogOpen} onOpenChange={(open) => {setAddDialogOpen(open); if (!open) setDrawingData(undefined); }}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="mr-2" /> Add Entry
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-w-4xl w-full h-[90vh]">
             <DialogHeader>
               <DialogTitle>Add a New Journal Entry</DialogTitle>
               <DialogDescription>
-                Capture a thought, feeling, or memory.
+                Capture a thought, feeling, or memory. Express yourself with words and drawings.
               </DialogDescription>
             </DialogHeader>
-            <form onSubmit={handleAddEntry} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="title">Title</Label>
-                <Input id="title" name="title" required />
+            <form onSubmit={handleAddEntry} className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full overflow-auto pr-6">
+              <div className="space-y-4 flex flex-col">
+                <div className="space-y-2">
+                  <Label htmlFor="title">Title</Label>
+                  <Input id="title" name="title" required />
+                </div>
+                <div className="space-y-2 flex-1 flex flex-col">
+                  <Label htmlFor="content">Content</Label>
+                  <Textarea id="content" name="content" required className="flex-1" />
+                </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="content">Content</Label>
-                <Textarea id="content" name="content" required rows={5} />
+              <div className="space-y-4">
+                 <Label>Drawing (Optional)</Label>
+                 <DrawingCanvas onDrawingChange={setDrawingData} />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="image">Image (Optional)</Label>
-                <Input id="image" name="image" type="file" accept="image/*" />
-              </div>
-              <DialogFooter>
+              <DialogFooter className="md:col-span-2">
                 <Button type="submit">Save Entry</Button>
               </DialogFooter>
             </form>
@@ -332,27 +424,28 @@ export default function JournalPage() {
          )}
 
          {/* Edit Dialog */}
-        <Dialog open={isEditDialogOpen} onOpenChange={setEditDialogOpen}>
-          <DialogContent>
+        <Dialog open={isEditDialogOpen} onOpenChange={(open) => {setEditDialogOpen(open); if (!open) setDrawingData(undefined); }}>
+          <DialogContent className="max-w-4xl w-full h-[90vh]">
             <DialogHeader>
               <DialogTitle>Edit Journal Entry</DialogTitle>
             </DialogHeader>
             {selectedEntry && (
-              <form onSubmit={handleEditEntry} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="title">Title</Label>
-                  <Input id="title" name="title" defaultValue={selectedEntry.title} required />
+              <form onSubmit={handleEditEntry} className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full overflow-auto pr-6">
+                 <div className="space-y-4 flex flex-col">
+                    <div className="space-y-2">
+                    <Label htmlFor="edit-title">Title</Label>
+                    <Input id="edit-title" name="title" defaultValue={selectedEntry.title} required />
+                    </div>
+                    <div className="space-y-2 flex-1 flex flex-col">
+                    <Label htmlFor="edit-content">Content</Label>
+                    <Textarea id="edit-content" name="content" defaultValue={selectedEntry.content} required className="flex-1" />
+                    </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="content">Content</Label>
-                  <Textarea id="content" name="content" defaultValue={selectedEntry.content} required rows={5} />
+                <div className="space-y-4">
+                    <Label>Drawing</Label>
+                    <DrawingCanvas onDrawingChange={setDrawingData} initialDrawing={selectedEntry.image} />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="image">Replace Image (Optional)</Label>
-                  <Input id="image" name="image" type="file" accept="image/*" />
-                   {selectedEntry.image && <Image src={selectedEntry.image} alt="current image" width={100} height={100} className="rounded-md mt-2" />}
-                </div>
-                <DialogFooter>
+                <DialogFooter className="md:col-span-2">
                   <Button type="button" variant="outline" onClick={() => setEditDialogOpen(false)}>Cancel</Button>
                   <Button type="submit">Save Changes</Button>
                 </DialogFooter>
