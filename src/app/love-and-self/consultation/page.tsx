@@ -25,7 +25,7 @@ export default function ConsultationPage() {
         </div>
       </div>
       <div className="bg-card/80 backdrop-blur-sm p-6 rounded-lg">
-        <CounselorConsultation />
+        <p>This is where the detailed consultation component will go, with tabs for Peer Support, College Counselors, and Nearby Professionals, styled for the Love & Self theme.</p>
       </div>
     </div>
   );
