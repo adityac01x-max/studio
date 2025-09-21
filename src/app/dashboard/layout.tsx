@@ -10,6 +10,7 @@ import { Toaster } from '@/components/ui/toaster';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { usePathname } from 'next/navigation';
 import ProfilePage from '../profile/page';
+import { QuickActionBar } from '@/components/quick-action-bar';
 
 export default function DashboardLayout({
   children,
@@ -30,6 +31,7 @@ export default function DashboardLayout({
         </ScrollArea>
       </SidebarInset>
       <Toaster />
+      <QuickActionBar />
     </SidebarProvider>
   );
 }

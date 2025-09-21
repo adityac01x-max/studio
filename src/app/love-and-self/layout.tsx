@@ -8,6 +8,7 @@ import {
 import { Toaster } from '@/components/ui/toaster';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import './theme.css';
+import { QuickActionBar } from '@/components/quick-action-bar';
 
 export default function LoveAndSelfLayout({
   children,
@@ -26,6 +27,7 @@ export default function LoveAndSelfLayout({
           </ScrollArea>
         </SidebarInset>
         <Toaster />
+        <QuickActionBar />
       </SidebarProvider>
     </div>
   );

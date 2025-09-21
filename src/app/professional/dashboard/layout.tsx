@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/sidebar';
 import { Toaster } from '@/components/ui/toaster';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { QuickActionBar } from '@/components/quick-action-bar';
 
 export default function ProfessionalDashboardLayout({
   children,
@@ -25,6 +26,7 @@ export default function ProfessionalDashboardLayout({
         </ScrollArea>
       </SidebarInset>
       <Toaster />
+      <QuickActionBar />
     </SidebarProvider>
   );
 }
