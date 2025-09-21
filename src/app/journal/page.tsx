@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Card,
   CardContent,
@@ -19,15 +19,32 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
+  DialogClose,
 } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Plus, ArrowLeft } from 'lucide-react';
+import { Plus, ArrowLeft, MoreVertical, Trash2, Edit, Eye, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import Masonry from 'masonry-layout';
-import React, { useEffect, useRef } from 'react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 type JournalEntry = {
   id: number;
@@ -74,26 +91,62 @@ const initialEntries: JournalEntry[] = [
   },
 ];
 
+
+const fileToDataURL = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+};
+
 export default function JournalPage() {
-  const [entries, setEntries] = useState<JournalEntry[]>(initialEntries);
+  const [entries, setEntries] = useState<JournalEntry[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isAddDialogOpen, setAddDialogOpen] = useState(false);
+  const [isEditDialogOpen, setEditDialogOpen] = useState(false);
+  const [isViewDialogOpen, setViewDialogOpen] = useState(false);
+  const [selectedEntry, setSelectedEntry] = useState<JournalEntry | null>(null);
+
   const gridRef = useRef(null);
 
   useEffect(() => {
+    setIsLoading(true);
+    try {
+      const storedEntries = localStorage.getItem('journalEntries');
+      if (storedEntries) {
+        setEntries(JSON.parse(storedEntries));
+      } else {
+        setEntries(initialEntries);
+      }
+    } catch (error) {
+      console.error("Failed to load journal entries from localStorage", error);
+      setEntries(initialEntries);
+    } finally {
+        setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isLoading) {
+        localStorage.setItem('journalEntries', JSON.stringify(entries));
+    }
     if (gridRef.current) {
-      const msnry = new Masonry(gridRef.current, {
-        itemSelector: '.grid-item',
-        columnWidth: '.grid-item',
-        percentPosition: true,
-        gutter: 16
-      });
-        // ImagesLoaded can be used here to perfect layout after images load
+        const msnry = new Masonry(gridRef.current, {
+            itemSelector: '.grid-item',
+            columnWidth: '.grid-item',
+            percentPosition: true,
+            gutter: 16,
+        });
+
+        // Use imagesLoaded library if image loading is an issue for layout
         msnry.layout?.();
         return () => msnry.destroy?.();
     }
-  }, [entries]);
+  }, [entries, isLoading]);
 
-  const handleAddEntry = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleAddEntry = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.currentTarget;
     const formData = new FormData(form);
@@ -101,20 +154,69 @@ export default function JournalPage() {
     const content = formData.get('content') as string;
     const imageFile = formData.get('image') as File;
 
+    let imageUrl: string | undefined = undefined;
+    if (imageFile && imageFile.size > 0) {
+        imageUrl = await fileToDataURL(imageFile);
+    }
+    
     if (title && content) {
       const newEntry: JournalEntry = {
         id: Date.now(),
         title,
         content,
         date: new Date().toISOString().split('T')[0],
+        image: imageUrl
       };
-      if (imageFile && imageFile.size > 0) {
-        newEntry.image = URL.createObjectURL(imageFile);
-      }
       setEntries([newEntry, ...entries]);
       setAddDialogOpen(false);
     }
   };
+
+  const handleEditEntry = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!selectedEntry) return;
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const title = formData.get('title') as string;
+    const content = formData.get('content') as string;
+    const imageFile = formData.get('image') as File;
+
+    let imageUrl = selectedEntry.image;
+     if (imageFile && imageFile.size > 0) {
+        imageUrl = await fileToDataURL(imageFile);
+    }
+
+    if (title && content) {
+        const updatedEntry = { ...selectedEntry, title, content, image: imageUrl };
+        setEntries(entries.map(e => e.id === selectedEntry.id ? updatedEntry : e));
+        setEditDialogOpen(false);
+        setSelectedEntry(null);
+    }
+  };
+
+  const handleDeleteEntry = (id: number) => {
+      setEntries(entries.filter(e => e.id !== id));
+  }
+
+  const openViewDialog = (entry: JournalEntry) => {
+      setSelectedEntry(entry);
+      setViewDialogOpen(true);
+  }
+
+  const openEditDialog = (entry: JournalEntry) => {
+      setSelectedEntry(entry);
+      setEditDialogOpen(true);
+  }
+
+  if (isLoading) {
+      return (
+          <div className="flex items-center justify-center h-full">
+              <Loader2 className="w-8 h-8 animate-spin" />
+              <p className="ml-2">Loading your journal...</p>
+          </div>
+      )
+  }
 
   return (
     <div className="space-y-6">
@@ -174,23 +276,49 @@ export default function JournalPage() {
                 <div key={entry.id} className="grid-item w-full sm:w-1/2 md:w-1/3 p-2">
                     <Card>
                         {entry.image && (
-                            <CardContent className="p-0">
-                            <Image
-                                src={entry.image}
-                                alt={entry.title}
-                                width={600}
-                                height={400}
-                                data-ai-hint={entry.imageHint || 'journal photo'}
-                                className="rounded-t-lg object-cover w-full h-auto"
-                            />
-                            </CardContent>
+                           <div className="relative aspect-[4/3] w-full cursor-pointer" onClick={() => openViewDialog(entry)}>
+                                <Image
+                                    src={entry.image}
+                                    alt={entry.title}
+                                    layout="fill"
+                                    objectFit="cover"
+                                    data-ai-hint={entry.imageHint || 'journal photo'}
+                                    className="rounded-t-lg"
+                                />
+                            </div>
                         )}
-                        <CardHeader>
-                            <CardTitle>{entry.title}</CardTitle>
-                            <CardDescription>{new Date(entry.date).toLocaleDateString()}</CardDescription>
+                        <CardHeader className="flex flex-row items-start justify-between">
+                            <div>
+                                <CardTitle>{entry.title}</CardTitle>
+                                <CardDescription>{new Date(entry.date).toLocaleDateString()}</CardDescription>
+                            </div>
+                             <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant="ghost" size="icon"><MoreVertical /></Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent>
+                                    <DropdownMenuItem onClick={() => openViewDialog(entry)}><Eye className="mr-2"/>View</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => openEditDialog(entry)}><Edit className="mr-2"/>Edit</DropdownMenuItem>
+                                     <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                            <Button variant="ghost" className="w-full justify-start text-destructive hover:text-destructive px-2 py-1.5 font-normal h-auto"><Trash2 className="mr-2"/>Delete</Button>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                                <AlertDialogDescription>This action cannot be undone. This will permanently delete your journal entry.</AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                <AlertDialogAction onClick={() => handleDeleteEntry(entry.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Delete</AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                         </CardHeader>
-                        <CardContent>
-                            <p className="text-sm text-muted-foreground">{entry.content}</p>
+                        <CardContent onClick={() => openViewDialog(entry)} className="cursor-pointer">
+                            <p className="text-sm text-muted-foreground line-clamp-3">{entry.content}</p>
                         </CardContent>
                     </Card>
                 </div>
@@ -202,6 +330,63 @@ export default function JournalPage() {
                 <p className="text-muted-foreground mt-2">Click "Add Entry" to capture your first memory.</p>
             </div>
          )}
+
+         {/* Edit Dialog */}
+        <Dialog open={isEditDialogOpen} onOpenChange={setEditDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Edit Journal Entry</DialogTitle>
+            </DialogHeader>
+            {selectedEntry && (
+              <form onSubmit={handleEditEntry} className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="title">Title</Label>
+                  <Input id="title" name="title" defaultValue={selectedEntry.title} required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="content">Content</Label>
+                  <Textarea id="content" name="content" defaultValue={selectedEntry.content} required rows={5} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="image">Replace Image (Optional)</Label>
+                  <Input id="image" name="image" type="file" accept="image/*" />
+                   {selectedEntry.image && <Image src={selectedEntry.image} alt="current image" width={100} height={100} className="rounded-md mt-2" />}
+                </div>
+                <DialogFooter>
+                  <Button type="button" variant="outline" onClick={() => setEditDialogOpen(false)}>Cancel</Button>
+                  <Button type="submit">Save Changes</Button>
+                </DialogFooter>
+              </form>
+            )}
+          </DialogContent>
+        </Dialog>
+        
+        {/* View Dialog */}
+        <Dialog open={isViewDialogOpen} onOpenChange={setViewDialogOpen}>
+            <DialogContent className="sm:max-w-2xl">
+                {selectedEntry && (
+                   <>
+                     <DialogHeader>
+                        <DialogTitle>{selectedEntry.title}</DialogTitle>
+                        <DialogDescription>{new Date(selectedEntry.date).toLocaleDateString()}</DialogDescription>
+                    </DialogHeader>
+                    {selectedEntry.image && (
+                         <div className="relative aspect-video w-full mt-4">
+                            <Image src={selectedEntry.image} alt={selectedEntry.title} layout="fill" objectFit="contain" />
+                        </div>
+                    )}
+                    <div className="py-4 whitespace-pre-wrap text-sm text-muted-foreground">
+                        {selectedEntry.content}
+                    </div>
+                    <DialogFooter>
+                        <DialogClose asChild>
+                            <Button type="button">Close</Button>
+                        </DialogClose>
+                    </DialogFooter>
+                   </>
+                )}
+            </DialogContent>
+        </Dialog>
     </div>
   );
 }
