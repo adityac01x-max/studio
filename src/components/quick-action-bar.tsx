@@ -37,6 +37,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useSidebar } from './ui/sidebar';
 
 type ActionItem = {
   href: string;
@@ -195,6 +196,9 @@ const lifestyleActionGroups: ActionGroup[] = [
 
 export function QuickActionBar() {
   const pathname = usePathname();
+  const sidebar = useSidebar();
+  
+  if (!sidebar) return null; // Or some fallback UI
 
   let actionGroups: ActionGroup[] = studentActionGroups;
   if (pathname.startsWith('/admin')) {

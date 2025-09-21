@@ -1,3 +1,4 @@
+
 'use client';
 import { AppSidebar } from '@/components/app-sidebar';
 import {
@@ -9,7 +10,6 @@ import { Toaster } from '@/components/ui/toaster';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { usePathname } from 'next/navigation';
 import ProfilePage from '../profile/page';
-import { QuickActionBar } from '@/components/quick-action-bar';
 
 export default function DashboardLayout({
   children,
@@ -28,7 +28,6 @@ export default function DashboardLayout({
         <ScrollArea className="h-full">
           <div className="p-4 md:p-8 pt-6">{isProfilePage ? <ProfilePage /> : children}</div>
         </ScrollArea>
-        <QuickActionBar />
       </SidebarInset>
       <Toaster />
     </SidebarProvider>
