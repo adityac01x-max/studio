@@ -17,7 +17,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
@@ -51,6 +50,27 @@ type JournalEntry = {
   date: string;
 };
 
+const mockEntries: JournalEntry[] = [
+    {
+        id: 1,
+        title: 'A Moment of Peace',
+        content: 'Today, I took a walk in the park during my lunch break. The sun was warm, and a gentle breeze was blowing. I sat on a bench and just watched the leaves dance in the wind. It was a simple moment, but it brought me a profound sense of calm and gratitude. I felt disconnected from my worries, even if just for a little while. I want to remember this feeling.',
+        date: new Date(Date.now() - 86400000 * 2).toISOString(), // 2 days ago
+    },
+    {
+        id: 2,
+        title: 'Tackled a Difficult Task',
+        content: "I finally finished the project I've been procrastinating on for weeks. It wasn't as bad as I thought it would be once I got started. I feel a huge weight off my shoulders. It's a good reminder that often, the anticipation is worse than the reality. I feel accomplished and motivated to keep this momentum going.",
+        date: new Date(Date.now() - 86400000).toISOString(), // Yesterday
+    },
+    {
+        id: 3,
+        title: 'A Small Act of Kindness',
+        content: 'I complimented a stranger on their jacket today, and their face lit up. It was a small interaction, but it made both of us smile. It costs nothing to be kind, and it made my whole day better. It\'s amazing how a few positive words can change the energy around you.',
+        date: new Date().toISOString(), // Today
+    },
+];
+
 export default function JournalPage() {
   const { toast } = useToast();
   const [entries, setEntries] = useState<JournalEntry[]>([]);
@@ -63,11 +83,14 @@ export default function JournalPage() {
   useEffect(() => {
     try {
       const savedEntries = localStorage.getItem('journalEntries');
-      if (savedEntries) {
+      if (savedEntries && JSON.parse(savedEntries).length > 0) {
         setEntries(JSON.parse(savedEntries));
+      } else {
+        setEntries(mockEntries);
       }
     } catch (error) {
       console.error('Failed to load journal entries from localStorage', error);
+      setEntries(mockEntries);
     } finally {
       setIsLoading(false);
     }
@@ -212,7 +235,7 @@ export default function JournalPage() {
               <CardHeader>
                 <CardTitle className="truncate">{entry.title}</CardTitle>
                 <CardDescription>
-                  {new Date(entry.date).toLocaleDateString()}
+                  {new Date(entry.date).toLocaleString([], { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex-1">
@@ -255,8 +278,8 @@ export default function JournalPage() {
               {entryToView ? new Date(entryToView.date).toLocaleString() : ''}
             </DialogDescription>
           </DialogHeader>
-          <div className="prose dark:prose-invert max-h-[60vh] overflow-y-auto">
-            <p>{entryToView?.content}</p>
+          <div className="prose dark:prose-invert max-h-[60vh] overflow-y-auto p-1">
+            <p style={{ whiteSpace: 'pre-wrap' }}>{entryToView?.content}</p>
           </div>
         </DialogContent>
       </Dialog>
