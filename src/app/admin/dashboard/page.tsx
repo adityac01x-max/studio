@@ -9,6 +9,10 @@ import {
   Shield,
   Users,
   PieChart as PieChartIcon,
+  Siren,
+  Library,
+  BookUser,
+  Calendar,
 } from 'lucide-react';
 import {
   Card,
@@ -44,6 +48,8 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
 
 const anonymizedTrendsData = [
   { month: 'Jan', avgPhq9: 12, avgGad7: 10 },
@@ -152,6 +158,48 @@ export default function AdminDashboardPage() {
           </CardContent>
         </Card>
       </div>
+      
+      <Card>
+        <CardHeader>
+          <CardTitle>Quick Actions</CardTitle>
+          <CardDescription>
+            Manage platform features and users.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4 grid-cols-2 md:grid-cols-3">
+          <Link href="/admin/sos" passHref>
+            <Button variant="outline" className="w-full h-20 flex-col gap-2">
+              <Siren className="w-6 h-6 text-primary" />
+              <span>SOS & High-Risk</span>
+            </Button>
+          </Link>
+          <Link href="/admin/resources" passHref>
+            <Button variant="outline" className="w-full h-20 flex-col gap-2">
+              <Library className="w-6 h-6 text-primary" />
+              <span>Manage Resources</span>
+            </Button>
+          </Link>
+          <Link href="/admin/peers" passHref>
+            <Button variant="outline" className="w-full h-20 flex-col gap-2">
+              <Users className="w-6 h-6 text-primary" />
+              <span>Manage Peers</span>
+            </Button>
+          </Link>
+          <Link href="/admin/counselors" passHref>
+            <Button variant="outline" className="w-full h-20 flex-col gap-2">
+              <BookUser className="w-6 h-6 text-primary" />
+              <span>Manage Counselors</span>
+            </Button>
+          </Link>
+           <Link href="/admin/schedule" passHref>
+            <Button variant="outline" className="w-full h-20 flex-col gap-2">
+              <Calendar className="w-6 h-6 text-primary" />
+              <span>Manage Schedule</span>
+            </Button>
+          </Link>
+        </CardContent>
+      </Card>
+
 
       <Card>
         <CardHeader>

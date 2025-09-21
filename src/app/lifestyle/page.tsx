@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Bed, Footprints, HeartPulse, Brain, Palette, Sprout, ArrowRight, Wind, Droplets, Flame, Mountain } from 'lucide-react';
+import { Bed, Footprints, HeartPulse, Brain, Palette, Sprout, ArrowRight, Wind, Droplets, Flame, Mountain, Activity, BarChart2, NotebookText } from 'lucide-react';
 import Link from 'next/link';
 import { Progress } from '@/components/ui/progress';
 
@@ -73,61 +73,34 @@ export default function LifestyleDashboardPage() {
         </CardContent>
       </Card>
       
-       <div>
-        <h2 className="text-2xl font-bold font-headline mb-4">
-          Explore Activities
-        </h2>
-        <div className="grid gap-6 md:grid-cols-3">
-          <Card>
-            <CardHeader>
-              <Brain className="w-8 h-8 text-primary mb-2" />
-              <CardTitle>Mindful Activities</CardTitle>
-              <CardDescription>
-                Engage in games and creative exercises to calm your mind.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Link href="/lifestyle/activities" passHref>
-                <Button variant="ghost" className="text-primary p-0">
-                  Start Activities <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <Sprout className="w-8 h-8 text-primary mb-2" />
-              <CardTitle>Virtual Greenhouse</CardTitle>
-              <CardDescription>
-                Cultivate digital plants and learn about the benefits of gardening.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Link href="/lifestyle/greenhouse" passHref>
-                <Button variant="ghost" className="text-primary p-0">
-                  Visit Greenhouse <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-           <Card>
-            <CardHeader>
-              <Footprints className="w-8 h-8 text-primary mb-2" />
-              <CardTitle>Mood-Based Exercises</CardTitle>
-              <CardDescription>
-                Find the right physical activity to match and improve your mood.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Link href="/lifestyle/exercises" passHref>
-                <Button variant="ghost" className="text-primary p-0">
-                  Find Exercises <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+       <Card>
+        <CardHeader>
+          <CardTitle>Quick Actions</CardTitle>
+          <CardDescription>
+            Explore activities for your mind and body.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4 grid-cols-2 md:grid-cols-3">
+          <Link href="/lifestyle/activities" passHref>
+            <Button variant="outline" className="w-full h-20 flex-col gap-2">
+              <Brain className="w-6 h-6 text-primary" />
+              <span>Mindful Activities</span>
+            </Button>
+          </Link>
+          <Link href="/lifestyle/exercises" passHref>
+            <Button variant="outline" className="w-full h-20 flex-col gap-2">
+              <Activity className="w-6 h-6 text-primary" />
+              <span>Mood-Based Exercises</span>
+            </Button>
+          </Link>
+          <Link href="/lifestyle/greenhouse" passHref>
+            <Button variant="outline" className="w-full h-20 flex-col gap-2">
+              <Sprout className="w-6 h-6 text-primary" />
+              <span>Virtual Greenhouse</span>
+            </Button>
+          </Link>
+        </CardContent>
+      </Card>
 
     </div>
   );
