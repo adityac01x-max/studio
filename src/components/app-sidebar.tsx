@@ -52,19 +52,26 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { useSidebar } from './ui/sidebar';
 import { ThemeToggle } from './theme-toggle';
 
-const navItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: Home },
-  { href: '/survey', label: 'Surveys', icon: FileText },
-  { href: '/analysis', label: 'Mood to Content Mapping', icon: BarChart2 },
-  { href: '/consultation', label: 'Consultation', icon: Users },
-  { href: '/resources', label: 'Resource Hub', icon: Library },
-  { href: '/schedule', label: 'My Schedule', icon: Calendar },
-  { href: '/chat', label: 'AI First-Aid', icon: Bot },
-  { href: '/progress', label: 'My Progress', icon: Trophy },
-  { href: '/health-report', label: 'Health Report', icon: Activity },
-  { href: '/projective-tests', label: 'Projective Tests', icon: FileWarning },
-  { href: '/journal', label: 'Memory Journal', icon: NotebookText },
-];
+const studentNavItems = {
+    'Core Tools': [
+      { href: '/dashboard', label: 'Dashboard', icon: Home },
+      { href: '/survey', label: 'Surveys', icon: FileText },
+      { href: '/analysis', label: 'Analysis', icon: BarChart2 },
+      { href: '/projective-tests', label: 'Projective Tests', icon: FileWarning },
+    ],
+    'My Journey': [
+      { href: '/health-report', label: 'Health Report', icon: Activity },
+      { href: '/progress', label: 'My Progress', icon: Trophy },
+      { href: '/journal', label: 'Memory Journal', icon: NotebookText },
+    ],
+    'Support': [
+       { href: '/resources', label: 'Resource Hub', icon: Library },
+      { href: '/consultation', label: 'Consultation', icon: Users },
+      { href: '/schedule', label: 'My Schedule', icon: Calendar },
+      { href: '/chat', label: 'AI First-Aid', icon: Bot },
+    ]
+}
+
 
 const adminNavItems = [
   { href: '/admin/dashboard', label: 'Admin Dashboard', icon: Shield },
@@ -130,12 +137,7 @@ export function AppSidebar() {
   
   const isAdminRoute = pathname.startsWith('/admin');
   const isProfessionalRoute = pathname.startsWith('/professional');
-
-  const studentNavItems = [
-    ...navItems,
-  ]
-
-  const currentNavItems = isAdminRoute ? adminNavItems : isProfessionalRoute ? professionalNavItems : studentNavItems;
+  
   const currentUser = isAdminRoute
     ? { name: 'Admin User', email: 'admin@college.ac.in', avatarSeed: 'admin' }
     : isProfessionalRoute
@@ -163,9 +165,10 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarMenu>
-          {currentNavItems.map((item) => (
+          {isAdminRoute ? (
+            adminNavItems.map((item) => (
             <SidebarMenuItem key={item.href}>
-              <Link href={item.href} passHref>
+              <Link href={item.href} legacyBehavior passHref>
                 <SidebarMenuButton
                   asChild
                   isActive={pathname === item.href}
@@ -174,14 +177,58 @@ export function AppSidebar() {
                     className: 'group-data-[collapsible=icon]:block hidden',
                   }}
                 >
-                  <>
+                  <a>
                     <item.icon />
                     <span>{item.label}</span>
-                  </>
+                  </a>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
-          ))}
+          ))
+          ) : isProfessionalRoute ? (
+             professionalNavItems.map((item) => (
+            <SidebarMenuItem key={item.href}>
+              <Link href={item.href} legacyBehavior passHref>
+                <SidebarMenuButton
+                  asChild
+                  isActive={pathname === item.href}
+                  tooltip={{
+                    children: item.label,
+                    className: 'group-data-[collapsible=icon]:block hidden',
+                  }}
+                >
+                  <a>
+                    <item.icon />
+                    <span>{item.label}</span>
+                  </a>
+                </SidebarMenuButton>
+              </Link>
+            </SidebarMenuItem>
+          ))
+          ) : (
+            Object.entries(studentNavItems).map(([groupName, items]) => (
+                <SidebarGroup key={groupName} className="p-0">
+                    <SidebarGroupLabel>{groupName}</SidebarGroupLabel>
+                    {items.map((item) => (
+                        <SidebarMenuItem key={item.href}>
+                        <Link href={item.href}>
+                            <SidebarMenuButton
+                            isActive={pathname === item.href}
+                             size="lg"
+                            tooltip={{
+                                children: item.label,
+                                className: 'group-data-[collapsible=icon]:block hidden',
+                            }}
+                            >
+                            <item.icon />
+                            <span>{item.label}</span>
+                            </SidebarMenuButton>
+                        </Link>
+                        </SidebarMenuItem>
+                    ))}
+                </SidebarGroup>
+            ))
+          )}
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>
