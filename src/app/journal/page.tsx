@@ -110,7 +110,6 @@ export default function JournalPage() {
   const gridRef = useRef(null);
 
   useEffect(() => {
-    // This code runs only on the client, after the component mounts.
     setIsLoading(true);
     try {
       const storedEntries = localStorage.getItem('journalEntries');
@@ -128,15 +127,12 @@ export default function JournalPage() {
   }, []);
 
   useEffect(() => {
-    // This effect runs whenever `entries` changes, to save to localStorage.
-    // It will not run on the initial server render because isLoading is true.
     if (!isLoading) {
         localStorage.setItem('journalEntries', JSON.stringify(entries));
     }
   }, [entries, isLoading]);
 
   useEffect(() => {
-    // This effect initializes Masonry after entries are loaded and rendered.
     if (!isLoading && gridRef.current && entries.length > 0) {
         const msnry = new Masonry(gridRef.current, {
             itemSelector: '.grid-item',
@@ -144,6 +140,14 @@ export default function JournalPage() {
             percentPosition: true,
             gutter: 16,
         });
+
+        // This is important to re-layout items after images have loaded
+        const images = gridRef.current.querySelectorAll('img');
+        images.forEach(img => {
+            img.addEventListener('load', () => msnry.layout());
+        });
+
+        msnry.layout();
 
         return () => msnry.destroy?.();
     }
