@@ -3,7 +3,14 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
-import { Calendar as CalendarIcon, Loader2, MapPin, Search } from 'lucide-react';
+import {
+  Calendar as CalendarIcon,
+  Loader2,
+  MapPin,
+  Search,
+  MessageSquare,
+  Video,
+} from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -15,6 +22,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from '@/components/ui/card';
 import {
   Form,
@@ -46,6 +54,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Checkbox } from './ui/checkbox';
 import { Input } from './ui/input';
+import Link from 'next/link';
 
 const consultationSchema = z.object({
   date: z.date({
@@ -82,6 +91,21 @@ const pastSessions = [
     counselor: 'Rohan Kumar (Peer)',
     type: 'Peer Support',
     status: 'Completed',
+  },
+];
+
+const counselors = [
+  {
+    id: 'counselor1',
+    name: 'Dr. Sunita Sharma',
+    specialty: 'Clinical Psychology',
+    avatar: 'https://picsum.photos/seed/counselor1/100/100',
+  },
+  {
+    id: 'counselor2',
+    name: 'Dr. Rohan Mehra',
+    specialty: 'Anxiety & Depression',
+    avatar: 'https://picsum.photos/seed/counselor2/100/100',
   },
 ];
 
@@ -288,6 +312,7 @@ const CounselorScheduler = ({ title }: { title: string }) => {
   );
 };
 
+
 export function CounselorConsultation() {
   const [useGeolocation, setUseGeolocation] = useState(false);
   const { toast } = useToast();
@@ -296,8 +321,7 @@ export function CounselorConsultation() {
     if (!useGeolocation) {
       toast({
         title: 'Geolocation Disabled',
-        description:
-          'Please agree to the terms to enable geolocation.',
+        description: 'Please agree to the terms to enable geolocation.',
       });
       return;
     }
@@ -316,85 +340,105 @@ export function CounselorConsultation() {
       </TabsList>
 
       <TabsContent value="peer" className="space-y-6">
-        <div className="grid gap-8 md:grid-cols-2">
-          <div>
-            <h3 className="text-xl font-bold font-headline mb-4">
-              Connect with a Peer Supporter
-            </h3>
-            <p className="text-muted-foreground mb-6">
-              Our peer supporters are trained students who can offer a listening
-              ear and share their own experiences. It's a great first step if
-              you're not sure where to start.
-            </p>
-            <div className="space-y-4">
-              {peerSupporters.map((peer) => (
-                <Card key={peer.id}>
-                  <CardContent className="pt-6 flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <Avatar className="h-12 w-12">
-                        <AvatarImage src={peer.avatar} />
-                        <AvatarFallback>
-                          {peer.name.charAt(0)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="font-bold">{peer.name}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {peer.year}
-                        </p>
-                      </div>
-                    </div>
-                    <Button>Schedule</Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-          <CounselorScheduler title="Peer Supporter" />
+        <h3 className="text-xl font-bold font-headline">
+          Connect with a Peer Supporter
+        </h3>
+        <p className="text-muted-foreground">
+          Our peer supporters are trained students who can offer a listening
+          ear and share their own experiences. It's a great first step if
+          you're not sure where to start.
+        </p>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {peerSupporters.map((peer) => (
+            <Card key={peer.id} className="flex flex-col">
+              <CardHeader>
+                <div className="flex flex-col items-center text-center gap-4">
+                  <Avatar className="h-20 w-20">
+                    <AvatarImage src={peer.avatar} />
+                    <AvatarFallback>{peer.name.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="font-bold text-lg">{peer.name}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {peer.year}
+                    </p>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="flex-1">
+                <Badge variant="outline" className="w-full justify-center">
+                  Available: {peer.availability}
+                </Badge>
+              </CardContent>
+              <CardFooter className="flex flex-col gap-2">
+                <Link
+                  href={`/student-chat?professionalId=${peer.id}`}
+                  className="w-full"
+                >
+                  <Button variant="outline" className="w-full">
+                    <MessageSquare className="mr-2" /> Chat
+                  </Button>
+                </Link>
+                <Link
+                  href={`/student-video?professionalId=${peer.id}`}
+                  className="w-full"
+                >
+                  <Button className="w-full">
+                    <Video className="mr-2" /> Video Call
+                  </Button>
+                </Link>
+              </CardFooter>
+            </Card>
+          ))}
         </div>
       </TabsContent>
 
       <TabsContent value="counselor" className="space-y-6">
-        <div className="grid gap-8 md:grid-cols-2">
-          <CounselorScheduler title="College Counselor" />
-          <Card>
-            <CardHeader>
-              <CardTitle className="font-headline text-xl">
-                Your Session History
-              </CardTitle>
-              <CardDescription>
-                Review your past appointments and track your progress.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Date</TableHead>
-                    <TableHead>With</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {pastSessions.map((session) => (
-                    <TableRow key={session.id}>
-                      <TableCell>
-                        {format(new Date(session.date), 'MMM d, yyyy')}
-                      </TableCell>
-                      <TableCell>{session.counselor}</TableCell>
-                      <TableCell>
-                        <Badge variant="outline">{session.type}</Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge>{session.status}</Badge>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+        <h3 className="text-xl font-bold font-headline">
+          Connect with a College Counselor
+        </h3>
+        <p className="text-muted-foreground">
+          Book a confidential session with a professional on-campus counselor.
+        </p>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {counselors.map((counselor) => (
+            <Card key={counselor.id} className="flex flex-col">
+              <CardHeader>
+                <div className="flex flex-col items-center text-center gap-4">
+                  <Avatar className="h-20 w-20">
+                    <AvatarImage src={counselor.avatar} />
+                    <AvatarFallback>
+                      {counselor.name.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <p className="font-bold text-lg">{counselor.name}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {counselor.specialty}
+                    </p>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardFooter className="flex flex-col gap-2">
+                <Link
+                  href={`/student-chat?professionalId=${counselor.id}`}
+                  className="w-full"
+                >
+                  <Button variant="outline" className="w-full">
+                    <MessageSquare className="mr-2" /> Chat
+                  </Button>
+                </Link>
+                <Link
+                  href={`/student-video?professionalId=${counselor.id}`}
+                  className="w-full"
+                >
+                  <Button className="w-full">
+                    <Video className="mr-2" /> Video Call
+                  </Button>
+                </Link>
+              </CardFooter>
+            </Card>
+          ))}
         </div>
       </TabsContent>
 
@@ -419,8 +463,8 @@ export function CounselorConsultation() {
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
                 I agree to use my device's location to find nearby
-                professionals. This is a one-time search and my location will not be
-                stored.
+                professionals. This is a one-time search and my location will
+                not be stored.
               </label>
             </div>
             <div className="flex gap-2">
@@ -460,3 +504,5 @@ export function CounselorConsultation() {
     </Tabs>
   );
 }
+
+    

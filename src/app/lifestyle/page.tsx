@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Bed, Footprints, HeartPulse, Brain, Palette, Sprout, ArrowRight, Wind, Droplets, Flame, Mountain, Activity, BarChart2, NotebookText, Home, Gamepad2, Bike, Bot } from 'lucide-react';
+import { Bed, Footprints, HeartPulse, Brain, Palette, Sprout, ArrowRight, Wind, Droplets, Flame, Mountain, Activity, BarChart2, NotebookText, Home, Gamepad2, Bike, Bot, Users } from 'lucide-react';
 import Link from 'next/link';
 import { Progress } from '@/components/ui/progress';
 
@@ -71,6 +71,12 @@ export default function LifestyleDashboardPage() {
               <span>Greenhouse</span>
             </Button>
           </Link>
+           <Link href="/lifestyle/consultation" passHref>
+            <Button variant="outline" className="w-full h-20 flex-col gap-2">
+              <Users className="w-6 h-6 text-primary" />
+              <span>Consultation</span>
+            </Button>
+          </Link>
           <Link href="/lifestyle/ai-chat" passHref>
             <Button variant="outline" className="w-full h-20 flex-col gap-2">
               <Bot className="w-6 h-6 text-primary" />
@@ -110,3 +116,5 @@ export default function LifestyleDashboardPage() {
     </div>
   );
 }
+
+    
