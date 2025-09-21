@@ -122,12 +122,6 @@ export default function StudentSignupPage() {
             <p className="text-xs text-muted-foreground">
                 By creating an account, you agree to our Terms of Service and Privacy Policy.
             </p>
-             <p className="text-sm">
-                Already have an account?{' '}
-                <Link href="/student-login" className="font-semibold text-primary hover:underline">
-                    Login
-                </Link>
-            </p>
         </CardFooter>
       </Card>
       </div>
