@@ -35,6 +35,9 @@ import {
   Trophy,
   Newspaper,
   TrendingUp,
+  Home,
+  NotebookText,
+  Milestone,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
@@ -186,6 +189,24 @@ export default function LoveAndSelfPage() {
         </p>
       </div>
 
+       <Card className="bg-card/80 backdrop-blur-sm">
+            <CardHeader>
+                <CardTitle>Quick Actions</CardTitle>
+            </CardHeader>
+            <CardContent className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <Link href="/love-and-self/questionnaires" passHref><Button variant="outline" className="w-full flex-col h-20"><ClipboardList /><span className="mt-1 text-xs">Questionnaires</span></Button></Link>
+                <Link href="/love-and-self/mood-mapping" passHref><Button variant="outline" className="w-full flex-col h-20"><BarChart2 /><span className="mt-1 text-xs">Mood Map</span></Button></Link>
+                <Link href="/love-and-self/progress" passHref><Button variant="outline" className="w-full flex-col h-20"><Trophy /><span className="mt-1 text-xs">My Progress</span></Button></Link>
+                <Link href="/love-and-self/schedule" passHref><Button variant="outline" className="w-full flex-col h-20"><Calendar /><span className="mt-1 text-xs">My Schedule</span></Button></Link>
+                <Link href="/journal" passHref><Button variant="outline" className="w-full flex-col h-20"><NotebookText /><span className="mt-1 text-xs">My Journal</span></Button></Link>
+                <Link href="/love-and-self/resources" passHref><Button variant="outline" className="w-full flex-col h-20"><Library /><span className="mt-1 text-xs">Resource Hub</span></Button></Link>
+                <Link href="/love-and-self/education" passHref><Button variant="outline" className="w-full flex-col h-20"><BookOpen /><span className="mt-1 text-xs">Education</span></Button></Link>
+                <Link href="/love-and-self/consultation" passHref><Button variant="outline" className="w-full flex-col h-20"><Users /><span className="mt-1 text-xs">Consultation</span></Button></Link>
+                <Link href="/love-and-self/ai-chat" passHref><Button variant="outline" className="w-full flex-col h-20"><Bot /><span className="mt-1 text-xs">AI Chat</span></Button></Link>
+                <Link href="/love-and-self/be-your-own-voice" passHref><Button variant="outline" className="w-full flex-col h-20"><Milestone /><span className="mt-1 text-xs">Be Your Own Voice</span></Button></Link>
+            </CardContent>
+        </Card>
+
        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
                  <Card className="bg-card/80 backdrop-blur-sm">
@@ -268,19 +289,6 @@ export default function LoveAndSelfPage() {
                     </CardContent>
                 </Card>
 
-                 <Card className="bg-card/80 backdrop-blur-sm">
-                    <CardHeader>
-                        <CardTitle>Quick Actions</CardTitle>
-                    </CardHeader>
-                    <CardContent className="grid grid-cols-2 gap-2">
-                        <Link href="/love-and-self/consultation" passHref><Button variant="outline" className="w-full flex-col h-16"><Users /><span className="mt-1 text-xs">Consult</span></Button></Link>
-                        <Link href="/love-and-self/resources" passHref><Button variant="outline" className="w-full flex-col h-16"><Library /><span className="mt-1 text-xs">Resource Hub</span></Button></Link>
-                        <Link href="/love-and-self/education" passHref><Button variant="outline" className="w-full flex-col h-16"><BookOpen /><span className="mt-1 text-xs">Education</span></Button></Link>
-                        <Link href="/love-and-self/mood-mapping" passHref><Button variant="outline" className="w-full flex-col h-16"><BarChart2 /><span className="mt-1 text-xs">Mood Map</span></Button></Link>
-                        <Link href="/love-and-self/ai-chat" passHref><Button variant="outline" className="w-full flex-col h-16"><Bot /><span className="mt-1 text-xs">AI Chat</span></Button></Link>
-                        <Link href="/love-and-self/questionnaires" passHref><Button variant="outline" className="w-full flex-col h-16"><ClipboardList /><span className="mt-1 text-xs">Questionnaires</span></Button></Link>
-                    </CardContent>
-                </Card>
                  <Card className="bg-card/80 backdrop-blur-sm">
                     <CardHeader>
                         <CardTitle>Upcoming Community Events</CardTitle>

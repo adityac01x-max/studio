@@ -119,6 +119,51 @@ export default function ProfessionalDashboardPage() {
         </p>
       </div>
 
+       <Card>
+        <CardHeader>
+          <CardTitle>Quick Actions</CardTitle>
+          <CardDescription>Access your main tools and features.</CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4 grid-cols-2 md:grid-cols-4">
+          <Link href="/professional/students" passHref>
+            <Button variant="outline" className="w-full h-20 flex-col gap-2">
+              <Users className="w-6 h-6 text-primary" />
+              <span>Manage Students</span>
+            </Button>
+          </Link>
+          <Link href="/professional/schedule" passHref>
+            <Button variant="outline" className="w-full h-20 flex-col gap-2">
+              <Calendar className="w-6 h-6 text-primary" />
+              <span>My Schedule</span>
+            </Button>
+          </Link>
+          <Link href="/professional/chat" passHref>
+            <Button variant="outline" className="w-full h-20 flex-col gap-2">
+              <MessageSquare className="w-6 h-6 text-primary" />
+              <span>Student Chat</span>
+            </Button>
+          </Link>
+          <Link href="/professional/video" passHref>
+            <Button variant="outline" className="w-full h-20 flex-col gap-2">
+              <Video className="w-6 h-6 text-primary" />
+              <span>Video Calls</span>
+            </Button>
+          </Link>
+          <Link href="/professional/questionnaires" passHref>
+            <Button variant="outline" className="w-full h-20 flex-col gap-2">
+              <ClipboardList className="w-6 h-6 text-primary" />
+              <span>Questionnaires</span>
+            </Button>
+          </Link>
+          <Link href="/professional/rooms" passHref>
+            <Button variant="outline" className="w-full h-20 flex-col gap-2">
+              <Milestone className="w-6 h-6 text-primary" />
+              <span>Community Rooms</span>
+            </Button>
+          </Link>
+        </CardContent>
+      </Card>
+
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader>
@@ -167,51 +212,6 @@ export default function ProfessionalDashboardPage() {
           </CardContent>
         </Card>
       </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
-          <CardDescription>Access your main tools and features.</CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-4 grid-cols-2 md:grid-cols-3">
-          <Link href="/professional/students" passHref>
-            <Button variant="outline" className="w-full h-20 flex-col gap-2">
-              <Users className="w-6 h-6 text-primary" />
-              <span>Manage Students</span>
-            </Button>
-          </Link>
-          <Link href="/professional/schedule" passHref>
-            <Button variant="outline" className="w-full h-20 flex-col gap-2">
-              <Calendar className="w-6 h-6 text-primary" />
-              <span>My Schedule</span>
-            </Button>
-          </Link>
-          <Link href="/professional/chat" passHref>
-            <Button variant="outline" className="w-full h-20 flex-col gap-2">
-              <MessageSquare className="w-6 h-6 text-primary" />
-              <span>Student Chat</span>
-            </Button>
-          </Link>
-          <Link href="/professional/video" passHref>
-            <Button variant="outline" className="w-full h-20 flex-col gap-2">
-              <Video className="w-6 h-6 text-primary" />
-              <span>Video Calls</span>
-            </Button>
-          </Link>
-          <Link href="/professional/questionnaires" passHref>
-            <Button variant="outline" className="w-full h-20 flex-col gap-2">
-              <ClipboardList className="w-6 h-6 text-primary" />
-              <span>Questionnaires</span>
-            </Button>
-          </Link>
-          <Link href="/professional/rooms" passHref>
-            <Button variant="outline" className="w-full h-20 flex-col gap-2">
-              <Milestone className="w-6 h-6 text-primary" />
-              <span>Community Rooms</span>
-            </Button>
-          </Link>
-        </CardContent>
-      </Card>
 
       <div className="grid gap-6 md:grid-cols-3">
         <Card className="md:col-span-2">

@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Bed, Footprints, HeartPulse, Brain, Palette, Sprout, ArrowRight, Wind, Droplets, Flame, Mountain, Activity, BarChart2, NotebookText } from 'lucide-react';
+import { Bed, Footprints, HeartPulse, Brain, Palette, Sprout, ArrowRight, Wind, Droplets, Flame, Mountain, Activity, BarChart2, NotebookText, Home, Gamepad2, Bike } from 'lucide-react';
 import Link from 'next/link';
 import { Progress } from '@/components/ui/progress';
 
@@ -45,6 +45,35 @@ export default function LifestyleDashboardPage() {
         </p>
       </div>
 
+       <Card>
+        <CardHeader>
+          <CardTitle>Quick Actions</CardTitle>
+          <CardDescription>
+            Explore activities for your mind and body.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4 grid-cols-2 md:grid-cols-4">
+          <Link href="/lifestyle/activities" passHref>
+            <Button variant="outline" className="w-full h-20 flex-col gap-2">
+              <Gamepad2 className="w-6 h-6 text-primary" />
+              <span>Activities</span>
+            </Button>
+          </Link>
+          <Link href="/lifestyle/exercises" passHref>
+            <Button variant="outline" className="w-full h-20 flex-col gap-2">
+              <Bike className="w-6 h-6 text-primary" />
+              <span>Exercises</span>
+            </Button>
+          </Link>
+          <Link href="/lifestyle/greenhouse" passHref>
+            <Button variant="outline" className="w-full h-20 flex-col gap-2">
+              <Sprout className="w-6 h-6 text-primary" />
+              <span>Greenhouse</span>
+            </Button>
+          </Link>
+        </CardContent>
+      </Card>
+
        <div className="grid gap-6 md:grid-cols-3">
           <HealthStatCard href="/lifestyle" icon={<Bed className="w-6 h-6 text-blue-500" />} title="Sleep" value={6} goal={8} unit="hrs" color="bg-blue-500" />
           <HealthStatCard href="/lifestyle" icon={<Footprints className="w-6 h-6 text-green-500" />} title="Steps" value={4503} goal={10000} unit="steps" color="bg-green-500" />
@@ -72,36 +101,6 @@ export default function LifestyleDashboardPage() {
             ))}
         </CardContent>
       </Card>
-      
-       <Card>
-        <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
-          <CardDescription>
-            Explore activities for your mind and body.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-4 grid-cols-2 md:grid-cols-3">
-          <Link href="/lifestyle/activities" passHref>
-            <Button variant="outline" className="w-full h-20 flex-col gap-2">
-              <Brain className="w-6 h-6 text-primary" />
-              <span>Mindful Activities</span>
-            </Button>
-          </Link>
-          <Link href="/lifestyle/exercises" passHref>
-            <Button variant="outline" className="w-full h-20 flex-col gap-2">
-              <Activity className="w-6 h-6 text-primary" />
-              <span>Mood-Based Exercises</span>
-            </Button>
-          </Link>
-          <Link href="/lifestyle/greenhouse" passHref>
-            <Button variant="outline" className="w-full h-20 flex-col gap-2">
-              <Sprout className="w-6 h-6 text-primary" />
-              <span>Virtual Greenhouse</span>
-            </Button>
-          </Link>
-        </CardContent>
-      </Card>
-
     </div>
   );
 }

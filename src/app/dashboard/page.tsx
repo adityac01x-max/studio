@@ -19,6 +19,7 @@ import {
   Users,
   NotebookText,
   Library,
+  FileWarning,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -137,6 +138,78 @@ export default function DashboardPage() {
           Here's your mental wellness overview for today.
         </p>
       </div>
+
+       <Card>
+        <CardHeader>
+          <CardTitle>Quick Actions</CardTitle>
+          <CardDescription>
+            Explore your tools and support options.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-4 grid-cols-2 md:grid-cols-4">
+          <Link href="/survey" passHref>
+            <Button variant="outline" className="w-full h-20 flex-col gap-2">
+              <FileText className="w-6 h-6 text-primary" />
+              <span>Surveys</span>
+            </Button>
+          </Link>
+          <Link href="/analysis" passHref>
+            <Button variant="outline" className="w-full h-20 flex-col gap-2">
+              <BarChart2 className="w-6 h-6 text-primary" />
+              <span>Analysis</span>
+            </Button>
+          </Link>
+           <Link href="/projective-tests" passHref>
+            <Button variant="outline" className="w-full h-20 flex-col gap-2">
+              <FileWarning className="w-6 h-6 text-primary" />
+              <span>Projective Tests</span>
+            </Button>
+          </Link>
+          <Link href="/health-report" passHref>
+            <Button variant="outline" className="w-full h-20 flex-col gap-2">
+              <Activity className="w-6 h-6 text-primary" />
+              <span>Health Report</span>
+            </Button>
+          </Link>
+          <Link href="/progress" passHref>
+            <Button variant="outline" className="w-full h-20 flex-col gap-2">
+              <Trophy className="w-6 h-6 text-primary" />
+              <span>My Progress</span>
+            </Button>
+          </Link>
+          <Link href="/journal" passHref>
+            <Button variant="outline" className="w-full h-20 flex-col gap-2">
+              <NotebookText className="w-6 h-6 text-primary" />
+              <span>My Journal</span>
+            </Button>
+          </Link>
+          <Link href="/resources" passHref>
+            <Button variant="outline" className="w-full h-20 flex-col gap-2">
+              <Library className="w-6 h-6 text-primary" />
+              <span>Resource Hub</span>
+            </Button>
+          </Link>
+          <Link href="/consultation" passHref>
+            <Button variant="outline" className="w-full h-20 flex-col gap-2">
+              <Users className="w-6 h-6 text-primary" />
+              <span>Consultation</span>
+            </Button>
+          </Link>
+          <Link href="/schedule" passHref>
+            <Button variant="outline" className="w-full h-20 flex-col gap-2">
+              <Calendar className="w-6 h-6 text-primary" />
+              <span>My Schedule</span>
+            </Button>
+          </Link>
+          <Link href="/chat" passHref>
+            <Button variant="outline" className="w-full h-20 flex-col gap-2">
+              <Bot className="w-6 h-6 text-primary" />
+              <span>AI First-Aid</span>
+            </Button>
+          </Link>
+        </CardContent>
+      </Card>
+
       <div className="grid gap-6 md:grid-cols-3">
         <Card className="md:col-span-2">
           <CardHeader>
@@ -216,53 +289,6 @@ export default function DashboardPage() {
             <SmileIcon className="w-8 h-8 text-green-500" />
             <span className="text-sm font-medium">Good</span>
           </Button>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Quick Actions</CardTitle>
-          <CardDescription>
-            Explore your tools and support options.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="grid gap-4 grid-cols-2 md:grid-cols-3">
-          <Link href="/survey" passHref>
-            <Button variant="outline" className="w-full h-20 flex-col gap-2">
-              <FileText className="w-6 h-6 text-primary" />
-              <span>Take a Survey</span>
-            </Button>
-          </Link>
-          <Link href="/analysis" passHref>
-            <Button variant="outline" className="w-full h-20 flex-col gap-2">
-              <BarChart2 className="w-6 h-6 text-primary" />
-              <span>My Analysis</span>
-            </Button>
-          </Link>
-          <Link href="/journal" passHref>
-            <Button variant="outline" className="w-full h-20 flex-col gap-2">
-              <NotebookText className="w-6 h-6 text-primary" />
-              <span>My Journal</span>
-            </Button>
-          </Link>
-          <Link href="/resources" passHref>
-            <Button variant="outline" className="w-full h-20 flex-col gap-2">
-              <Library className="w-6 h-6 text-primary" />
-              <span>Resource Hub</span>
-            </Button>
-          </Link>
-          <Link href="/consultation" passHref>
-            <Button variant="outline" className="w-full h-20 flex-col gap-2">
-              <Users className="w-6 h-6 text-primary" />
-              <span>Consultation</span>
-            </Button>
-          </Link>
-          <Link href="/chat" passHref>
-            <Button variant="outline" className="w-full h-20 flex-col gap-2">
-              <Bot className="w-6 h-6 text-primary" />
-              <span>AI First-Aid</span>
-            </Button>
-          </Link>
         </CardContent>
       </Card>
     </div>
