@@ -6,8 +6,32 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
-import { Bot, Grip, LucideIcon } from 'lucide-react';
+import {
+  Bot,
+  Grip,
+  LucideIcon,
+  FileText,
+  BarChart2,
+  FileWarning,
+  Activity,
+  Trophy,
+  NotebookText,
+  Library,
+  Users,
+  Calendar,
+  Shield,
+  Siren,
+  BookUser,
+  Briefcase,
+  MessageSquare,
+  Video,
+  ClipboardList,
+  Milestone,
+  Home,
+  BookOpen,
+} from 'lucide-react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 type ActionItem = {
   href: string;
@@ -20,11 +44,155 @@ type ActionGroup = {
   actions: ActionItem[];
 };
 
-interface QuickActionBarProps {
-  actionGroups: ActionGroup[];
-}
+const studentActionGroups: ActionGroup[] = [
+  {
+    title: 'Core Tools',
+    actions: [
+      { href: '/survey', label: 'Surveys', icon: FileText },
+      { href: '/analysis', label: 'Analysis', icon: BarChart2 },
+      {
+        href: '/projective-tests',
+        label: 'Projective Tests',
+        icon: FileWarning,
+      },
+    ],
+  },
+  {
+    title: 'My Journey',
+    actions: [
+      { href: '/health-report', label: 'Health Report', icon: Activity },
+      { href: '/progress', label: 'My Progress', icon: Trophy },
+      { href: '/journal', label: 'My Journal', icon: NotebookText },
+    ],
+  },
+  {
+    title: 'Support',
+    actions: [
+      { href: '/resources', label: 'Resource Hub', icon: Library },
+      { href: '/consultation', label: 'Consultation', icon: Users },
+      { href: '/schedule', label: 'My Schedule', icon: Calendar },
+      { href: '/chat', label: 'AI First-Aid', icon: Bot },
+    ],
+  },
+];
 
-export function QuickActionBar({ actionGroups }: QuickActionBarProps) {
+const adminActionGroups: ActionGroup[] = [
+  {
+    title: 'Management',
+    actions: [
+      { href: '/admin/dashboard', label: 'Admin Dashboard', icon: Shield },
+      { href: '/admin/sos', label: 'SOS & High-Risk', icon: Siren },
+      { href: '/admin/resources', label: 'Manage Resources', icon: Library },
+      { href: '/admin/peers', label: 'Manage Peers', icon: Users },
+      { href: '/admin/counselors', label: 'Manage Counselors', icon: BookUser },
+      { href: '/admin/schedule', label: 'Manage Schedule', icon: Calendar },
+    ],
+  },
+];
+
+const professionalActionGroups: ActionGroup[] = [
+  {
+    title: 'Professional Tools',
+    actions: [
+      { href: '/professional/dashboard', label: 'Dashboard', icon: Briefcase },
+      { href: '/professional/students', label: 'Students', icon: Users },
+      { href: '/professional/schedule', label: 'Schedule', icon: Calendar },
+      { href: '/professional/chat', label: 'Chat', icon: MessageSquare },
+      { href: '/professional/video', label: 'Video Calls', icon: Video },
+      {
+        href: '/professional/questionnaires',
+        label: 'Questionnaires',
+        icon: ClipboardList,
+      },
+      {
+        href: '/professional/rooms',
+        label: 'Community Rooms',
+        icon: Milestone,
+      },
+    ],
+  },
+];
+
+const loveAndSelfActionGroups: ActionGroup[] = [
+  {
+    title: 'Core Tools',
+    actions: [
+      { href: '/love-and-self', label: 'Dashboard', icon: Home },
+      {
+        href: '/love-and-self/questionnaires',
+        label: 'Questionnaires',
+        icon: ClipboardList,
+      },
+      {
+        href: '/love-and-self/mood-mapping',
+        label: 'Mood Mapping',
+        icon: BarChart2,
+      },
+    ],
+  },
+  {
+    title: 'My Journey',
+    actions: [
+      { href: '/love-and-self/progress', label: 'My Progress', icon: Trophy },
+      {
+        href: '/love-and-self/schedule',
+        label: 'My Schedule',
+        icon: Calendar,
+      },
+      { href: '/journal', label: 'My Journal', icon: NotebookText },
+    ],
+  },
+  {
+    title: 'Support',
+    actions: [
+      { href: '/love-and-self/resources', label: 'Resource Hub', icon: Library },
+      {
+        href: '/love-and-self/education',
+        label: 'Education Center',
+        icon: BookOpen,
+      },
+      {
+        href: '/love-and-self/consultation',
+        label: 'Consultation',
+        icon: Users,
+      },
+      { href: '/love-and-self/ai-chat', label: 'AI First-Aid', icon: Bot },
+      {
+        href: '/love-and-self/be-your-own-voice',
+        label: 'Be Your Own Voice',
+        icon: Milestone,
+      },
+    ],
+  },
+];
+
+const lifestyleActionGroups: ActionGroup[] = [
+    {
+        title: 'Lifestyle',
+        actions: [
+            { href: '/lifestyle', label: 'Dashboard', icon: Home },
+            { href: '/lifestyle/activities', label: 'Activities', icon: BarChart2 },
+            { href: '/lifestyle/exercises', label: 'Exercises', icon: Activity },
+            { href: '/lifestyle/greenhouse', label: 'Greenhouse', icon: NotebookText },
+        ],
+    },
+];
+
+
+export function QuickActionBar() {
+  const pathname = usePathname();
+
+  let actionGroups: ActionGroup[] = studentActionGroups;
+  if (pathname.startsWith('/admin')) {
+    actionGroups = adminActionGroups;
+  } else if (pathname.startsWith('/professional')) {
+    actionGroups = professionalActionGroups;
+  } else if (pathname.startsWith('/love-and-self')) {
+    actionGroups = loveAndSelfActionGroups;
+  } else if (pathname.startsWith('/lifestyle')) {
+    actionGroups = lifestyleActionGroups;
+  }
+
   return (
     <Popover>
       <PopoverTrigger asChild>
