@@ -13,7 +13,7 @@ import { AppLogo } from '@/components/icons';
 
 export default function StudentLoginPage() {
   return (
-    <div className="flex h-screen">
+    <div className="flex min-h-screen">
       <div className="relative w-1/2 hidden md:block">
         <Image
           src="https://picsum.photos/seed/student-login/1200/1600"
@@ -52,7 +52,7 @@ export default function StudentLoginPage() {
                     <BrainCircuit className="w-8 h-8 text-accent" />
                   </div>
                   <div>
-                    <CardTitle>Mental Health & Content</CardTitle>
+                    <CardTitle>Mental Health &amp; Content</CardTitle>
                     <CardDescription>
                       Access surveys, resources, and professional support.
                     </CardDescription>
@@ -67,7 +67,7 @@ export default function StudentLoginPage() {
                     <Heart className="w-8 h-8 text-accent" />
                   </div>
                   <div>
-                    <CardTitle>Love & Self</CardTitle>
+                    <CardTitle>Love &amp; Self</CardTitle>
                     <CardDescription>
                       Explore relationships, self-esteem, and personal growth.
                     </CardDescription>
@@ -82,7 +82,7 @@ export default function StudentLoginPage() {
                     <Bike className="w-8 h-8 text-accent" />
                   </div>
                   <div>
-                    <CardTitle>Lifestyle & Fitness</CardTitle>
+                    <CardTitle>Lifestyle &amp; Wellness</CardTitle>
                     <CardDescription>
                       Discover exercises and tips for a healthy body and mind.
                     </CardDescription>
