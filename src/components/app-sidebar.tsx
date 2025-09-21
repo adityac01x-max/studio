@@ -62,6 +62,7 @@ const studentNavItems = {
     'My Journey': [
       { href: '/health-report', label: 'Health Report', icon: Activity },
       { href: '/progress', label: 'My Progress', icon: Trophy },
+      { href: '/journal', label: 'My Journal', icon: NotebookText },
     ],
     'Support': [
        { href: '/resources', label: 'Resource Hub', icon: Library },
