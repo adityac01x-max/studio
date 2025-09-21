@@ -71,6 +71,12 @@ export default function LifestyleDashboardPage() {
               <span>Greenhouse</span>
             </Button>
           </Link>
+          <Link href="/lifestyle/consultation" passHref>
+            <Button variant="outline" className="w-full h-20 flex-col gap-2">
+              <Users className="w-6 h-6 text-primary" />
+              <span>Consultation</span>
+            </Button>
+          </Link>
           <Link href="/lifestyle/ai-chat" passHref>
             <Button variant="outline" className="w-full h-20 flex-col gap-2">
               <Bot className="w-6 h-6 text-primary" />
@@ -110,5 +116,3 @@ export default function LifestyleDashboardPage() {
     </div>
   );
 }
-
-    

@@ -101,6 +101,7 @@ const lifestyleNavItems = [
   { href: '/lifestyle/activities', label: 'Activities', icon: Gamepad2 },
   { href: '/lifestyle/exercises', label: 'Exercises', icon: Bike },
   { href: '/lifestyle/greenhouse', label: 'Greenhouse', icon: Sprout },
+  { href: '/lifestyle/consultation', label: 'Consultation', icon: Users },
   { href: '/lifestyle/ai-chat', label: 'AI First-Aid', icon: Bot },
 ];
 
@@ -370,5 +371,3 @@ export function AppSidebar() {
     </>
   );
 }
-
-    
