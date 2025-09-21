@@ -1,5 +1,5 @@
 
-import { LifestyleSidebar } from './sidebar';
+import { AppSidebar } from '@/components/app-sidebar';
 import {
   SidebarProvider,
   Sidebar,
@@ -17,7 +17,7 @@ export default function LifestyleLayout({
   return (
     <SidebarProvider>
       <Sidebar collapsible="icon">
-        <LifestyleSidebar />
+        <AppSidebar />
       </Sidebar>
       <SidebarInset>
         <ScrollArea className="h-full">

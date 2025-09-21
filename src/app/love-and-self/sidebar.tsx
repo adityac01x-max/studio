@@ -11,8 +11,6 @@ import {
   Users,
   Heart,
   Home,
-  MessageSquare,
-  Sparkles,
   LogOut,
   BookUser,
   ClipboardList,
@@ -97,7 +95,7 @@ export function LoveAndSelfSidebar() {
                         <Link href={item.href} legacyBehavior passHref>
                             <SidebarMenuButton
                             asChild
-                            isActive={pathname === item.href}
+                            isActive={pathname.startsWith(item.href)}
                              size="lg"
                             tooltip={{
                                 children: item.label,
@@ -159,10 +157,16 @@ export function LoveAndSelfSidebar() {
                     <span>Profile</span>
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem asChild>
+               <DropdownMenuItem asChild>
                  <Link href="/student-login">
                   <LogOut className="mr-2 h-4 w-4" />
                   Back to Main Menu
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                 <Link href="/">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Logout
                 </Link>
               </DropdownMenuItem>
             </DropdownMenuContent>
