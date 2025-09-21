@@ -47,7 +47,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useUserRole } from '@/hooks/use-user-role.tsx';
 import { Label } from '@/components/ui/label';
 
@@ -97,15 +97,35 @@ export default function ProfilePage() {
       occupation: 'Student'
     },
   });
+  
+  useEffect(() => {
+    try {
+      const savedProfile = localStorage.getItem('userProfile');
+      if (savedProfile) {
+        form.reset(JSON.parse(savedProfile));
+      }
+    } catch (error) {
+      console.error("Failed to load profile from localStorage", error);
+    }
+  }, [form]);
 
   const contentPreference = form.watch('contentPreference');
 
   function onSubmit(data: z.infer<typeof profileSchema>) {
-    console.log(data);
-    toast({
-      title: 'Profile Updated!',
-      description: 'Your profile has been successfully updated.',
-    });
+    try {
+        localStorage.setItem('userProfile', JSON.stringify(data));
+        toast({
+            title: 'Profile Updated!',
+            description: 'Your profile has been successfully updated.',
+        });
+    } catch (error) {
+        console.error("Failed to save profile to localStorage", error);
+        toast({
+            variant: 'destructive',
+            title: 'Error Saving Profile',
+            description: 'Could not save your profile. Please try again.',
+        });
+    }
   }
 
   const handleEnlistAsPeer = () => {
@@ -260,7 +280,7 @@ export default function ProfilePage() {
                                                 checked={field.value?.includes(item)}
                                                 onCheckedChange={(checked) => {
                                                     return checked
-                                                    ? field.onChange([...field.value, item])
+                                                    ? field.onChange([...(field.value || []), item])
                                                     : field.onChange(field.value?.filter((value) => value !== item));
                                                 }}
                                                 />
