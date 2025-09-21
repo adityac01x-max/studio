@@ -23,7 +23,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { ArrowLeft, Plus, Trash2, Edit, MoreHorizontal, Loader2, BookOpen } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Edit, MoreHorizontal, Loader2, BookOpen, Smile, Frown, Meh } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -43,12 +43,18 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import Image from 'next/image';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { cn } from '@/lib/utils';
+
+type Mood = 'Positive' | 'Negative' | 'Neutral';
 
 type JournalEntry = {
   id: number;
   title: string;
   content: string;
   date: string;
+  mood: Mood;
   imageUrl?: string;
 };
 
@@ -58,6 +64,7 @@ const mockEntries: JournalEntry[] = [
         title: 'A Moment of Peace',
         content: 'Today, I took a walk in the park during my lunch break. The sun was warm, and a gentle breeze was blowing. I sat on a bench and just watched the leaves dance in the wind. It was a simple moment, but it brought me a profound sense of calm and gratitude. I felt disconnected from my worries, even if just for a little while. I want to remember this feeling.',
         date: new Date(Date.now() - 86400000 * 2).toISOString(), // 2 days ago
+        mood: 'Positive',
         imageUrl: 'https://picsum.photos/seed/peace/600/400'
     },
     {
@@ -65,13 +72,31 @@ const mockEntries: JournalEntry[] = [
         title: 'Tackled a Difficult Task',
         content: "I finally finished the project I've been procrastinating on for weeks. It wasn't as bad as I thought it would be once I got started. I feel a huge weight off my shoulders. It's a good reminder that often, the anticipation is worse than the reality. I feel accomplished and motivated to keep this momentum going.",
         date: new Date(Date.now() - 86400000).toISOString(), // Yesterday
+        mood: 'Positive',
         imageUrl: 'https://picsum.photos/seed/task/600/400'
+    },
+    {
+        id: 4,
+        title: 'Feeling a bit down',
+        content: "Feeling a bit overwhelmed and sad today. Not sure why, just one of those days where everything feels heavy. I hope tomorrow is better.",
+        date: new Date(Date.now() - 86400000 * 3).toISOString(), // 3 days ago
+        mood: 'Negative',
+        imageUrl: 'https://picsum.photos/seed/sad-day/600/400'
+    },
+    {
+        id: 5,
+        title: 'Just a regular day',
+        content: "Nothing much happened today. Went to classes, did some homework. It was an okay day, not particularly good or bad. Just a neutral, average day.",
+        date: new Date(Date.now() - 86400000 * 4).toISOString(), // 4 days ago
+        mood: 'Neutral',
+        imageUrl: 'https://picsum.photos/seed/neutral-day/600/400'
     },
     {
         id: 3,
         title: 'A Small Act of Kindness',
         content: 'I complimented a stranger on their jacket today, and their face lit up. It was a small interaction, but it made both of us smile. It costs nothing to be kind, and it made my whole day better. It\'s amazing how a few positive words can change the energy around you.',
         date: new Date().toISOString(), // Today
+        mood: 'Positive',
         imageUrl: 'https://picsum.photos/seed/kindness/600/400'
     },
 ];
@@ -83,6 +108,66 @@ const fileToDataURL = (file: File): Promise<string> => {
         reader.onerror = (error) => reject(error);
         reader.readAsDataURL(file);
     });
+};
+
+const JournalGrid = ({ entries, onEdit, onView, onDelete }: { entries: JournalEntry[], onEdit: (e: JournalEntry) => void, onView: (e: JournalEntry) => void, onDelete: (e: JournalEntry) => void }) => {
+  if (entries.length === 0) {
+    return (
+      <div className="text-center py-12 border-dashed border-2 rounded-lg mt-4">
+        <BookOpen className="mx-auto w-12 h-12 text-muted-foreground" />
+        <h3 className="mt-4 text-lg font-semibold">No entries for this mood</h3>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Click "Add Entry" to add one.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+      {entries.map((entry) => (
+        <Card key={entry.id} className="flex flex-col">
+          {entry.imageUrl && (
+            <div className="relative w-full h-48">
+              <Image src={entry.imageUrl} alt={entry.title} layout="fill" objectFit="cover" className="rounded-t-lg" data-ai-hint="journal image" />
+            </div>
+          )}
+          <CardHeader>
+            <CardTitle className="truncate">{entry.title}</CardTitle>
+            <CardDescription>
+              {new Date(entry.date).toLocaleString([], { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex-1">
+            <p className="line-clamp-4 text-sm text-muted-foreground">
+              {entry.content}
+            </p>
+          </CardContent>
+          <CardFooter className="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => onView(entry)}>View</Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <MoreHorizontal />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={() => onEdit(entry)}>
+                  <Edit className="mr-2" /> Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => onDelete(entry)}
+                  className="text-destructive"
+                >
+                  <Trash2 className="mr-2" /> Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </CardFooter>
+        </Card>
+      ))}
+    </div>
+  );
 };
 
 
@@ -126,7 +211,13 @@ export default function JournalPage() {
     const formData = new FormData(event.currentTarget);
     const title = formData.get('title') as string;
     const content = formData.get('content') as string;
+    const mood = formData.get('mood') as Mood;
     const imageFile = formData.get('image') as File;
+
+    if (!mood) {
+        toast({ title: 'Error', description: 'Please select a mood for your entry.', variant: 'destructive'});
+        return;
+    }
 
     let imageUrl = entryToEdit?.imageUrl;
     if (imageFile && imageFile.size > 0) {
@@ -144,7 +235,7 @@ export default function JournalPage() {
       setEntries(
         entries.map((entry) =>
           entry.id === entryToEdit.id
-            ? { ...entry, title, content, imageUrl, date: new Date().toISOString() }
+            ? { ...entry, title, content, mood, imageUrl, date: new Date().toISOString() }
             : entry
         )
       );
@@ -155,6 +246,7 @@ export default function JournalPage() {
         id: Date.now(),
         title,
         content,
+        mood,
         imageUrl,
         date: new Date().toISOString(),
       };
@@ -180,6 +272,10 @@ export default function JournalPage() {
       setEntryToDelete(null);
     }
   };
+  
+  const positiveEntries = entries.filter(e => e.mood === 'Positive');
+  const negativeEntries = entries.filter(e => e.mood === 'Negative');
+  const neutralEntries = entries.filter(e => e.mood === 'Neutral');
 
   if (isLoading) {
     return <div className="flex justify-center items-center h-64"><Loader2 className="w-8 h-8 animate-spin" /></div>;
@@ -227,6 +323,26 @@ export default function JournalPage() {
                   required
                 />
               </div>
+               <div className="space-y-2">
+                <Label>Mood</Label>
+                <RadioGroup name="mood" defaultValue={entryToEdit?.mood} className="flex gap-4 pt-2">
+                    <Label className={cn("flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground", entryToEdit?.mood === 'Positive' && "border-green-500")}>
+                        <RadioGroupItem value="Positive" className="sr-only" />
+                        <Smile className="w-8 h-8 text-green-500 mb-2"/>
+                        Positive
+                    </Label>
+                    <Label className={cn("flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground", entryToEdit?.mood === 'Negative' && "border-red-500")}>
+                        <RadioGroupItem value="Negative" className="sr-only" />
+                        <Frown className="w-8 h-8 text-red-500 mb-2"/>
+                        Negative
+                    </Label>
+                    <Label className={cn("flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground", entryToEdit?.mood === 'Neutral' && "border-yellow-500")}>
+                        <RadioGroupItem value="Neutral" className="sr-only" />
+                        <Meh className="w-8 h-8 text-yellow-500 mb-2"/>
+                        Neutral
+                    </Label>
+                </RadioGroup>
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="content">Body</Label>
                 <Textarea
@@ -258,59 +374,23 @@ export default function JournalPage() {
         </Dialog>
       </div>
 
-      {entries.length === 0 ? (
-        <div className="text-center py-12 border-dashed border-2 rounded-lg">
-          <BookOpen className="mx-auto w-12 h-12 text-muted-foreground" />
-          <h3 className="mt-4 text-lg font-semibold">Your journal is empty</h3>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Click "Add Entry" to write your first journal post.
-          </p>
-        </div>
-      ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {entries.map((entry) => (
-            <Card key={entry.id} className="flex flex-col">
-              {entry.imageUrl && (
-                  <div className="relative w-full h-48">
-                    <Image src={entry.imageUrl} alt={entry.title} layout="fill" objectFit="cover" className="rounded-t-lg" data-ai-hint="journal image" />
-                  </div>
-              )}
-              <CardHeader>
-                <CardTitle className="truncate">{entry.title}</CardTitle>
-                <CardDescription>
-                  {new Date(entry.date).toLocaleString([], { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="flex-1">
-                <p className="line-clamp-4 text-sm text-muted-foreground">
-                  {entry.content}
-                </p>
-              </CardContent>
-              <CardFooter className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setEntryToView(entry)}>View</Button>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <MoreHorizontal />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent>
-                    <DropdownMenuItem onClick={() => openEditDialog(entry)}>
-                      <Edit className="mr-2" /> Edit
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => setEntryToDelete(entry)}
-                      className="text-destructive"
-                    >
-                      <Trash2 className="mr-2" /> Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
-      )}
+      <Tabs defaultValue="positive">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="positive">Positive</TabsTrigger>
+          <TabsTrigger value="negative">Negative</TabsTrigger>
+          <TabsTrigger value="neutral">Neutral</TabsTrigger>
+        </TabsList>
+        <TabsContent value="positive">
+            <JournalGrid entries={positiveEntries} onEdit={openEditDialog} onView={setEntryToView} onDelete={setEntryToDelete} />
+        </TabsContent>
+        <TabsContent value="negative">
+            <JournalGrid entries={negativeEntries} onEdit={openEditDialog} onView={setEntryToView} onDelete={setEntryToDelete} />
+        </TabsContent>
+        <TabsContent value="neutral">
+            <JournalGrid entries={neutralEntries} onEdit={openEditDialog} onView={setEntryToView} onDelete={setEntryToDelete} />
+        </TabsContent>
+      </Tabs>
+
 
       {/* View Entry Dialog */}
       <Dialog open={!!entryToView} onOpenChange={() => setEntryToView(null)}>
