@@ -98,7 +98,7 @@ export function LoveAndSelfSidebar() {
                     <SidebarGroupLabel>{groupName}</SidebarGroupLabel>
                     {items.map((item) => (
                         <SidebarMenuItem key={item.href}>
-                        <Link href={item.href} legacyBehavior passHref>
+                        <Link href={item.href} >
                             <SidebarMenuButton
                             asChild
                             isActive={pathname.startsWith(item.href)}

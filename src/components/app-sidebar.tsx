@@ -211,7 +211,7 @@ export function AppSidebar() {
           {Array.isArray(currentNavItems) ? (
             currentNavItems.map((item) => (
             <SidebarMenuItem key={item.href}>
-              <Link href={item.href} legacyBehavior passHref>
+              <Link href={item.href} >
                 <SidebarMenuButton
                   asChild
                   isActive={pathname === item.href}
@@ -234,7 +234,7 @@ export function AppSidebar() {
                     <SidebarGroupLabel>{groupName}</SidebarGroupLabel>
                     {items.map((item: any) => (
                         <SidebarMenuItem key={item.href}>
-                        <Link href={item.href} legacyBehavior passHref>
+                        <Link href={item.href} >
                             <SidebarMenuButton
                               asChild
                               isActive={pathname.startsWith(item.href) && item.href !== '/journal' ? (pathname === item.href) : pathname.startsWith(item.href)}
