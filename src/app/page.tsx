@@ -17,8 +17,8 @@ import { AppLogo } from '@/components/icons';
 
 export default function LandingPage() {
   return (
-    <div className="flex h-screen">
-      <div className="relative w-1/2 hidden md:block">
+    <div className="flex min-h-screen flex-col md:flex-row">
+      <div className="relative md:w-1/2 hidden md:block">
         <Image
           src="https://picsum.photos/seed/tricycle/1200/1600"
           alt="A red tricycle"
@@ -35,7 +35,7 @@ export default function LandingPage() {
           </p>
         </div>
       </div>
-      <div className="w-full md:w-1/2 flex flex-col items-center justify-center p-8 bg-background overflow-auto">
+      <div className="w-full md:w-1/2 flex flex-col items-center justify-center p-8 bg-background">
         <div className="max-w-md w-full">
           <h2 className="font-headline text-4xl font-bold text-primary mb-8 text-center">
             Welcome to Your Wellness Space
