@@ -1,12 +1,12 @@
 
 import type { Metadata } from 'next';
 import './globals.css';
-import { ThemeProvider } from '@/components/theme-provider';
-import { UserRoleProvider } from '@/hooks/use-user-role.tsx';
+import { Providers } from '@/components/providers';
 
-// This is a client component, so we can't export metadata from here.
-// It should be defined in a parent layout or the page itself if they are server components.
-// For this root layout, we can keep it simple.
+export const metadata: Metadata = {
+    title: 'Anubhuti',
+    description: 'A step towards a healthier mind. Your space for mental well-being and support.',
+};
 
 export default function RootLayout({
   children,
@@ -28,16 +28,7 @@ export default function RootLayout({
         />
       </head>
       <body className="font-body antialiased">
-        <UserRoleProvider>
-            <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-            >
-                {children}
-            </ThemeProvider>
-        </UserRoleProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
