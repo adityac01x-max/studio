@@ -10,9 +10,10 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Wind, Droplets, Flame, Mountain, PlayCircle } from 'lucide-react';
+import { Wind, Droplets, Flame, Mountain, PlayCircle, ArrowLeft } from 'lucide-react';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import Link from 'next/link';
 
 const moods = [
   { name: 'Stressed', icon: <Flame className="w-6 h-6" />, color: 'bg-red-500/10 text-red-500' },
@@ -56,13 +57,21 @@ export default function ExercisesPage() {
 
   return (
     <div className="space-y-6">
-        <div className="space-y-2">
+        <div className="flex items-center gap-4 mb-6">
+          <Link href="/lifestyle" passHref>
+            <Button variant="outline" size="icon">
+              <ArrowLeft />
+              <span className="sr-only">Back to Lifestyle Dashboard</span>
+            </Button>
+          </Link>
+          <div className='flex-1'>
             <h1 className="font-headline text-3xl font-bold tracking-tight">
                 Mood-Based Exercises
             </h1>
              <p className="text-muted-foreground">
                 Find the right physical activity to match and improve your mood.
             </p>
+          </div>
         </div>
       <Card>
         <CardHeader>

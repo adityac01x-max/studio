@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Brain, Palette, Check, X, RefreshCw, Hand, Waves, Sun, Flower, Gem, Eraser, Pen } from 'lucide-react';
+import { Brain, Palette, Check, X, RefreshCw, Hand, Waves, Sun, Flower, Gem, Eraser, Pen, ArrowLeft } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -21,6 +21,7 @@ import {
 import { cn } from '@/lib/utils';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
+import Link from 'next/link';
 
 const DrawingCanvas = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -487,14 +488,23 @@ export default function ActivitiesPage() {
 
   return (
     <div className="space-y-6">
-       <div className="space-y-2">
-        <h1 className="font-headline text-3xl font-bold tracking-tight">
-          Mindful Activities
-        </h1>
-        <p className="text-muted-foreground">
-          Engage in games and creative exercises to calm your mind and reduce stress.
-        </p>
+       <div className="flex items-center gap-4 mb-6">
+        <Link href="/lifestyle" passHref>
+          <Button variant="outline" size="icon">
+            <ArrowLeft />
+            <span className="sr-only">Back to Lifestyle Dashboard</span>
+          </Button>
+        </Link>
+        <div className='flex-1'>
+          <h1 className="font-headline text-3xl font-bold tracking-tight">
+            Mindful Activities
+          </h1>
+          <p className="text-muted-foreground">
+            Engage in games and creative exercises to calm your mind and reduce stress.
+          </p>
+        </div>
       </div>
+
 
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
