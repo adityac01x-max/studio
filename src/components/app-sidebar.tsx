@@ -353,18 +353,22 @@ export function AppSidebar() {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href="/profile">
-                    <BookUser className="mr-2 h-4 w-4" />
-                    <span>Profile</span>
-                </Link>
-              </DropdownMenuItem>
-               <DropdownMenuItem asChild>
-                 <Link href="/student-login">
-                  <LogOut className="mr-2 h-4 w-4" />
-                  Back to Main Menu
-                </Link>
-              </DropdownMenuItem>
+               {!isAdminRoute && !isProfessionalRoute && (
+                <DropdownMenuItem asChild>
+                  <Link href="/profile">
+                      <BookUser className="mr-2 h-4 w-4" />
+                      <span>Profile</span>
+                  </Link>
+                </DropdownMenuItem>
+              )}
+               {!isAdminRoute && !isProfessionalRoute && (
+                 <DropdownMenuItem asChild>
+                   <Link href="/student-login">
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Back to Main Menu
+                  </Link>
+                </DropdownMenuItem>
+               )}
               <DropdownMenuItem asChild>
                 <Link href="/">
                   <LogOut className="mr-2 h-4 w-4" />
