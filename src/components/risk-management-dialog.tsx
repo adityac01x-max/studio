@@ -12,7 +12,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Phone, MessageCircle } from 'lucide-react';
+import { Phone, MessageCircle, Video } from 'lucide-react';
 import { Button } from './ui/button';
 
 interface RiskManagementDialogProps {
@@ -35,6 +35,11 @@ export function RiskManagementDialog({
     router.push('/chat');
     onOpenChange(false);
   };
+  
+  const handleHopeVideo = () => {
+    router.push('/hope-video');
+    onOpenChange(false);
+  }
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -56,8 +61,15 @@ export function RiskManagementDialog({
           >
             <Phone className="mr-2" /> Call National Helpline (1800-599-0019)
           </Button>
+          <Button
+            onClick={handleHopeVideo}
+            className="w-full"
+            variant="secondary"
+          >
+            <Video className="mr-2" /> Watch a Hope-Filled Video
+          </Button>
           <p className="text-sm text-center text-muted-foreground">
-            A free, confidential service available 24/7.
+            You can also call a free, confidential service 24/7.
           </p>
         </div>
         <AlertDialogFooter>
