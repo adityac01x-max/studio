@@ -101,6 +101,7 @@ const lifestyleNavItems = [
   { href: '/lifestyle/activities', label: 'Activities', icon: Gamepad2 },
   { href: '/lifestyle/exercises', label: 'Exercises', icon: Bike },
   { href: '/lifestyle/greenhouse', label: 'Greenhouse', icon: Sprout },
+  { href: '/lifestyle/ai-chat', label: 'AI First-Aid', icon: Bot },
 ];
 
 
@@ -155,22 +156,26 @@ export function AppSidebar() {
   let homeLink;
   let navHeader;
   let navIcon;
+  let currentNavItems: any = studentNavItems;
 
   if (isAdminRoute) {
     currentUser = { name: 'Admin User', email: 'admin@college.ac.in', avatarSeed: 'admin' };
     homeLink = '/admin/dashboard';
     navHeader = 'Anubhuti Admin';
     navIcon = <Shield className="w-5 h-5" />;
+    currentNavItems = adminNavItems;
   } else if (isProfessionalRoute) {
     currentUser = { name: 'Dr. Sharma', email: 's.sharma@college.ac.in', avatarSeed: 'psychologist' };
     homeLink = '/professional/dashboard';
     navHeader = 'Professional';
     navIcon = <Briefcase className="w-5 h-5" />;
+    currentNavItems = professionalNavItems;
   } else if (isLifestyleRoute) {
     currentUser = { name: 'Student User', email: 'student@college.ac.in', avatarSeed: 'user' };
     homeLink = '/lifestyle';
     navHeader = 'Lifestyle';
     navIcon = <Bike className="w-5 h-5" />;
+    currentNavItems = lifestyleNavItems;
   } else {
     currentUser = { name: 'Student User', email: 'student@college.ac.in', avatarSeed: 'user' };
     homeLink = '/dashboard';
@@ -196,13 +201,13 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarMenu>
-          {isAdminRoute ? (
-            adminNavItems.map((item) => (
+          {Array.isArray(currentNavItems) ? (
+            currentNavItems.map((item) => (
             <SidebarMenuItem key={item.href}>
               <Link href={item.href} legacyBehavior passHref>
                 <SidebarMenuButton
                   asChild
-                  isActive={pathname.startsWith(item.href)}
+                  isActive={pathname === item.href}
                   tooltip={{
                     children: item.label,
                     className: 'group-data-[collapsible=icon]:block hidden',
@@ -216,56 +221,16 @@ export function AppSidebar() {
               </Link>
             </SidebarMenuItem>
           ))
-          ) : isProfessionalRoute ? (
-             professionalNavItems.map((item) => (
-            <SidebarMenuItem key={item.href}>
-              <Link href={item.href} legacyBehavior passHref>
-                <SidebarMenuButton
-                  asChild
-                  isActive={pathname.startsWith(item.href)}
-                  tooltip={{
-                    children: item.label,
-                    className: 'group-data-[collapsible=icon]:block hidden',
-                  }}
-                >
-                  <a>
-                    <item.icon />
-                    <span>{item.label}</span>
-                  </a>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-          ))
-          ) : isLifestyleRoute ? (
-             lifestyleNavItems.map((item) => (
-                <SidebarMenuItem key={item.href}>
-                  <Link href={item.href} legacyBehavior passHref>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={pathname.startsWith(item.href)}
-                      tooltip={{
-                        children: item.label,
-                        className: 'group-data-[collapsible=icon]:block hidden',
-                      }}
-                    >
-                      <a>
-                        <item.icon />
-                        <span>{item.label}</span>
-                      </a>
-                    </SidebarMenuButton>
-                  </Link>
-                </SidebarMenuItem>
-              ))
           ) : (
-            Object.entries(studentNavItems).map(([groupName, items]) => (
+            Object.entries(currentNavItems).map(([groupName, items]) => (
                 <SidebarGroup key={groupName} className="p-0">
                     <SidebarGroupLabel>{groupName}</SidebarGroupLabel>
-                    {items.map((item) => (
+                    {items.map((item: any) => (
                         <SidebarMenuItem key={item.href}>
                         <Link href={item.href} legacyBehavior passHref>
                             <SidebarMenuButton
                               asChild
-                              isActive={pathname.startsWith(item.href)}
+                              isActive={pathname.startsWith(item.href) && item.href !== '/journal' ? (pathname === item.href) : pathname.startsWith(item.href)}
                               size="lg"
                               tooltip={{
                                   children: item.label,

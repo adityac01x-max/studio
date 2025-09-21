@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -29,6 +30,10 @@ import {
   Milestone,
   Home,
   BookOpen,
+  LayoutGrid,
+  Gamepad2,
+  Bike,
+  Sprout
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -170,10 +175,11 @@ const lifestyleActionGroups: ActionGroup[] = [
     {
         title: 'Lifestyle',
         actions: [
-            { href: '/lifestyle', label: 'Dashboard', icon: Home },
-            { href: '/lifestyle/activities', label: 'Activities', icon: BarChart2 },
-            { href: '/lifestyle/exercises', label: 'Exercises', icon: Activity },
-            { href: '/lifestyle/greenhouse', label: 'Greenhouse', icon: NotebookText },
+            { href: '/lifestyle', label: 'Dashboard', icon: LayoutGrid },
+            { href: '/lifestyle/activities', label: 'Activities', icon: Gamepad2 },
+            { href: '/lifestyle/exercises', label: 'Exercises', icon: Bike },
+            { href: '/lifestyle/greenhouse', label: 'Greenhouse', icon: Sprout },
+            { href: '/lifestyle/ai-chat', label: 'AI First-Aid', icon: Bot },
         ],
     },
 ];
