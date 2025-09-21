@@ -18,7 +18,7 @@ export default function LoveAndSelfLayout({
   return (
     <div className="love-and-self-theme">
       <SidebarProvider>
-        <Sidebar>
+        <Sidebar collapsible="icon">
           <LoveAndSelfSidebar />
         </Sidebar>
         <SidebarInset>

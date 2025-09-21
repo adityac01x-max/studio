@@ -17,7 +17,7 @@ export default function AdminDashboardLayout({
 }>) {
   return (
     <SidebarProvider>
-      <Sidebar>
+      <Sidebar collapsible="icon">
         <AppSidebar />
       </Sidebar>
       <SidebarInset>

@@ -94,8 +94,9 @@ export function LoveAndSelfSidebar() {
                     <SidebarGroupLabel>{groupName}</SidebarGroupLabel>
                     {items.map((item) => (
                         <SidebarMenuItem key={item.href}>
-                        <Link href={item.href}>
+                        <Link href={item.href} legacyBehavior passHref>
                             <SidebarMenuButton
+                            asChild
                             isActive={pathname === item.href}
                              size="lg"
                             tooltip={{
@@ -103,8 +104,10 @@ export function LoveAndSelfSidebar() {
                                 className: 'group-data-[collapsible=icon]:block hidden',
                             }}
                             >
-                            <item.icon />
-                            <span>{item.label}</span>
+                             <a>
+                                <item.icon />
+                                <span>{item.label}</span>
+                            </a>
                             </SidebarMenuButton>
                         </Link>
                         </SidebarMenuItem>

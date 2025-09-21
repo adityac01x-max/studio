@@ -16,7 +16,7 @@ export default function LifestyleLayout({
 }>) {
   return (
     <SidebarProvider>
-      <Sidebar>
+      <Sidebar collapsible="icon">
         <LifestyleSidebar />
       </Sidebar>
       <SidebarInset>

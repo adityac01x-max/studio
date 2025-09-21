@@ -170,16 +170,19 @@ export function AppSidebar() {
           {isAdminRoute ? (
             adminNavItems.map((item) => (
             <SidebarMenuItem key={item.href}>
-              <Link href={item.href}>
+              <Link href={item.href} legacyBehavior passHref>
                 <SidebarMenuButton
+                  asChild
                   isActive={pathname === item.href}
                   tooltip={{
                     children: item.label,
                     className: 'group-data-[collapsible=icon]:block hidden',
                   }}
                 >
-                  <item.icon />
-                  <span>{item.label}</span>
+                  <a>
+                    <item.icon />
+                    <span>{item.label}</span>
+                  </a>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
@@ -187,16 +190,19 @@ export function AppSidebar() {
           ) : isProfessionalRoute ? (
              professionalNavItems.map((item) => (
             <SidebarMenuItem key={item.href}>
-              <Link href={item.href}>
+              <Link href={item.href} legacyBehavior passHref>
                 <SidebarMenuButton
+                  asChild
                   isActive={pathname.startsWith(item.href)}
                   tooltip={{
                     children: item.label,
                     className: 'group-data-[collapsible=icon]:block hidden',
                   }}
                 >
-                  <item.icon />
-                  <span>{item.label}</span>
+                  <a>
+                    <item.icon />
+                    <span>{item.label}</span>
+                  </a>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
@@ -207,17 +213,20 @@ export function AppSidebar() {
                     <SidebarGroupLabel>{groupName}</SidebarGroupLabel>
                     {items.map((item) => (
                         <SidebarMenuItem key={item.href}>
-                        <Link href={item.href}>
+                        <Link href={item.href} legacyBehavior passHref>
                             <SidebarMenuButton
-                            isActive={pathname === item.href}
-                             size="lg"
-                            tooltip={{
-                                children: item.label,
-                                className: 'group-data-[collapsible=icon]:block hidden',
-                            }}
+                              asChild
+                              isActive={pathname === item.href}
+                              size="lg"
+                              tooltip={{
+                                  children: item.label,
+                                  className: 'group-data-[collapsible=icon]:block hidden',
+                              }}
                             >
-                            <item.icon />
-                            <span>{item.label}</span>
+                              <a>
+                                <item.icon />
+                                <span>{item.label}</span>
+                              </a>
                             </SidebarMenuButton>
                         </Link>
                         </SidebarMenuItem>
