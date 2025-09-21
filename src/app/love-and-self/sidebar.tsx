@@ -28,6 +28,8 @@ import {
   SidebarMenuButton,
   SidebarFooter,
   SidebarTrigger,
+  SidebarGroup,
+  SidebarGroupLabel,
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import {
@@ -42,18 +44,24 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useSidebar } from '@/components/ui/sidebar';
 import { ThemeToggle } from '@/components/theme-toggle';
 
-const navItems = [
-  { href: '/love-and-self', label: 'Dashboard', icon: Home },
-  { href: '/love-and-self/progress', label: 'My Progress', icon: Trophy },
-  { href: '/love-and-self/consultation', label: 'Consultation', icon: Users },
-  { href: '/love-and-self/schedule', label: 'My Schedule', icon: Calendar },
-  { href: '/love-and-self/resources', label: 'Resource Hub', icon: Library },
-  { href: '/love-and-self/education', label: 'Education Center', icon: BookOpen },
-  { href: '/love-and-self/questionnaires', label: 'Questionnaires', icon: ClipboardList },
-  { href: '/love-and-self/ai-chat', label: 'AI First-Aid', icon: Bot },
-  { href: '/love-and-self/mood-mapping', label: 'Mood Mapping', icon: BarChart2 },
-  { href: '/journal', label: 'Memory Journal', icon: NotebookText },
-];
+const navItems = {
+  'Core Tools': [
+    { href: '/love-and-self', label: 'Dashboard', icon: Home },
+    { href: '/love-and-self/questionnaires', label: 'Questionnaires', icon: ClipboardList },
+    { href: '/love-and-self/mood-mapping', label: 'Mood Mapping', icon: BarChart2 },
+  ],
+  'My Journey': [
+    { href: '/love-and-self/progress', label: 'My Progress', icon: Trophy },
+    { href: '/love-and-self/schedule', label: 'My Schedule', icon: Calendar },
+    { href: '/journal', label: 'Memory Journal', icon: NotebookText },
+  ],
+  'Support': [
+    { href: '/love-and-self/resources', label: 'Resource Hub', icon: Library },
+    { href: '/love-and-self/education', label: 'Education Center', icon: BookOpen },
+    { href: '/love-and-self/consultation', label: 'Consultation', icon: Users },
+    { href: '/love-and-self/ai-chat', label: 'AI First-Aid', icon: Bot },
+  ]
+};
 
 
 export function LoveAndSelfSidebar() {
@@ -79,25 +87,28 @@ export function LoveAndSelfSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarMenu>
-          {navItems.map((item) => (
-            <SidebarMenuItem key={item.href}>
-              <Link href={item.href} passHref>
-                <SidebarMenuButton
-                  asChild
-                  isActive={pathname === item.href}
-                  tooltip={{
-                    children: item.label,
-                    className: 'group-data-[collapsible=icon]:block hidden',
-                  }}
-                >
-                  <>
-                    <item.icon />
-                    <span>{item.label}</span>
-                  </>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-          ))}
+          {Object.entries(navItems).map(([groupName, items]) => (
+                <SidebarGroup key={groupName} className="p-0">
+                    <SidebarGroupLabel>{groupName}</SidebarGroupLabel>
+                    {items.map((item) => (
+                        <SidebarMenuItem key={item.href}>
+                        <Link href={item.href}>
+                            <SidebarMenuButton
+                            isActive={pathname === item.href}
+                             size="lg"
+                            tooltip={{
+                                children: item.label,
+                                className: 'group-data-[collapsible=icon]:block hidden',
+                            }}
+                            >
+                            <item.icon />
+                            <span>{item.label}</span>
+                            </SidebarMenuButton>
+                        </Link>
+                        </SidebarMenuItem>
+                    ))}
+                </SidebarGroup>
+            ))}
         </SidebarMenu>
       </SidebarContent>
       <SidebarFooter>
