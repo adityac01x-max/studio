@@ -1,6 +1,4 @@
 
-'use client';
-
 import type { Metadata } from 'next';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
@@ -39,7 +37,7 @@ export default function RootLayout({
             >
                 {children}
             </ThemeProvider>
-        </UserRole-provider>
+        </UserRoleProvider>
       </body>
     </html>
   );
