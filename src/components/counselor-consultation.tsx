@@ -15,6 +15,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from '@/components/ui/card';
 import {
   Form,
@@ -70,22 +71,6 @@ const timeSlots = [
   '04:00 PM',
 ];
 
-const pastSessions = [
-  {
-    id: 1,
-    date: '2024-04-15',
-    counselor: 'Dr. Ananya Sharma',
-    type: 'College Counselor',
-    status: 'Completed',
-  },
-  {
-    id: 2,
-    date: '2024-05-02',
-    counselor: 'Rohan Kumar (Peer)',
-    type: 'Peer Support',
-    status: 'Completed',
-  },
-];
 
 const peerSupporters = [
   {
@@ -148,33 +133,134 @@ const nearbyProfessionals = [
   },
 ];
 
+const CounselorBookingForm = ({ counselorId }: { counselorId: string }) => {
+    const { toast } = useToast();
+    const [isLoading, setIsLoading] = useState(false);
+    const form = useForm<ConsultationFormValues>({
+        resolver: zodResolver(consultationSchema),
+    });
+
+    function onSubmit(data: ConsultationFormValues) {
+        setIsLoading(true);
+        console.log(data);
+
+        setTimeout(() => {
+        toast({
+            title: 'Appointment Booked!',
+            description: `Your session with ${counselorId} is confirmed for ${format(
+            data.date,
+            'PPP'
+            )} at ${data.time}.`,
+        });
+        form.reset();
+        setIsLoading(false);
+        }, 1000);
+    }
+    
+    return (
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                     <FormField
+                        control={form.control}
+                        name="date"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-col">
+                            <FormLabel>Date</FormLabel>
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                <FormControl>
+                                    <Button
+                                    variant={'outline'}
+                                    className={cn(
+                                        'w-full pl-3 text-left font-normal',
+                                        !field.value && 'text-muted-foreground'
+                                    )}
+                                    >
+                                    {field.value ? (
+                                        format(field.value, 'PPP')
+                                    ) : (
+                                        <span>Pick a date</span>
+                                    )}
+                                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                    </Button>
+                                </FormControl>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-auto p-0" align="start">
+                                <Calendar
+                                    mode="single"
+                                    selected={field.value}
+                                    onSelect={field.onChange}
+                                    disabled={(date) => date < new Date() || date < new Date("1900-01-01")}
+                                    initialFocus
+                                />
+                                </PopoverContent>
+                            </Popover>
+                            <FormMessage />
+                            </FormItem>
+                        )}
+                        />
+                    <FormField
+                    control={form.control}
+                    name="time"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Available Times</FormLabel>
+                        <FormControl>
+                            <RadioGroup
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                            className="grid grid-cols-2 gap-2"
+                            >
+                            {timeSlots.map((time) => (
+                                <FormItem key={time} className="flex-1">
+                                <FormControl>
+                                     <RadioGroupItem value={time} className="sr-only" />
+                                </FormControl>
+                                <FormLabel className="flex items-center justify-center p-2 rounded-md border-2 border-muted bg-popover hover:bg-accent hover:text-accent-foreground has-[:checked]:border-primary has-[:checked]:bg-primary/10 cursor-pointer">
+                                    {time}
+                                </FormLabel>
+                                </FormItem>
+                            ))}
+                            </RadioGroup>
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
+                </div>
+                 <FormField
+                    control={form.control}
+                    name="notes"
+                    render={({ field }) => (
+                        <FormItem>
+                        <FormLabel>Notes (Optional)</FormLabel>
+                        <FormControl>
+                            <Textarea
+                            placeholder="Anything you'd like to share with the counselor beforehand?"
+                            {...field}
+                            />
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                 />
+                 <Button type="submit" disabled={isLoading} className="w-full">
+                    {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Confirm Appointment
+                </Button>
+            </form>
+        </Form>
+    );
+};
+
 
 export function CounselorConsultation() {
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
   const [useGeolocation, setUseGeolocation] = useState(false);
   const [activeTab, setActiveTab] = useState('peer');
+  const [bookingCounselor, setBookingCounselor] = useState<string | null>(null);
 
-  const form = useForm<ConsultationFormValues>({
-    resolver: zodResolver(consultationSchema),
-  });
-
-  function onSubmit(data: ConsultationFormValues) {
-    setIsLoading(true);
-    console.log(data);
-
-    setTimeout(() => {
-      toast({
-        title: 'Appointment Booked!',
-        description: `Your session is confirmed for ${format(
-          data.date,
-          'PPP'
-        )} at ${data.time}.`,
-      });
-      form.reset();
-      setIsLoading(false);
-    }, 1000);
-  }
 
   const handleGeolocation = () => {
     if (!useGeolocation) {
@@ -252,11 +338,16 @@ export function CounselorConsultation() {
                                 </div>
                                 <div className="text-right">
                                     <p className="text-sm text-muted-foreground">{counselor.availability}</p>
-                                    <Link href={`/student-video?professionalId=${counselor.id}`} passHref>
-                                     <Button className="mt-2">Book Appointment</Button>
-                                    </Link>
+                                     <Button className="mt-2" onClick={() => setBookingCounselor(bookingCounselor === counselor.id ? null : counselor.id)}>
+                                        {bookingCounselor === counselor.id ? 'Cancel' : 'Book Appointment'}
+                                    </Button>
                                 </div>
                             </CardHeader>
+                            {bookingCounselor === counselor.id && (
+                                 <CardContent>
+                                    <CounselorBookingForm counselorId={counselor.id}/>
+                                </CardContent>
+                            )}
                         </Card>
                     ))}
                 </div>
