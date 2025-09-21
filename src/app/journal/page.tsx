@@ -18,7 +18,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -71,7 +70,7 @@ const mockEntries: JournalEntry[] = [
         id: 1,
         title: 'A Moment of Peace',
         content: 'Today, I took a walk in the park during my lunch break. The sun was warm, and a gentle breeze was blowing. I sat on a bench and just watched the leaves dance in the wind. It was a simple moment, but it brought me a profound sense of calm and gratitude. I felt disconnected from my worries, even if just for a little while. I want to remember this feeling.',
-        date: new Date(Date.now() - 86400000 * 2).toISOString(), // 2 days ago
+        date: new Date(Date.now() - 86400000 * 2).toISOString(),
         mood: 'Positive',
         imageUrl: 'https://picsum.photos/seed/peace/600/400'
     },
@@ -79,15 +78,23 @@ const mockEntries: JournalEntry[] = [
         id: 2,
         title: 'Tackled a Difficult Task',
         content: "I finally finished the project I've been procrastinating on for weeks. It wasn't as bad as I thought it would be once I got started. I feel a huge weight off my shoulders. It's a good reminder that often, the anticipation is worse than the reality. I feel accomplished and motivated to keep this momentum going.",
-        date: new Date(Date.now() - 86400000).toISOString(), // Yesterday
+        date: new Date(Date.now() - 86400000).toISOString(),
         mood: 'Positive',
         imageUrl: 'https://picsum.photos/seed/task/600/400'
+    },
+    {
+        id: 3,
+        title: 'A Small Act of Kindness',
+        content: "I complimented a stranger on their jacket today, and their face lit up. It was a small interaction, but it made both of us smile. It costs nothing to be kind, and it made my whole day better. It's amazing how a few positive words can change the energy around you.",
+        date: new Date().toISOString(),
+        mood: 'Positive',
+        imageUrl: 'https://picsum.photos/seed/kindness/600/400'
     },
     {
         id: 4,
         title: 'Feeling a bit down',
         content: "Feeling a bit overwhelmed and sad today. Not sure why, just one of those days where everything feels heavy. I hope tomorrow is better.",
-        date: new Date(Date.now() - 86400000 * 3).toISOString(), // 3 days ago
+        date: new Date(Date.now() - 86400000 * 3).toISOString(),
         mood: 'Negative',
         imageUrl: 'https://picsum.photos/seed/sad-day/600/400'
     },
@@ -95,17 +102,9 @@ const mockEntries: JournalEntry[] = [
         id: 5,
         title: 'Just a regular day',
         content: "Nothing much happened today. Went to classes, did some homework. It was an okay day, not particularly good or bad. Just a neutral, average day.",
-        date: new Date(Date.now() - 86400000 * 4).toISOString(), // 4 days ago
+        date: new Date(Date.now() - 86400000 * 4).toISOString(),
         mood: 'Neutral',
         imageUrl: 'https://picsum.photos/seed/neutral-day/600/400'
-    },
-    {
-        id: 3,
-        title: 'A Small Act of Kindness',
-        content: 'I complimented a stranger on their jacket today, and their face lit up. It was a small interaction, but it made both of us smile. It costs nothing to be kind, and it made my whole day better. It\'s amazing how a few positive words can change the energy around you.',
-        date: new Date().toISOString(), // Today
-        mood: 'Positive',
-        imageUrl: 'https://picsum.photos/seed/kindness/600/400'
     },
     {
         id: 6,
