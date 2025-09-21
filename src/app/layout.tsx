@@ -4,7 +4,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
-import { UserRoleProvider } from '@/hooks/use-user-role';
+import { UserRoleProvider } from '@/hooks/use-user-role.tsx';
 
 // This is a client component, so we can't export metadata from here.
 // It should be defined in a parent layout or the page itself if they are server components.

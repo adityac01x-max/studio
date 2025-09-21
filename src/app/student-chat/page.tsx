@@ -130,43 +130,8 @@ function StudentChatContent() {
     setIsSending(false);
   };
 
-  const currentConversationList = activeTab === 'peer-inbox' ? peerSupportInbox : professionals;
-
-  return (
-    <div className="flex flex-col h-[calc(100vh-4rem)]">
-      <div className="flex items-center gap-4 mb-6">
-        <Link href="/consultation" passHref>
-          <Button variant="outline" size="icon">
-            <ArrowLeft />
-            <span className="sr-only">Back to Consultation</span>
-          </Button>
-        </Link>
-        <h1 className="font-headline text-3xl font-bold tracking-tight">
-          My Chats
-        </h1>
-      </div>
-       <Card className="flex-1">
-        {isPeer ? (
-             <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
-                <TabsList className="grid w-full grid-cols-2">
-                    <TabsTrigger value="peer-inbox">Peer Support Inbox</TabsTrigger>
-                    <TabsTrigger value="my-chats">My Personal Chats</TabsTrigger>
-                </TabsList>
-                <TabsContent value="peer-inbox" className="flex-1 mt-0">
-                    <ChatInterface />
-                </TabsContent>
-                <TabsContent value="my-chats" className="flex-1 mt-0">
-                     <ChatInterface />
-                </TabsContent>
-            </Tabs>
-        ) : (
-            <ChatInterface />
-        )}
-      </Card>
-    </div>
-  );
-
-  function ChatInterface() {
+  const ChatInterface = () => {
+    const currentList = activeTab === 'peer-inbox' ? peerSupportInbox : professionals;
     return (
         <ResizablePanelGroup direction="horizontal" className="h-full">
           <ResizablePanel defaultSize={30} minSize={25}>
@@ -174,7 +139,7 @@ function StudentChatContent() {
               <h2 className="text-xl font-bold mb-4">Conversations</h2>
               <ScrollArea className="h-[calc(100vh-12rem)]">
                 <div className="space-y-2">
-                  {currentConversationList.map((convo) => (
+                  {currentList.map((convo) => (
                     <Button
                       key={convo.id}
                       variant="ghost"
@@ -228,10 +193,10 @@ function StudentChatContent() {
                       <div
                         key={message.id}
                         className={cn('flex items-end gap-2', 
-                            message.role === 'student' ? 'justify-end' : 'justify-start'
+                            message.role === (activeTab === 'peer-inbox' ? 'peer' : 'student') ? 'justify-end' : 'justify-start'
                         )}
                       >
-                         {message.role === 'professional' && (
+                         {message.role !== (activeTab === 'peer-inbox' ? 'peer' : 'student') && (
                             <Avatar className='h-8 w-8'>
                                 <AvatarImage src={selectedConversation.avatar} />
                                 <AvatarFallback>{selectedConversation.name.charAt(0)}</AvatarFallback>
@@ -240,14 +205,14 @@ function StudentChatContent() {
                         <div
                           className={cn(
                             'rounded-lg p-3 max-w-[70%]',
-                            message.role === 'student'
+                            message.role === (activeTab === 'peer-inbox' ? 'peer' : 'student')
                               ? 'bg-primary text-primary-foreground'
                               : 'bg-muted'
                           )}
                         >
                           <p>{message.content}</p>
                         </div>
-                        {message.role === 'student' && (
+                        {message.role === (activeTab === 'peer-inbox' ? 'peer' : 'student') && (
                             <Avatar className='h-8 w-8'>
                                 <AvatarFallback>U</AvatarFallback>
                             </Avatar>
@@ -288,11 +253,46 @@ function StudentChatContent() {
         </ResizablePanelGroup>
     );
   }
+
+  return (
+    <div className="flex flex-col h-[calc(100vh-4rem)]">
+      <div className="flex items-center gap-4 mb-6">
+        <Link href="/consultation" passHref>
+          <Button variant="outline" size="icon">
+            <ArrowLeft />
+            <span className="sr-only">Back to Consultation</span>
+          </Button>
+        </Link>
+        <h1 className="font-headline text-3xl font-bold tracking-tight">
+          My Chats
+        </h1>
+      </div>
+       <Card className="flex-1">
+        {isPeer ? (
+             <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
+                <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="peer-inbox">Peer Support Inbox</TabsTrigger>
+                    <TabsTrigger value="my-chats">My Personal Chats</TabsTrigger>
+                </TabsList>
+                <TabsContent value="peer-inbox" className="flex-1 mt-0">
+                    <ChatInterface />
+                </TabsContent>
+                <TabsContent value="my-chats" className="flex-1 mt-0">
+                     <ChatInterface />
+                </TabsContent>
+            </Tabs>
+        ) : (
+            <ChatInterface />
+        )}
+      </Card>
+    </div>
+  );
+
 }
 
 export default function StudentChatPage() {
     return (
-        <Suspense fallback={<div className="flex-1 flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin"/></div>}>
+        <Suspense fallback={<div className="flex-1 flex items-center justify-center"><Loader2 className="w-8 w-8 animate-spin"/></div>}>
             <StudentChatContent />
         </Suspense>
     )
