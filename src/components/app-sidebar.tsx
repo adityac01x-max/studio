@@ -62,7 +62,6 @@ const studentNavItems = {
     'My Journey': [
       { href: '/health-report', label: 'Health Report', icon: Activity },
       { href: '/progress', label: 'My Progress', icon: Trophy },
-      { href: '/journal', label: 'Memory Journal', icon: NotebookText },
     ],
     'Support': [
        { href: '/resources', label: 'Resource Hub', icon: Library },
@@ -168,19 +167,16 @@ export function AppSidebar() {
           {isAdminRoute ? (
             adminNavItems.map((item) => (
             <SidebarMenuItem key={item.href}>
-              <Link href={item.href} legacyBehavior passHref>
+              <Link href={item.href}>
                 <SidebarMenuButton
-                  asChild
                   isActive={pathname === item.href}
                   tooltip={{
                     children: item.label,
                     className: 'group-data-[collapsible=icon]:block hidden',
                   }}
                 >
-                  <a>
-                    <item.icon />
-                    <span>{item.label}</span>
-                  </a>
+                  <item.icon />
+                  <span>{item.label}</span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
@@ -188,19 +184,16 @@ export function AppSidebar() {
           ) : isProfessionalRoute ? (
              professionalNavItems.map((item) => (
             <SidebarMenuItem key={item.href}>
-              <Link href={item.href} legacyBehavior passHref>
+              <Link href={item.href}>
                 <SidebarMenuButton
-                  asChild
                   isActive={pathname === item.href}
                   tooltip={{
                     children: item.label,
                     className: 'group-data-[collapsible=icon]:block hidden',
                   }}
                 >
-                  <a>
-                    <item.icon />
-                    <span>{item.label}</span>
-                  </a>
+                  <item.icon />
+                  <span>{item.label}</span>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
