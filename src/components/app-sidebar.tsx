@@ -55,7 +55,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { useSidebar } from './ui/sidebar';
 import { ThemeToggle } from './theme-toggle';
-import { useUserRole } from '@/hooks/use-user-role.tsx';
+import { useUserRole } from '@/hooks/use-user-role';
 import { cn } from '@/lib/utils';
 
 const studentNavItems = {
@@ -211,19 +211,16 @@ export function AppSidebar() {
           {Array.isArray(currentNavItems) ? (
             currentNavItems.map((item) => (
             <SidebarMenuItem key={item.href}>
-              <Link href={item.href} >
+              <Link href={item.href} passHref>
                 <SidebarMenuButton
-                  asChild
                   isActive={pathname === item.href}
                   tooltip={{
                     children: item.label,
                     className: 'group-data-[collapsible=icon]:block hidden',
                   }}
                 >
-                  <a>
                     <item.icon />
                     <span>{item.label}</span>
-                  </a>
                 </SidebarMenuButton>
               </Link>
             </SidebarMenuItem>
@@ -234,9 +231,8 @@ export function AppSidebar() {
                     <SidebarGroupLabel>{groupName}</SidebarGroupLabel>
                     {items.map((item: any) => (
                         <SidebarMenuItem key={item.href}>
-                        <Link href={item.href} >
+                        <Link href={item.href} passHref>
                             <SidebarMenuButton
-                              asChild
                               isActive={pathname.startsWith(item.href) && item.href !== '/journal' ? (pathname === item.href) : pathname.startsWith(item.href)}
                               size="lg"
                               tooltip={{
@@ -244,10 +240,8 @@ export function AppSidebar() {
                                   className: 'group-data-[collapsible=icon]:block hidden',
                               }}
                             >
-                              <a>
                                 <item.icon />
                                 <span>{item.label}</span>
-                              </a>
                             </SidebarMenuButton>
                         </Link>
                         </SidebarMenuItem>
@@ -361,7 +355,7 @@ export function AppSidebar() {
                   </Link>
                 </DropdownMenuItem>
               )}
-               {!isAdminRoute && !isProfessionalRoute && (
+               {!isAdminRoute && (
                  <DropdownMenuItem asChild>
                    <Link href="/student-login">
                     <LogOut className="mr-2 h-4 w-4" />
