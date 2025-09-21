@@ -71,6 +71,7 @@ const studentNavItems = {
     'Support': [
        { href: '/resources', label: 'Resource Hub', icon: Library },
       { href: '/consultation', label: 'Consultation', icon: Users },
+      { href: '/student-chat', label: 'My Chats', icon: MessageSquare },
       { href: '/schedule', label: 'My Schedule', icon: Calendar },
       { href: '/chat', label: 'AI First-Aid', icon: Bot },
     ]
@@ -102,6 +103,7 @@ const lifestyleNavItems = [
   { href: '/lifestyle/exercises', label: 'Exercises', icon: Bike },
   { href: '/lifestyle/greenhouse', label: 'Greenhouse', icon: Sprout },
   { href: '/lifestyle/consultation', label: 'Consultation', icon: Users },
+  { href: '/lifestyle/student-chat', label: 'My Chats', icon: MessageSquare },
   { href: '/lifestyle/ai-chat', label: 'AI First-Aid', icon: Bot },
 ];
 

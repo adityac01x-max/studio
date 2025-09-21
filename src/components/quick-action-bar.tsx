@@ -75,6 +75,7 @@ const studentActionGroups: ActionGroup[] = [
     actions: [
       { href: '/resources', label: 'Resource Hub', icon: Library },
       { href: '/consultation', label: 'Consultation', icon: Users },
+      { href: '/student-chat', label: 'My Chats', icon: MessageSquare },
       { href: '/schedule', label: 'My Schedule', icon: Calendar },
       { href: '/chat', label: 'AI First-Aid', icon: Bot },
     ],
@@ -161,6 +162,11 @@ const loveAndSelfActionGroups: ActionGroup[] = [
         label: 'Consultation',
         icon: Users,
       },
+      {
+        href: '/love-and-self/student-chat',
+        label: 'My Chats',
+        icon: MessageSquare,
+      },
       { href: '/love-and-self/ai-chat', label: 'AI First-Aid', icon: Bot },
       {
         href: '/love-and-self/be-your-own-voice',
@@ -180,6 +186,7 @@ const lifestyleActionGroups: ActionGroup[] = [
             { href: '/lifestyle/exercises', label: 'Exercises', icon: Bike },
             { href: '/lifestyle/greenhouse', label: 'Greenhouse', icon: Sprout },
             { href: '/lifestyle/consultation', label: 'Consultation', icon: Users },
+            { href: '/lifestyle/student-chat', label: 'My Chats', icon: MessageSquare },
             { href: '/lifestyle/ai-chat', label: 'AI First-Aid', icon: Bot },
         ],
     },

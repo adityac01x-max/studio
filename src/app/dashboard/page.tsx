@@ -20,6 +20,7 @@ import {
   NotebookText,
   Library,
   FileWarning,
+  MessageSquare,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -193,6 +194,12 @@ export default function DashboardPage() {
             <Button variant="outline" className="w-full h-20 flex-col gap-2">
               <Users className="w-6 h-6 text-primary" />
               <span>Consultation</span>
+            </Button>
+          </Link>
+           <Link href="/student-chat" passHref>
+            <Button variant="outline" className="w-full h-20 flex-col gap-2">
+              <MessageSquare className="w-6 h-6 text-primary" />
+              <span>My Chats</span>
             </Button>
           </Link>
           <Link href="/schedule" passHref>

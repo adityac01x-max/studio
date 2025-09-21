@@ -38,6 +38,7 @@ import {
   Home,
   NotebookText,
   Milestone,
+  MessageSquare,
 } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
@@ -202,6 +203,7 @@ export default function LoveAndSelfPage() {
                 <Link href="/love-and-self/resources" passHref><Button variant="outline" className="w-full flex-col h-20"><Library /><span className="mt-1 text-xs">Resource Hub</span></Button></Link>
                 <Link href="/love-and-self/education" passHref><Button variant="outline" className="w-full flex-col h-20"><BookOpen /><span className="mt-1 text-xs">Education</span></Button></Link>
                 <Link href="/love-and-self/consultation" passHref><Button variant="outline" className="w-full flex-col h-20"><Users /><span className="mt-1 text-xs">Consultation</span></Button></Link>
+                 <Link href="/love-and-self/student-chat" passHref><Button variant="outline" className="w-full flex-col h-20"><MessageSquare /><span className="mt-1 text-xs">My Chats</span></Button></Link>
                 <Link href="/love-and-self/ai-chat" passHref><Button variant="outline" className="w-full flex-col h-20"><Bot /><span className="mt-1 text-xs">AI Chat</span></Button></Link>
                 <Link href="/love-and-self/be-your-own-voice" passHref><Button variant="outline" className="w-full flex-col h-20"><Milestone /><span className="mt-1 text-xs">Be Your Own Voice</span></Button></Link>
             </CardContent>
