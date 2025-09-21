@@ -46,6 +46,13 @@ import Image from 'next/image';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { cn } from '@/lib/utils';
+import dynamic from 'next/dynamic';
+
+const DrawingCanvas = dynamic(() => import('@/components/drawing-canvas').then(mod => mod.DrawingCanvas), {
+  ssr: false,
+  loading: () => <div className="flex justify-center items-center h-[400px] w-full"><Loader2 className="animate-spin" /></div>,
+});
+
 
 type Mood = 'Positive' | 'Negative' | 'Neutral';
 
@@ -125,15 +132,6 @@ const mockEntries: JournalEntry[] = [
     }
 ];
 
-const fileToDataURL = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = (error) => reject(error);
-        reader.readAsDataURL(file);
-    });
-};
-
 const JournalGrid = ({ entries, onEdit, onView, onDelete }: { entries: JournalEntry[], onEdit: (e: JournalEntry) => void, onView: (e: JournalEntry) => void, onDelete: (e: JournalEntry) => void }) => {
   if (entries.length === 0) {
     return (
@@ -203,6 +201,7 @@ export default function JournalPage() {
   const [entryToEdit, setEntryToEdit] = useState<JournalEntry | null>(null);
   const [entryToView, setEntryToView] = useState<JournalEntry | null>(null);
   const [entryToDelete, setEntryToDelete] = useState<JournalEntry | null>(null);
+  const [tempDrawing, setTempDrawing] = useState<string>('');
 
   useEffect(() => {
     try {
@@ -236,30 +235,18 @@ export default function JournalPage() {
     const title = formData.get('title') as string;
     const content = formData.get('content') as string;
     const mood = formData.get('mood') as Mood;
-    const imageFile = formData.get('image') as File;
 
     if (!mood) {
         toast({ title: 'Error', description: 'Please select a mood for your entry.', variant: 'destructive'});
         return;
     }
 
-    let imageUrl = entryToEdit?.imageUrl;
-    if (imageFile && imageFile.size > 0) {
-        try {
-            imageUrl = await fileToDataURL(imageFile);
-        } catch (error) {
-            toast({ title: 'Error', description: 'Could not upload image.', variant: 'destructive'});
-            return;
-        }
-    }
-
-
     if (entryToEdit) {
       // Editing existing entry
       setEntries(
         entries.map((entry) =>
           entry.id === entryToEdit.id
-            ? { ...entry, title, content, mood, imageUrl, date: new Date().toISOString() }
+            ? { ...entry, title, content, mood, imageUrl: tempDrawing || entry.imageUrl, date: new Date().toISOString() }
             : entry
         )
       );
@@ -271,7 +258,7 @@ export default function JournalPage() {
         title,
         content,
         mood,
-        imageUrl,
+        imageUrl: tempDrawing,
         date: new Date().toISOString(),
       };
       setEntries([newEntry, ...entries]);
@@ -279,12 +266,20 @@ export default function JournalPage() {
     }
     setDialogOpen(false);
     setEntryToEdit(null);
+    setTempDrawing('');
   };
 
   const openEditDialog = (entry: JournalEntry) => {
     setEntryToEdit(entry);
+    setTempDrawing(entry.imageUrl || '');
     setDialogOpen(true);
   };
+  
+  const openNewDialog = () => {
+    setEntryToEdit(null);
+    setTempDrawing('');
+    setDialogOpen(true);
+  }
 
   const handleDelete = () => {
     if (entryToDelete) {
@@ -319,13 +314,13 @@ export default function JournalPage() {
             My Journal
             </h1>
         </div>
-        <Dialog open={isDialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) setEntryToEdit(null); }}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2" /> Add Entry
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-3xl">
+        <Button onClick={openNewDialog}>
+          <Plus className="mr-2" /> Add Entry
+        </Button>
+      </div>
+
+      <Dialog open={isDialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) setEntryToEdit(null); }}>
+          <DialogContent className="sm:max-w-4xl md:max-w-6xl">
             <DialogHeader>
               <DialogTitle>
                 {entryToEdit ? 'Edit Journal Entry' : 'New Journal Entry'}
@@ -336,59 +331,58 @@ export default function JournalPage() {
                   : 'Write down your thoughts and feelings. This is a safe space.'}
               </DialogDescription>
             </DialogHeader>
-            <form onSubmit={handleFormSubmit} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="title">Title</Label>
-                <Input
-                  id="title"
-                  name="title"
-                  defaultValue={entryToEdit?.title || ''}
-                  placeholder="e.g., A good day"
-                  required
-                />
+            <form onSubmit={handleFormSubmit}>
+             <div className="grid md:grid-cols-2 gap-6 max-h-[70vh] overflow-y-auto p-1">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="title">Title</Label>
+                    <Input
+                      id="title"
+                      name="title"
+                      defaultValue={entryToEdit?.title || ''}
+                      placeholder="e.g., A good day"
+                      required
+                    />
+                  </div>
+                   <div className="space-y-2">
+                    <Label>Mood</Label>
+                    <RadioGroup name="mood" defaultValue={entryToEdit?.mood} className="flex gap-4 pt-2">
+                        <Label className={cn("flex-1 flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground cursor-pointer", entryToEdit?.mood === 'Positive' && "border-green-500")}>
+                            <RadioGroupItem value="Positive" className="sr-only" />
+                            <Smile className="w-8 h-8 text-green-500 mb-2"/>
+                            Positive
+                        </Label>
+                        <Label className={cn("flex-1 flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground cursor-pointer", entryToEdit?.mood === 'Negative' && "border-red-500")}>
+                            <RadioGroupItem value="Negative" className="sr-only" />
+                            <Frown className="w-8 h-8 text-red-500 mb-2"/>
+                            Negative
+                        </Label>
+                        <Label className={cn("flex-1 flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground cursor-pointer", entryToEdit?.mood === 'Neutral' && "border-yellow-500")}>
+                            <RadioGroupItem value="Neutral" className="sr-only" />
+                            <Meh className="w-8 h-8 text-yellow-500 mb-2"/>
+                            Neutral
+                        </Label>
+                    </RadioGroup>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="content">Body</Label>
+                    <Textarea
+                      id="content"
+                      name="content"
+                      defaultValue={entryToEdit?.content || ''}
+                      placeholder="What's on your mind?"
+                      required
+                      rows={10}
+                    />
+                  </div>
+                </div>
+                <div className="space-y-2">
+                     <Label>Creative Canvas</Label>
+                     <DrawingCanvas onDrawingChange={setTempDrawing} initialImage={entryToEdit?.imageUrl} />
+                </div>
               </div>
-               <div className="space-y-2">
-                <Label>Mood</Label>
-                <RadioGroup name="mood" defaultValue={entryToEdit?.mood} className="flex gap-4 pt-2">
-                    <Label className={cn("flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground", entryToEdit?.mood === 'Positive' && "border-green-500")}>
-                        <RadioGroupItem value="Positive" className="sr-only" />
-                        <Smile className="w-8 h-8 text-green-500 mb-2"/>
-                        Positive
-                    </Label>
-                    <Label className={cn("flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground", entryToEdit?.mood === 'Negative' && "border-red-500")}>
-                        <RadioGroupItem value="Negative" className="sr-only" />
-                        <Frown className="w-8 h-8 text-red-500 mb-2"/>
-                        Negative
-                    </Label>
-                    <Label className={cn("flex flex-col items-center justify-center rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground", entryToEdit?.mood === 'Neutral' && "border-yellow-500")}>
-                        <RadioGroupItem value="Neutral" className="sr-only" />
-                        <Meh className="w-8 h-8 text-yellow-500 mb-2"/>
-                        Neutral
-                    </Label>
-                </RadioGroup>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="content">Body</Label>
-                <Textarea
-                  id="content"
-                  name="content"
-                  defaultValue={entryToEdit?.content || ''}
-                  placeholder="What's on your mind?"
-                  required
-                  rows={10}
-                />
-              </div>
-               <div className="space-y-2">
-                <Label htmlFor="image">Image (Optional)</Label>
-                <Input id="image" name="image" type="file" accept="image/*" />
-                 {entryToEdit?.imageUrl && (
-                    <div className="mt-2">
-                        <p className="text-sm text-muted-foreground">Current image:</p>
-                        <Image src={entryToEdit.imageUrl} alt="Current journal image" width={100} height={100} className="rounded-md mt-1" />
-                    </div>
-                )}
-              </div>
-              <DialogFooter>
+              <DialogFooter className="mt-6 pt-4 border-t">
+                <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
                 <Button type="submit">
                   {entryToEdit ? 'Save Changes' : 'Save Entry'}
                 </Button>
@@ -396,7 +390,6 @@ export default function JournalPage() {
             </form>
           </DialogContent>
         </Dialog>
-      </div>
 
       <Tabs defaultValue="positive">
         <TabsList className="grid w-full grid-cols-3">
