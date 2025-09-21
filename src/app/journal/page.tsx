@@ -108,6 +108,7 @@ export default function JournalPage() {
   const [drawingData, setDrawingData] = useState<string | undefined>(undefined);
 
   const gridRef = useRef(null);
+  const masonryRef = useRef<Masonry | null>(null);
 
   useEffect(() => {
     setIsLoading(true);
@@ -133,25 +134,32 @@ export default function JournalPage() {
   }, [entries, isLoading]);
 
   useEffect(() => {
-    if (!isLoading && gridRef.current && entries.length > 0) {
-        const msnry = new Masonry(gridRef.current, {
+    if (isLoading || typeof window === 'undefined' || !gridRef.current || entries.length === 0) {
+      return;
+    }
+
+    if (!masonryRef.current) {
+        masonryRef.current = new Masonry(gridRef.current, {
             itemSelector: '.grid-item',
             columnWidth: '.grid-item',
             percentPosition: true,
             gutter: 16,
         });
-
-        // This is important to re-layout items after images have loaded
-        const images = gridRef.current.querySelectorAll('img');
-        images.forEach(img => {
-            img.addEventListener('load', () => msnry.layout());
-        });
-
-        msnry.layout();
-
-        return () => msnry.destroy?.();
     }
-  }, [entries, isLoading]);
+
+    masonryRef.current.reloadItems();
+    masonryRef.current.layout();
+
+    const images = gridRef.current.querySelectorAll('img');
+    images.forEach(img => {
+      img.addEventListener('load', () => masonryRef.current?.layout());
+    });
+    
+    return () => {
+        masonryRef.current?.destroy?.();
+        masonryRef.current = null;
+    }
+}, [entries, isLoading]);
 
   const handleAddEntry = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
