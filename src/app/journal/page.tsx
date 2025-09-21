@@ -211,6 +211,7 @@ export default function JournalPage() {
   const gridRef = useRef(null);
 
   useEffect(() => {
+    // This code runs only on the client, after the component mounts.
     setIsLoading(true);
     try {
       const storedEntries = localStorage.getItem('journalEntries');
@@ -228,10 +229,16 @@ export default function JournalPage() {
   }, []);
 
   useEffect(() => {
+    // This effect runs whenever `entries` changes, to save to localStorage.
+    // It will not run on the initial server render because isLoading is true.
     if (!isLoading) {
         localStorage.setItem('journalEntries', JSON.stringify(entries));
     }
-    if (gridRef.current) {
+  }, [entries, isLoading]);
+
+  useEffect(() => {
+    // This effect initializes Masonry after entries are loaded and rendered.
+    if (!isLoading && gridRef.current && entries.length > 0) {
         const msnry = new Masonry(gridRef.current, {
             itemSelector: '.grid-item',
             columnWidth: '.grid-item',
@@ -239,8 +246,6 @@ export default function JournalPage() {
             gutter: 16,
         });
 
-        // Use imagesLoaded library if image loading is an issue for layout
-        msnry.layout?.();
         return () => msnry.destroy?.();
     }
   }, [entries, isLoading]);
@@ -416,7 +421,7 @@ export default function JournalPage() {
                 </div>
             ))}
         </div>
-         {entries.length === 0 && (
+         {entries.length === 0 && !isLoading && (
             <div className="text-center py-24 border-dashed border-2 rounded-lg">
                 <h3 className="text-xl font-semibold">Your Journal is Empty</h3>
                 <p className="text-muted-foreground mt-2">Click "Add Entry" to capture your first memory.</p>
