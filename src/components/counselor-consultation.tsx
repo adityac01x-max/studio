@@ -4,7 +4,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { Calendar as CalendarIcon, Loader2, MapPin, Users, BookUser, Search, Star } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
@@ -34,14 +34,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
+import { Link as LinkIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -51,6 +44,7 @@ import { Checkbox } from './ui/checkbox';
 import { Input } from './ui/input';
 import { usePathname } from 'next/navigation';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
+import { useLoadScript } from '@react-google-maps/api';
 
 const consultationSchema = z.object({
   date: z.date({
@@ -73,22 +67,6 @@ const timeSlots = [
   '04:00 PM',
 ];
 
-const nearbyProfessionals = [
-    {
-      id: 'prof1',
-      name: 'Dr. Anjali Gupta',
-      specialty: 'Cognitive Behavioral Therapy',
-      location: 'Koramangala, Bengaluru',
-      rating: 4.8,
-    },
-    {
-      id: 'prof2',
-      name: 'Dr. Vikram Patel',
-      specialty: 'Mindfulness-Based Stress Reduction',
-      location: 'Indiranagar, Bengaluru',
-      rating: 4.9,
-    },
-];
 
 const peerSupporters = [
   {
@@ -254,8 +232,15 @@ export function CounselorConsultation() {
   const [bookingCounselor, setBookingCounselor] = useState<string | null>(null);
   const [isSearchingNearby, setIsSearchingNearby] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
-  const [professionals, setProfessionals] = useState<any[]>([]);
+  const [professionals, setProfessionals] = useState<google.maps.places.PlaceResult[]>([]);
   const [bookingProfessional, setBookingProfessional] = useState<string | null>(null);
+  const [currentLocation, setCurrentLocation] = useState<google.maps.LatLng | null>(null);
+
+  const libraries = useMemo(() => ['places'], []);
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
+    libraries: libraries as any,
+  });
 
   const getBasePath = () => {
     if (pathname.startsWith('/love-and-self')) return '/love-and-self';
@@ -273,6 +258,14 @@ export function CounselorConsultation() {
       });
       return;
     }
+    if (!isLoaded) {
+      toast({
+        title: 'Map not ready',
+        description: 'Google Maps is still loading. Please try again in a moment.',
+        variant: 'destructive',
+      });
+      return;
+    }
 
     setIsSearchingNearby(true);
     setSearchError(null);
@@ -280,14 +273,35 @@ export function CounselorConsultation() {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        setTimeout(() => { // Simulate API call
-            setProfessionals(nearbyProfessionals);
-            toast({
-                title: 'Search Complete',
-                description: `Found ${nearbyProfessionals.length} professionals in your area.`,
-            });
+        const { latitude, longitude } = position.coords;
+        const location = new google.maps.LatLng(latitude, longitude);
+        setCurrentLocation(location);
+
+        const placesService = new google.maps.places.PlacesService(document.createElement('div'));
+        const request: google.maps.places.PlaceSearchRequest = {
+            location,
+            radius: 5000, // 5km radius
+            keyword: 'psychologist',
+        };
+
+        placesService.nearbySearch(request, (results, status) => {
+            if (status === google.maps.places.PlacesServiceStatus.OK && results) {
+                setProfessionals(results);
+                toast({
+                    title: 'Search Complete',
+                    description: `Found ${results.length} professionals in your area.`,
+                });
+            } else {
+                 setSearchError('Could not find any professionals nearby.');
+                 toast({
+                    title: 'Search Failed',
+                    description: 'Could not find any professionals nearby. Please try again later.',
+                    variant: 'destructive',
+                });
+            }
             setIsSearchingNearby(false);
-        }, 1500)
+        });
+
       },
       (error) => {
         let errorMessage = 'An unknown error occurred.';
@@ -309,7 +323,7 @@ export function CounselorConsultation() {
       },
       {
           enableHighAccuracy: true,
-          timeout: 5000,
+          timeout: 10000,
           maximumAge: 0,
       }
     );
@@ -402,7 +416,7 @@ export function CounselorConsultation() {
                             I agree to use my location to find nearby professionals.
                         </label>
                     </div>
-                    <Button onClick={handleGeolocation} className="w-full md:w-auto" disabled={isSearchingNearby || !useGeolocation}>
+                    <Button onClick={handleGeolocation} className="w-full md:w-auto" disabled={isSearchingNearby || !useGeolocation || !isLoaded}>
                         {isSearchingNearby ? (
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         ) : (
@@ -421,25 +435,34 @@ export function CounselorConsultation() {
                     {professionals.length > 0 && (
                          <div className="space-y-4 animate-in fade-in-50 duration-500">
                             {professionals.map(prof => (
-                                <Card key={prof.id}>
-                                    <CardHeader className="flex flex-row items-center justify-between">
-                                        <div>
-                                            <CardTitle className="text-lg">{prof.name}</CardTitle>
-                                            <CardDescription>{prof.specialty}</CardDescription>
-                                        </div>
-                                        <div className="text-right">
-                                            <p className="text-sm font-bold flex items-center gap-1"><MapPin className="w-4 h-4"/>{prof.location}</p>
-                                            <p className="text-sm text-muted-foreground flex items-center justify-end gap-1"><Star className="w-4 h-4 text-yellow-400" />{prof.rating}</p>
+                                <Card key={prof.place_id}>
+                                    <CardHeader>
+                                        <div className="flex justify-between items-start">
+                                            <div>
+                                                <CardTitle className="text-lg">{prof.name}</CardTitle>
+                                                <CardDescription>{prof.vicinity}</CardDescription>
+                                            </div>
+                                            <div className="text-right">
+                                                {prof.rating && (
+                                                    <p className="text-sm font-bold flex items-center justify-end gap-1"><Star className="w-4 h-4 text-yellow-400" />{prof.rating} ({prof.user_ratings_total})</p>
+                                                )}
+                                            </div>
                                         </div>
                                     </CardHeader>
-                                     <CardFooter>
-                                         <Button className="w-full" onClick={() => setBookingProfessional(bookingProfessional === prof.id ? null : prof.id)}>
-                                            {bookingProfessional === prof.id ? 'Cancel' : 'Book Appointment'}
+                                    <CardFooter className="flex-col sm:flex-row gap-2">
+                                        <Button className="w-full" onClick={() => setBookingProfessional(bookingProfessional === prof.place_id ? null : prof.place_id)}>
+                                            {bookingProfessional === prof.place_id ? 'Cancel' : 'Book Appointment'}
+                                        </Button>
+                                         <Button variant="outline" asChild className="w-full">
+                                            <a href={`https://www.google.com/maps/search/?api=1&query=Google&query_place_id=${prof.place_id}`} target="_blank" rel="noopener noreferrer">
+                                                <LinkIcon className="mr-2"/>
+                                                View on Map
+                                            </a>
                                         </Button>
                                      </CardFooter>
-                                     {bookingProfessional === prof.id && (
+                                     {bookingProfessional === prof.place_id && (
                                         <CardContent>
-                                            <CounselorBookingForm counselorId={prof.id}/>
+                                            <CounselorBookingForm counselorId={prof.name || 'this professional'}/>
                                         </CardContent>
                                      )}
                                 </Card>
