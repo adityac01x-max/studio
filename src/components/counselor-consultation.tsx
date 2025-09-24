@@ -4,7 +4,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { Calendar as CalendarIcon, Loader2, MapPin, Users, BookUser, Search, Star } from 'lucide-react';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
@@ -36,7 +36,6 @@ import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { Link as LinkIcon } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -45,6 +44,7 @@ import { Input } from './ui/input';
 import { usePathname } from 'next/navigation';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 import { useLoadScript } from '@react-google-maps/api';
+import { useLocation } from '@/hooks/use-location';
 
 const consultationSchema = z.object({
   date: z.date({
@@ -231,12 +231,11 @@ export function CounselorConsultation() {
   const [activeTab, setActiveTab] = useState('peer');
   const [bookingCounselor, setBookingCounselor] = useState<string | null>(null);
   const [isSearchingNearby, setIsSearchingNearby] = useState(false);
-  const [searchError, setSearchError] = useState<string | null>(null);
   const [professionals, setProfessionals] = useState<google.maps.places.PlaceResult[]>([]);
   const [pagination, setPagination] = useState<google.maps.places.PlaceSearchPagination | null>(null);
   const [bookingProfessional, setBookingProfessional] = useState<string | null>(null);
-  const [currentLocation, setCurrentLocation] = useState<google.maps.LatLng | null>(null);
-
+  
+  const { location, error: locationError, requestLocation } = useLocation();
 
   const libraries = useMemo(() => ['places'], []);
   const { isLoaded, loadError } = useLoadScript({
@@ -258,24 +257,7 @@ export function CounselorConsultation() {
   };
   const basePath = getBasePath();
 
-  useEffect(() => {
-    if (activeTab === 'nearby' && useGeolocation && !currentLocation) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const { latitude, longitude } = position.coords;
-                setCurrentLocation(new google.maps.LatLng(latitude, longitude));
-            },
-            (error) => {
-                // Handle errors silently for now, the main error is handled on button click
-                console.error("Proactive geolocation error: ", error);
-            },
-            { enableHighAccuracy: true, timeout: 10000, maximumAge: 600000 }
-        );
-    }
-}, [activeTab, useGeolocation, currentLocation]);
-
-
-  const handleGeolocation = () => {
+  const handleGeolocationSearch = useCallback(() => {
     if (!useGeolocation) {
       toast({
         title: 'Geolocation Disabled',
@@ -301,15 +283,14 @@ export function CounselorConsultation() {
       return;
     }
 
+    const searchAction = (loc: { lat: number; lng: number; }) => {
+        setIsSearchingNearby(true);
+        setProfessionals([]);
+        setPagination(null);
 
-    setIsSearchingNearby(true);
-    setSearchError(null);
-    setProfessionals([]);
-
-    const searchAction = (location: google.maps.LatLng) => {
         const placesService = new google.maps.places.PlacesService(document.createElement('div'));
         const request: google.maps.places.PlaceSearchRequest = {
-            location,
+            location: new google.maps.LatLng(loc.lat, loc.lng),
             radius: 5000, // 5km radius
             keyword: 'psychologist',
         };
@@ -323,7 +304,6 @@ export function CounselorConsultation() {
                     description: `Found ${results.length} professionals in your area.`,
                 });
             } else {
-                 setSearchError('Could not find any professionals nearby.');
                  toast({
                     title: 'Search Failed',
                     description: 'Could not find any professionals nearby. Please try again later.',
@@ -333,44 +313,20 @@ export function CounselorConsultation() {
             setIsSearchingNearby(false);
         });
     }
-    
-    if (currentLocation) {
-        searchAction(currentLocation);
+
+    if (location) {
+        searchAction(location);
     } else {
-        navigator.geolocation.getCurrentPosition(
-        (position) => {
-            const { latitude, longitude } = position.coords;
-            const location = new google.maps.LatLng(latitude, longitude);
-            setCurrentLocation(location);
-            searchAction(location);
-        },
-        (error) => {
-            let errorMessage = 'An unknown error occurred.';
-            if (error.code === error.PERMISSION_DENIED) {
-            errorMessage = 'You have denied location access. Please enable it in your browser settings.';
-            } else if (error.code === error.POSITION_UNAVAILABLE) {
-            errorMessage = 'Location information is unavailable.';
-            } else if (error.code === error.TIMEOUT) {
-            errorMessage = 'The request to get user location timed out.';
-            }
-            
-            toast({
-            title: 'Geolocation Error',
-            description: errorMessage,
-            variant: 'destructive',
-            });
-            setSearchError(errorMessage);
-            setIsSearchingNearby(false);
-        },
-        {
-            enableHighAccuracy: true,
-            timeout: 10000,
-            maximumAge: 0,
-        }
-        );
+        requestLocation();
     }
-  };
-  
+  }, [isLoaded, loadError, location, requestLocation, toast, useGeolocation]);
+
+  useEffect(() => {
+      if(location && isSearchingNearby){
+        handleGeolocationSearch();
+      }
+  }, [location, isSearchingNearby, handleGeolocationSearch])
+
   const handleLoadMore = () => {
     if (pagination && pagination.hasNextPage) {
         setIsSearchingNearby(true);
@@ -465,7 +421,7 @@ export function CounselorConsultation() {
                             I agree to use my location to find nearby professionals.
                         </label>
                     </div>
-                    <Button onClick={handleGeolocation} className="w-full md:w-auto" disabled={isSearchingNearby || !useGeolocation || !isLoaded}>
+                    <Button onClick={handleGeolocationSearch} className="w-full md:w-auto" disabled={isSearchingNearby || !useGeolocation || !isLoaded}>
                         {!isLoaded ? (
                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         ) : isSearchingNearby ? (
@@ -476,10 +432,10 @@ export function CounselorConsultation() {
                         {!isLoaded ? 'Loading Maps...' : isSearchingNearby ? 'Searching...' : 'Find Near Me'}
                     </Button>
 
-                    {searchError && (
+                    {locationError && (
                         <Alert variant="destructive">
                             <AlertTitle>Error</AlertTitle>
-                            <AlertDescription>{searchError}</AlertDescription>
+                            <AlertDescription>{locationError}</AlertDescription>
                         </Alert>
                     )}
 
@@ -536,4 +492,3 @@ export function CounselorConsultation() {
     </div>
   );
 }
-
