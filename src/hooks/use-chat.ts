@@ -34,6 +34,13 @@ const mockMessages: Record<string, Omit<Message, 'id' | 'timestamp'>[]> = {
         { role: 'student', content: 'I\'m feeling really anxious about my exams.' },
         { role: 'professional', content: 'I understand, exam periods can be very stressful. Have you been able to sleep and eat properly?' },
         { role: 'student', content: 'Not really, I\'m having trouble sleeping.' },
+    ],
+    'student-abc_peer-supporter-1': [
+        { role: 'student', content: "Hi, I'm feeling really overwhelmed and was hoping to talk." },
+        { role: 'peer', content: "Of course, I'm here to listen. What's been on your mind?" },
+    ],
+    'student-xyz_peer-supporter-1': [
+        { role: 'student', content: "Thanks for offering to help. I'm struggling with exam stress." }
     ]
 };
 
