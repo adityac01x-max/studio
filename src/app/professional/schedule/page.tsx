@@ -91,6 +91,24 @@ const allSessions = [
     type: 'Video Call',
     status: 'Upcoming',
   },
+   {
+    id: 'session-5',
+    studentId: 'STU-anon-345',
+    studentAvatar: 'https://picsum.photos/seed/STU-anon-345/100/100',
+    date: new Date().toISOString(),
+    time: '11:00 AM - 12:00 PM',
+    type: 'In-Person',
+    status: 'Upcoming',
+  },
+    {
+    id: 'session-6',
+    studentId: 'STU-anon-999',
+    studentAvatar: 'https://picsum.photos/seed/STU-anon-999/100/100',
+    date: new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+    time: '03:00 PM - 04:00 PM',
+    type: 'Video Call',
+    status: 'Upcoming',
+  },
 ];
 
 type Session = typeof allSessions[0];

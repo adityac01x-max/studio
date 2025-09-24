@@ -51,20 +51,29 @@ import {
 } from '@/components/ui/chart';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Link from 'next/link';
+import { format } from 'date-fns';
+
 
 const upcomingSessions = [
   {
     studentId: 'STU-anon-789',
     time: '10:00 AM',
-    date: '2024-07-31',
+    date: new Date().toISOString(),
     studentAvatar: 'https://picsum.photos/seed/STU-anon-789/100/100',
     type: 'In-Person',
   },
   {
     studentId: 'STU-anon-101',
     time: '09:00 AM',
-    date: '2024-08-01',
+    date: new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString(),
     studentAvatar: 'https://picsum.photos/seed/STU-anon-101/100/100',
+    type: 'Video Call',
+  },
+    {
+    studentId: 'STU-anon-123',
+    time: '02:00 PM',
+    date: new Date().toISOString(),
+    studentAvatar: 'https://picsum.photos/seed/STU-anon-123/100/100',
     type: 'Video Call',
   },
 ];
@@ -108,6 +117,10 @@ const sessionTypeData = [
 ]
 
 export default function ProfessionalDashboardPage() {
+  const todaysSessions = upcomingSessions.filter(
+    session => format(new Date(session.date), 'PPP') === format(new Date(), 'PPP')
+  );
+
   return (
     <div className="space-y-6">
       <div className="space-y-2">
@@ -265,7 +278,7 @@ export default function ProfessionalDashboardPage() {
             <CardDescription>Your next sessions for today.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            {upcomingSessions.map((session) => (
+            {todaysSessions.length > 0 ? todaysSessions.map((session) => (
               <div
                 key={session.studentId}
                 className="flex items-center justify-between"
@@ -299,7 +312,7 @@ export default function ProfessionalDashboardPage() {
                   </Button>
                 )}
               </div>
-            ))}
+            )) : <p className="text-sm text-muted-foreground">No sessions scheduled for today.</p>}
           </CardContent>
         </Card>
       </div>

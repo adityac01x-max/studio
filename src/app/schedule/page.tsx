@@ -58,7 +58,7 @@ const scheduledSessions = [
     id: 'session-3',
     title: 'Session with Dr. Sunita Sharma',
     counselor: 'Dr. Sunita Sharma',
-    date: '2024-07-31',
+    date: new Date().toISOString(),
     time: '10:00 AM - 11:00 AM',
     location: 'Counseling Center, Room 2',
     type: 'Consultation',
@@ -71,7 +71,7 @@ const scheduledSessions = [
     id: 'session-4',
     title: 'Mindfulness Workshop',
     counselor: 'College Wellness Dept.',
-    date: '2024-08-01',
+    date: new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString(),
     time: '04:00 PM - 05:00 PM',
     location: 'Virtual Meeting',
     type: 'Workshop',
@@ -84,7 +84,7 @@ const scheduledSessions = [
     id: 'session-5',
     title: 'Session with Dr. Rohan Mehra',
     counselor: 'Dr. Rohan Mehra',
-    date: '2024-08-02',
+    date: new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000).toISOString(),
     time: '09:00 AM - 10:00 AM',
     location: 'Counseling Center, Room 1',
     type: 'Consultation',
@@ -97,7 +97,7 @@ const scheduledSessions = [
     id: 'session-6',
     title: 'Group Therapy: Stress Management',
     counselor: 'Dr. Sunita Sharma',
-    date: '2024-08-05',
+    date: new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000).toISOString(),
     time: '03:00 PM - 04:00 PM',
     location: 'Health Services Building, Group Room A',
     type: 'Workshop',
@@ -110,7 +110,7 @@ const scheduledSessions = [
     id: 'session-7',
     title: 'Check-in with Priya Singh',
     counselor: 'Priya Singh',
-    date: '2024-08-06',
+    date: new Date(new Date().getTime() + 6 * 24 * 60 * 60 * 1000).toISOString(),
     time: '11:00 AM - 11:30 AM',
     location: 'Virtual Coffee Chat',
     type: 'Peer Support',
@@ -123,7 +123,7 @@ const scheduledSessions = [
     id: 'session-8',
     title: 'Follow-up with Dr. Rohan Mehra',
     counselor: 'Dr. Rohan Mehra',
-    date: '2024-08-09',
+    date: new Date(new Date().getTime() + 9 * 24 * 60 * 60 * 1000).toISOString(),
     time: '09:00 AM - 10:00 AM',
     location: 'Counseling Center, Room 1',
     type: 'Consultation',
@@ -156,7 +156,7 @@ export default function SchedulePage() {
     ? scheduledSessions.filter(
         (c) => format(new Date(c.date), 'PPP') === format(date, 'PPP')
       )
-    : scheduledSessions.filter((c) => new Date(c.date) >= new Date());
+    : scheduledSessions.filter((c) => new Date(c.date) >= new Date(new Date().setHours(0,0,0,0)));
 
   const handleOpenDialog = (session: Session) => {
     setSelectedSession(session);
