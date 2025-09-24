@@ -306,6 +306,11 @@ export function CounselorConsultation() {
         });
         setSearchError(errorMessage);
         setIsSearchingNearby(false);
+      },
+      {
+          enableHighAccuracy: true,
+          timeout: 5000,
+          maximumAge: 0,
       }
     );
   };
