@@ -76,6 +76,20 @@ const upcomingSessions = [
     studentAvatar: 'https://picsum.photos/seed/STU-anon-123/100/100',
     type: 'Video Call',
   },
+  {
+    studentId: 'STU-anon-345',
+    time: '11:00 AM',
+    date: new Date().toISOString(),
+    studentAvatar: 'https://picsum.photos/seed/STU-anon-345/100/100',
+    type: 'In-Person',
+  },
+    {
+    studentId: 'STU-anon-999',
+    time: '03:00 PM',
+    date: new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+    studentAvatar: 'https://picsum.photos/seed/STU-anon-999/100/100',
+    type: 'Video Call',
+  },
 ];
 
 const highRiskStudents = [
