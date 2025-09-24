@@ -233,8 +233,8 @@ export function CounselorConsultation() {
   const [isSearchingNearby, setIsSearchingNearby] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [professionals, setProfessionals] = useState<google.maps.places.PlaceResult[]>([]);
+  const [pagination, setPagination] = useState<google.maps.places.PlaceSearchPagination | null>(null);
   const [bookingProfessional, setBookingProfessional] = useState<string | null>(null);
-  const [currentLocation, setCurrentLocation] = useState<google.maps.LatLng | null>(null);
 
   const libraries = useMemo(() => ['places'], []);
   const { isLoaded } = useLoadScript({
@@ -275,7 +275,6 @@ export function CounselorConsultation() {
       (position) => {
         const { latitude, longitude } = position.coords;
         const location = new google.maps.LatLng(latitude, longitude);
-        setCurrentLocation(location);
 
         const placesService = new google.maps.places.PlacesService(document.createElement('div'));
         const request: google.maps.places.PlaceSearchRequest = {
@@ -284,9 +283,10 @@ export function CounselorConsultation() {
             keyword: 'psychologist',
         };
 
-        placesService.nearbySearch(request, (results, status) => {
+        placesService.nearbySearch(request, (results, status, pagination) => {
             if (status === google.maps.places.PlacesServiceStatus.OK && results) {
                 setProfessionals(results);
+                setPagination(pagination ?? null);
                 toast({
                     title: 'Search Complete',
                     description: `Found ${results.length} professionals in your area.`,
@@ -328,6 +328,13 @@ export function CounselorConsultation() {
       }
     );
   };
+  
+  const handleLoadMore = () => {
+    if (pagination && pagination.hasNextPage) {
+        setIsSearchingNearby(true);
+        pagination.nextPage();
+    }
+  }
 
 
   return (
@@ -416,7 +423,7 @@ export function CounselorConsultation() {
                             I agree to use my location to find nearby professionals.
                         </label>
                     </div>
-                    <Button onClick={handleGeolocation} className="w-full md:w-auto" disabled={isSearchingNearby || !useGeolocation}>
+                    <Button onClick={handleGeolocation} className="w-full md:w-auto" disabled={isSearchingNearby || !useGeolocation || !isLoaded}>
                         {!isLoaded ? (
                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         ) : isSearchingNearby ? (
@@ -469,6 +476,14 @@ export function CounselorConsultation() {
                                      )}
                                 </Card>
                             ))}
+                        </div>
+                    )}
+                    {pagination && pagination.hasNextPage && (
+                        <div className="flex justify-center mt-4">
+                            <Button onClick={handleLoadMore} variant="outline" disabled={isSearchingNearby}>
+                                {isSearchingNearby && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                Load More
+                            </Button>
                         </div>
                     )}
                 </div>
