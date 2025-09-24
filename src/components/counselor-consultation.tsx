@@ -50,6 +50,8 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Checkbox } from './ui/checkbox';
 import { Input } from './ui/input';
 import { usePathname } from 'next/navigation';
+import { Alert, AlertDescription, AlertTitle } from './ui/alert';
+
 
 const consultationSchema = z.object({
   date: z.date({
@@ -262,6 +264,9 @@ export function CounselorConsultation() {
   const [useGeolocation, setUseGeolocation] = useState(false);
   const [activeTab, setActiveTab] = useState('peer');
   const [bookingCounselor, setBookingCounselor] = useState<string | null>(null);
+  const [isSearchingNearby, setIsSearchingNearby] = useState(false);
+  const [searchError, setSearchError] = useState<string | null>(null);
+  const [professionalsFound, setProfessionalsFound] = useState(false);
 
   const getBasePath = () => {
     if (pathname.startsWith('/love-and-self')) return '/love-and-self';
@@ -275,15 +280,53 @@ export function CounselorConsultation() {
       toast({
         title: 'Geolocation Disabled',
         description: 'Please agree to the terms to enable geolocation.',
+        variant: 'destructive'
       });
       return;
     }
-    toast({
-      title: 'Searching for Professionals...',
-      description: 'Please allow location access in your browser.',
-    });
-    // Geolocation logic would go here
+
+    setIsSearchingNearby(true);
+    setSearchError(null);
+    setProfessionalsFound(false);
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        // In a real app, you would use position.coords.latitude and position.coords.longitude
+        // to query a backend for nearby professionals.
+        console.log('Latitude:', position.coords.latitude, 'Longitude:', position.coords.longitude);
+        
+        // Simulate a successful search
+        setTimeout(() => {
+            toast({
+                title: 'Search Complete',
+                description: 'Found professionals in your area.',
+            });
+            setProfessionalsFound(true);
+            setIsSearchingNearby(false);
+        }, 1500);
+
+      },
+      (error) => {
+        let errorMessage = 'An unknown error occurred.';
+        if (error.code === error.PERMISSION_DENIED) {
+          errorMessage = 'You have denied location access. Please enable it in your browser settings.';
+        } else if (error.code === error.POSITION_UNAVAILABLE) {
+          errorMessage = 'Location information is unavailable.';
+        } else if (error.code === error.TIMEOUT) {
+          errorMessage = 'The request to get user location timed out.';
+        }
+        
+        toast({
+          title: 'Geolocation Error',
+          description: errorMessage,
+          variant: 'destructive',
+        });
+        setSearchError(errorMessage);
+        setIsSearchingNearby(false);
+      }
+    );
   };
+
 
   return (
     <div className="space-y-4">
@@ -371,33 +414,46 @@ export function CounselorConsultation() {
                         I agree to use my location to find nearby professionals.
                     </label>
                     </div>
-                    <Button onClick={handleGeolocation} className="w-full md:w-auto">
-                        <Search className="mr-2" />
+                    <Button onClick={handleGeolocation} className="w-full md:w-auto" disabled={isSearchingNearby}>
+                        {isSearchingNearby ? (
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : (
+                            <Search className="mr-2" />
+                        )}
                         Find Near Me
                     </Button>
 
-                     <div className="space-y-4">
-                        {nearbyProfessionals.map(prof => (
-                            <Card key={prof.id}>
-                                <CardHeader className="flex flex-row items-center justify-between">
-                                    <div className="flex items-center gap-4">
-                                        <Avatar className="w-12 h-12">
-                                            <AvatarImage src={prof.avatar} />
-                                            <AvatarFallback>{prof.name.charAt(0)}</AvatarFallback>
-                                        </Avatar>
-                                        <div>
-                                            <CardTitle className="text-lg">{prof.name}</CardTitle>
-                                            <CardDescription>{prof.specialty}</CardDescription>
+                    {searchError && (
+                        <Alert variant="destructive">
+                            <AlertTitle>Error</AlertTitle>
+                            <AlertDescription>{searchError}</AlertDescription>
+                        </Alert>
+                    )}
+
+                    {professionalsFound && (
+                         <div className="space-y-4 animate-in fade-in-50 duration-500">
+                            {nearbyProfessionals.map(prof => (
+                                <Card key={prof.id}>
+                                    <CardHeader className="flex flex-row items-center justify-between">
+                                        <div className="flex items-center gap-4">
+                                            <Avatar className="w-12 h-12">
+                                                <AvatarImage src={prof.avatar} />
+                                                <AvatarFallback>{prof.name.charAt(0)}</AvatarFallback>
+                                            </Avatar>
+                                            <div>
+                                                <CardTitle className="text-lg">{prof.name}</CardTitle>
+                                                <CardDescription>{prof.specialty}</CardDescription>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="text-right">
-                                        <p className="text-sm font-semibold">{prof.distance}</p>
-                                        <p className="text-xs text-muted-foreground">{prof.address}</p>
-                                    </div>
-                                </CardHeader>
-                            </Card>
-                        ))}
-                    </div>
+                                        <div className="text-right">
+                                            <p className="text-sm font-semibold">{prof.distance}</p>
+                                            <p className="text-xs text-muted-foreground">{prof.address}</p>
+                                        </div>
+                                    </CardHeader>
+                                </Card>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </TabsContent>
             </Tabs>
