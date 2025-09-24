@@ -3,7 +3,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
-import { Calendar as CalendarIcon, Loader2, MapPin, Users, BookUser, Search } from 'lucide-react';
+import { Calendar as CalendarIcon, Loader2, MapPin, Users, BookUser, Search, Star } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -255,6 +255,7 @@ export function CounselorConsultation() {
   const [isSearchingNearby, setIsSearchingNearby] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [professionals, setProfessionals] = useState<any[]>([]);
+  const [bookingProfessional, setBookingProfessional] = useState<string | null>(null);
 
   const getBasePath = () => {
     if (pathname.startsWith('/love-and-self')) return '/love-and-self';
@@ -396,7 +397,7 @@ export function CounselorConsultation() {
                             I agree to use my location to find nearby professionals.
                         </label>
                     </div>
-                    <Button onClick={handleGeolocation} className="w-full md:w-auto" disabled={isSearchingNearby}>
+                    <Button onClick={handleGeolocation} className="w-full md:w-auto" disabled={isSearchingNearby || !useGeolocation}>
                         {isSearchingNearby ? (
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         ) : (
@@ -422,10 +423,20 @@ export function CounselorConsultation() {
                                             <CardDescription>{prof.specialty}</CardDescription>
                                         </div>
                                         <div className="text-right">
-                                            <p className="text-sm font-bold">{prof.location}</p>
-                                            <p className="text-sm text-muted-foreground">Rating: {prof.rating}</p>
+                                            <p className="text-sm font-bold flex items-center gap-1"><MapPin className="w-4 h-4"/>{prof.location}</p>
+                                            <p className="text-sm text-muted-foreground flex items-center justify-end gap-1"><Star className="w-4 h-4 text-yellow-400" />{prof.rating}</p>
                                         </div>
                                     </CardHeader>
+                                     <CardFooter>
+                                         <Button className="w-full" onClick={() => setBookingProfessional(bookingProfessional === prof.id ? null : prof.id)}>
+                                            {bookingProfessional === prof.id ? 'Cancel' : 'Book Appointment'}
+                                        </Button>
+                                     </CardFooter>
+                                     {bookingProfessional === prof.id && (
+                                        <CardContent>
+                                            <CounselorBookingForm counselorId={prof.id}/>
+                                        </CardContent>
+                                     )}
                                 </Card>
                             ))}
                         </div>
