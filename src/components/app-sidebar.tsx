@@ -99,15 +99,20 @@ const professionalNavItems = [
     { href: '/professional/rooms', label: 'Community Rooms', icon: Milestone },
 ]
 
-const lifestyleNavItems = [
-  { href: '/lifestyle', label: 'Dashboard', icon: LayoutGrid },
-  { href: '/lifestyle/activities', label: 'Activities', icon: Gamepad2 },
-  { href: '/lifestyle/exercises', label: 'Exercises', icon: Bike },
-  { href: '/lifestyle/greenhouse', label: 'Greenhouse', icon: Sprout },
-  { href: '/lifestyle/consultation', label: 'Consultation', icon: Users },
-  { href: '/lifestyle/student-chat', label: 'My Chats', icon: MessageSquare },
-  { href: '/lifestyle/ai-chat', label: 'AI First-Aid', icon: Bot },
-];
+const lifestyleNavItems = {
+    'Lifestyle Tools': [
+        { href: '/lifestyle', label: 'Dashboard', icon: LayoutGrid },
+        { href: '/lifestyle/activities', label: 'Activities', icon: Gamepad2 },
+        { href: '/lifestyle/exercises', label: 'Exercises', icon: Bike },
+        { href: '/lifestyle/greenhouse', label: 'Greenhouse', icon: Sprout },
+    ],
+    'Support': [
+        { href: '/lifestyle/consultation', label: 'Consultation', icon: Users },
+        { href: '/lifestyle/student-chat', label: 'My Chats', icon: MessageSquare },
+        { href: '/lifestyle/schedule', label: 'My Schedule', icon: Calendar },
+        { href: '/lifestyle/ai-chat', label: 'AI First-Aid', icon: Bot },
+    ]
+};
 
 
 function DiamondIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -229,7 +234,7 @@ export function AppSidebar() {
             Object.entries(currentNavItems).map(([groupName, items]) => (
                 <SidebarGroup key={groupName} className="p-0">
                     <SidebarGroupLabel>{groupName}</SidebarGroupLabel>
-                    {items.map((item: any) => (
+                    {(items as any[]).map((item: any) => (
                         <SidebarMenuItem key={item.href}>
                         <Link href={item.href} passHref>
                             <SidebarMenuButton

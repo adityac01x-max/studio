@@ -27,59 +27,73 @@ import Link from 'next/link';
 const scheduledSessions = [
   {
     id: 'session-1',
-    title: 'Consultation with Dr. Alex Chen',
-    counselor: 'Dr. Alex Chen (LGBTQ+ Affirming)',
-    date: '2024-07-30',
-    time: '11:00 AM - 12:00 PM',
-    location: 'Virtual Meeting',
+    title: 'Session with Dr. Sunita Sharma',
+    counselor: 'Dr. Sunita Sharma',
+    date: '2024-07-29',
+    time: '10:00 AM - 11:00 AM',
+    location: 'Counseling Center, Room 2',
     type: 'Consultation',
     report: {
       notes:
-        'Discussed feelings around identity and navigating family conversations. Explored resources for finding local community.',
-      followUp: 'Journal about values and what authenticity means to you.',
+        'Patient discussed feelings of anxiety related to upcoming exams. We practiced breathing exercises and discussed time management strategies. Patient seemed receptive and engaged.',
+      followUp: 'Practice breathing exercises twice daily. Try to implement the 5-minute rule for procrastination.',
     },
   },
   {
     id: 'session-2',
-    title: 'Queer Peer Support Circle',
-    counselor: 'Priya Singh (Peer Lead)',
-    date: '2024-08-01',
-    time: '06:00 PM - 07:00 PM',
-    location: 'Student Union, Room 3',
+    title: 'Peer Support Meeting',
+    counselor: 'Rohan Kumar',
+    date: '2024-07-29',
+    time: '02:00 PM - 03:00 PM',
+    location: 'Student Union, Room 5',
     type: 'Peer Support',
     report: {
-      notes: 'Group discussion on the theme of "Chosen Family." Shared personal stories and offered mutual support. A very positive and validating atmosphere.',
-      followUp: 'N/A',
+      notes:
+        'Discussed challenges with balancing social life and academics. Shared experiences with other peers. The group was supportive and offered practical advice.',
+      followUp: 'Connect with one peer from the group for a coffee chat this week.',
     },
   },
   {
     id: 'session-3',
-    title: 'Coming Out Stories Workshop',
-    counselor: 'Community Hub',
-    date: '2024-08-05',
-    time: '04:00 PM - 05:30 PM',
-    location: 'Virtual Workshop',
-    type: 'Workshop',
-    report: {
-      notes: 'Upcoming workshop focused on sharing and listening to coming out experiences in a safe, moderated space.',
-      followUp: 'Registration is required. Come with an open heart.',
-    },
-  },
-   {
-    id: 'session-4',
-    title: 'Self-Esteem & Identity Session',
-    counselor: 'Dr. Meera Desai',
-    date: '2024-08-08',
-    time: '01:00 PM - 02:00 PM',
-    location: 'Counseling Center, Room 4',
+    title: 'Session with Dr. Sunita Sharma',
+    counselor: 'Dr. Sunita Sharma',
+    date: new Date().toISOString(),
+    time: '10:00 AM - 11:00 AM',
+    location: 'Counseling Center, Room 2',
     type: 'Consultation',
     report: {
-      notes: 'This is an upcoming session.',
-      followUp: 'Please complete the self-esteem questionnaire beforehand.',
+      notes: 'This is an upcoming session. Notes will be available after completion.',
+      followUp: 'Come prepared to discuss progress on time management strategies.',
     },
   },
   {
+    id: 'session-4',
+    title: 'Mindfulness Workshop',
+    counselor: 'College Wellness Dept.',
+    date: new Date(new Date().getTime() + 24 * 60 * 60 * 1000).toISOString(),
+    time: '04:00 PM - 05:00 PM',
+    location: 'Virtual Meeting',
+    type: 'Workshop',
+    report: {
+      notes: 'This is an upcoming workshop. A summary will be provided after the event.',
+      followUp: 'N/A',
+    },
+  },
+   {
     id: 'session-5',
+    title: 'Session with Dr. Rohan Mehra',
+    counselor: 'Dr. Rohan Mehra',
+    date: new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000).toISOString(),
+    time: '09:00 AM - 10:00 AM',
+    location: 'Counseling Center, Room 1',
+    type: 'Consultation',
+    report: {
+      notes: 'This is an upcoming session. Notes will be available after completion.',
+      followUp: 'N/A',
+    },
+  },
+  {
+    id: 'session-6',
     title: 'Group Therapy: Stress Management',
     counselor: 'Dr. Sunita Sharma',
     date: new Date(new Date().getTime() + 5 * 24 * 60 * 60 * 1000).toISOString(),
@@ -92,7 +106,7 @@ const scheduledSessions = [
     },
   },
   {
-    id: 'session-6',
+    id: 'session-7',
     title: 'Check-in with Priya Singh',
     counselor: 'Priya Singh',
     date: new Date(new Date().getTime() + 6 * 24 * 60 * 60 * 1000).toISOString(),
@@ -105,7 +119,7 @@ const scheduledSessions = [
     },
   },
   {
-    id: 'session-7',
+    id: 'session-8',
     title: 'Follow-up with Dr. Rohan Mehra',
     counselor: 'Dr. Rohan Mehra',
     date: new Date(new Date().getTime() + 9 * 24 * 60 * 60 * 1000).toISOString(),
@@ -130,7 +144,7 @@ const SessionIcon = ({type}: {type: string}) => {
     }
 }
 
-export default function LoveAndSelfSchedulePage() {
+export default function LifestyleSchedulePage() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
   const [isDialogOpen, setDialogOpen] = useState(false);
@@ -149,21 +163,21 @@ export default function LoveAndSelfSchedulePage() {
   };
 
   return (
-     <div className="space-y-6">
-        <div className="flex items-center gap-4 mb-6">
-            <Link href="/love-and-self">
-            <Button variant="outline" size="icon">
-                <ArrowLeft />
-                <span className="sr-only">Back</span>
-            </Button>
-            </Link>
-            <h1 className="font-headline text-3xl font-bold tracking-tight">
-                My Schedule
-            </h1>
-        </div>
+    <div className="space-y-6">
+      <div className="flex items-center gap-4 mb-6">
+        <Link href="/lifestyle">
+          <Button variant="outline" size="icon">
+            <ArrowLeft />
+            <span className="sr-only">Back to Dashboard</span>
+          </Button>
+        </Link>
+        <h1 className="font-headline text-3xl font-bold tracking-tight">
+          My Schedule
+        </h1>
+      </div>
       <div className="grid gap-8 md:grid-cols-3">
         <div className="md:col-span-2 space-y-6">
-          <Card className="bg-card/80 backdrop-blur-sm">
+          <Card>
             <CardHeader>
               <CardTitle>Upcoming Sessions</CardTitle>
               <CardDescription>
@@ -176,7 +190,7 @@ export default function LoveAndSelfSchedulePage() {
               {filteredSessions.length > 0 ? (
                 <div className="space-y-4">
                   {filteredSessions.map((item) => (
-                    <Card key={item.id} className="bg-card/80 backdrop-blur-sm">
+                    <Card key={item.id}>
                       <CardContent className="pt-6 grid gap-4">
                         <div className="flex justify-between items-start">
                           <div>
@@ -225,7 +239,7 @@ export default function LoveAndSelfSchedulePage() {
           </Card>
         </div>
         <div className="space-y-6">
-          <Card className="bg-card/80 backdrop-blur-sm">
+          <Card>
             <CardHeader>
               <CardTitle>Total Scheduled Sessions</CardTitle>
             </CardHeader>
@@ -237,7 +251,7 @@ export default function LoveAndSelfSchedulePage() {
               <p className="text-muted-foreground">Sessions</p>
             </CardContent>
           </Card>
-          <Card className="bg-card/80 backdrop-blur-sm">
+          <Card>
             <CardContent className="p-0">
               <Calendar
                 mode="single"
