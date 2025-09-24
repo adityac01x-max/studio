@@ -54,7 +54,7 @@ const navItems = {
   ],
   'My Journey': [
     { href: '/love-and-self/progress', label: 'My Progress', icon: Trophy },
-    { href: '/love-and-self/schedule', label: 'My Schedule', icon: Calendar },
+    { href: '/schedule', label: 'My Schedule', icon: Calendar },
     { href: '/journal', label: 'My Journal', icon: NotebookText },
   ],
   'Support': [
