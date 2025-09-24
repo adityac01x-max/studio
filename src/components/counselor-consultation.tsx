@@ -4,7 +4,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { Calendar as CalendarIcon, Loader2, MapPin, Users, BookUser, Search, Star } from 'lucide-react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Button } from '@/components/ui/button';
@@ -237,10 +237,15 @@ export function CounselorConsultation() {
   const [bookingProfessional, setBookingProfessional] = useState<string | null>(null);
 
   const libraries = useMemo(() => ['places'], []);
-  const { isLoaded } = useLoadScript({
+  const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
     libraries: libraries as any,
+    preventGoogleFontsLoading: true,
   });
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+  }
 
   const getBasePath = () => {
     if (pathname.startsWith('/love-and-self')) return '/love-and-self';
@@ -341,7 +346,7 @@ export function CounselorConsultation() {
     <div className="space-y-4">
       <Card>
         <CardContent className="p-6">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
             <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="peer">
                     <Users className="mr-2"/>
