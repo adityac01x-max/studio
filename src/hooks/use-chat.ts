@@ -22,6 +22,22 @@ export type Message = {
   timestamp: Timestamp;
 };
 
+const mockMessages: Record<string, Omit<Message, 'id' | 'timestamp'>[]> = {
+    'student-user_professional-counselor1': [
+        { role: 'student', content: 'Hello Dr. Sharma, I am feeling a bit overwhelmed with my studies.' },
+        { role: 'professional', content: 'Hello! Thank you for reaching out. Can you tell me a bit more about what feels overwhelming?' },
+    ],
+    'student-user_professional-peer1': [
+        { role: 'peer', content: 'Hey, feel free to reach out if you need to talk.' },
+    ],
+    'student-789_professional-sharma': [
+        { role: 'student', content: 'I\'m feeling really anxious about my exams.' },
+        { role: 'professional', content: 'I understand, exam periods can be very stressful. Have you been able to sleep and eat properly?' },
+        { role: 'student', content: 'Not really, I\'m having trouble sleeping.' },
+    ]
+};
+
+
 export const useChat = (conversationId: string) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,13 +54,22 @@ export const useChat = (conversationId: string) => {
     );
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const msgs = querySnapshot.docs
-        .map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-        } as Message))
-        .reverse(); // Reverse to show oldest first
-      setMessages(msgs);
+      if (querySnapshot.empty && mockMessages[conversationId]) {
+          const mocked = mockMessages[conversationId].map((msg, index) => ({
+              ...msg,
+              id: `mock-${index}`,
+              timestamp: Timestamp.now(),
+          }));
+          setMessages(mocked);
+      } else {
+        const msgs = querySnapshot.docs
+            .map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            } as Message))
+            .reverse(); // Reverse to show oldest first
+        setMessages(msgs);
+      }
       setLoading(false);
     }, (error) => {
         console.error("Error fetching messages:", error);

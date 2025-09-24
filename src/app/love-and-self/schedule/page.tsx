@@ -112,7 +112,7 @@ export default function LoveAndSelfSchedulePage() {
   return (
      <div className="space-y-6">
         <div className="flex items-center gap-4 mb-6">
-            <Link href="/love-and-self" passHref>
+            <Link href="/love-and-self">
             <Button variant="outline" size="icon">
                 <ArrowLeft />
                 <span className="sr-only">Back</span>
