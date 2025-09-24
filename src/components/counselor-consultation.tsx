@@ -160,7 +160,7 @@ const CounselorBookingForm = ({ counselorId }: { counselorId: string }) => {
                                     mode="single"
                                     selected={field.value}
                                     onSelect={field.onChange}
-                                    disabled={(date) => date < new Date() || date < new Date("1900-01-01")}
+                                    disabled={(date) => date < new Date(new Date().setHours(0,0,0,0))}
                                     initialFocus
                                 />
                                 </PopoverContent>
@@ -416,13 +416,15 @@ export function CounselorConsultation() {
                             I agree to use my location to find nearby professionals.
                         </label>
                     </div>
-                    <Button onClick={handleGeolocation} className="w-full md:w-auto" disabled={isSearchingNearby || !useGeolocation || !isLoaded}>
-                        {isSearchingNearby ? (
+                    <Button onClick={handleGeolocation} className="w-full md:w-auto" disabled={isSearchingNearby || !useGeolocation}>
+                        {!isLoaded ? (
+                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        ) : isSearchingNearby ? (
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         ) : (
                             <Search className="mr-2" />
                         )}
-                        Find Near Me
+                        {!isLoaded ? 'Loading Maps...' : isSearchingNearby ? 'Searching...' : 'Find Near Me'}
                     </Button>
 
                     {searchError && (
