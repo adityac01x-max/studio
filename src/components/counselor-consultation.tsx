@@ -235,12 +235,16 @@ export function CounselorConsultation() {
   const [professionals, setProfessionals] = useState<google.maps.places.PlaceResult[]>([]);
   const [pagination, setPagination] = useState<google.maps.places.PlaceSearchPagination | null>(null);
   const [bookingProfessional, setBookingProfessional] = useState<string | null>(null);
+  const [currentLocation, setCurrentLocation] = useState<google.maps.LatLng | null>(null);
+
 
   const libraries = useMemo(() => ['places'], []);
   const { isLoaded, loadError } = useLoadScript({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
     libraries: libraries as any,
     preventGoogleFontsLoading: true,
+    // Only load the script when the nearby tab is active
+    preventLoading: activeTab !== 'nearby',
   });
 
   const handleTabChange = (value: string) => {
@@ -253,6 +257,23 @@ export function CounselorConsultation() {
     return '';
   };
   const basePath = getBasePath();
+
+  useEffect(() => {
+    if (activeTab === 'nearby' && useGeolocation && !currentLocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const { latitude, longitude } = position.coords;
+                setCurrentLocation(new google.maps.LatLng(latitude, longitude));
+            },
+            (error) => {
+                // Handle errors silently for now, the main error is handled on button click
+                console.error("Proactive geolocation error: ", error);
+            },
+            { enableHighAccuracy: true, timeout: 10000, maximumAge: 600000 }
+        );
+    }
+}, [activeTab, useGeolocation, currentLocation]);
+
 
   const handleGeolocation = () => {
     if (!useGeolocation) {
@@ -271,16 +292,21 @@ export function CounselorConsultation() {
       });
       return;
     }
+    if (loadError) {
+       toast({
+        title: 'Map Error',
+        description: 'Could not load Google Maps. Please check your connection or API key.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
 
     setIsSearchingNearby(true);
     setSearchError(null);
     setProfessionals([]);
 
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        const location = new google.maps.LatLng(latitude, longitude);
-
+    const searchAction = (location: google.maps.LatLng) => {
         const placesService = new google.maps.places.PlacesService(document.createElement('div'));
         const request: google.maps.places.PlaceSearchRequest = {
             location,
@@ -288,10 +314,10 @@ export function CounselorConsultation() {
             keyword: 'psychologist',
         };
 
-        placesService.nearbySearch(request, (results, status, pagination) => {
+        placesService.nearbySearch(request, (results, status, pag) => {
             if (status === google.maps.places.PlacesServiceStatus.OK && results) {
                 setProfessionals(results);
-                setPagination(pagination ?? null);
+                setPagination(pag ?? null);
                 toast({
                     title: 'Search Complete',
                     description: `Found ${results.length} professionals in your area.`,
@@ -306,32 +332,43 @@ export function CounselorConsultation() {
             }
             setIsSearchingNearby(false);
         });
-
-      },
-      (error) => {
-        let errorMessage = 'An unknown error occurred.';
-        if (error.code === error.PERMISSION_DENIED) {
-          errorMessage = 'You have denied location access. Please enable it in your browser settings.';
-        } else if (error.code === error.POSITION_UNAVAILABLE) {
-          errorMessage = 'Location information is unavailable.';
-        } else if (error.code === error.TIMEOUT) {
-          errorMessage = 'The request to get user location timed out.';
+    }
+    
+    if (currentLocation) {
+        searchAction(currentLocation);
+    } else {
+        navigator.geolocation.getCurrentPosition(
+        (position) => {
+            const { latitude, longitude } = position.coords;
+            const location = new google.maps.LatLng(latitude, longitude);
+            setCurrentLocation(location);
+            searchAction(location);
+        },
+        (error) => {
+            let errorMessage = 'An unknown error occurred.';
+            if (error.code === error.PERMISSION_DENIED) {
+            errorMessage = 'You have denied location access. Please enable it in your browser settings.';
+            } else if (error.code === error.POSITION_UNAVAILABLE) {
+            errorMessage = 'Location information is unavailable.';
+            } else if (error.code === error.TIMEOUT) {
+            errorMessage = 'The request to get user location timed out.';
+            }
+            
+            toast({
+            title: 'Geolocation Error',
+            description: errorMessage,
+            variant: 'destructive',
+            });
+            setSearchError(errorMessage);
+            setIsSearchingNearby(false);
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0,
         }
-        
-        toast({
-          title: 'Geolocation Error',
-          description: errorMessage,
-          variant: 'destructive',
-        });
-        setSearchError(errorMessage);
-        setIsSearchingNearby(false);
-      },
-      {
-          enableHighAccuracy: true,
-          timeout: 10000,
-          maximumAge: 0,
-      }
-    );
+        );
+    }
   };
   
   const handleLoadMore = () => {
@@ -499,3 +536,4 @@ export function CounselorConsultation() {
     </div>
   );
 }
+
