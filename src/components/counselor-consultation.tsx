@@ -3,7 +3,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
-import { Calendar as CalendarIcon, Loader2, MapPin, Users, BookUser, Search } from 'lucide-react';
+import { Calendar as CalendarIcon, Loader2, MapPin, Users, BookUser, Search, Star } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -51,7 +51,8 @@ import { Checkbox } from './ui/checkbox';
 import { Input } from './ui/input';
 import { usePathname } from 'next/navigation';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
-
+import { GoogleMap, useJsApiLoader, Libraries } from '@react-google-maps/api';
+import Image from 'next/image';
 
 const consultationSchema = z.object({
   date: z.date({
@@ -109,32 +110,7 @@ const collegeCounselors = [
   },
 ];
 
-const nearbyProfessionals = [
-  {
-    id: 'prof1',
-    name: 'Dr. Meera Desai, PhD',
-    specialty: 'Cognitive Behavioral Therapy',
-    address: '123 Wellness Ave, Jayanagar',
-    distance: '2.5 km',
-    avatar: 'https://picsum.photos/seed/prof1/100/100'
-  },
-  {
-    id: 'prof2',
-    name: 'Sameer Joshi, M.Phil',
-    specialty: 'Anxiety & Stress Management',
-    address: '456 Serenity Blvd, Koramangala',
-    distance: '3.1 km',
-    avatar: 'https://picsum.photos/seed/prof2/100/100'
-  },
-  {
-    id: 'prof3',
-    name: 'Dr. Fatima Khan, MD',
-    specialty: 'Psychiatry, LGBTQ+ Affirming',
-    address: '789 Harmony Rd, Indiranagar',
-    distance: '4.0 km',
-    avatar: 'https://picsum.photos/seed/prof3/100/100'
-  },
-];
+const libraries: Libraries = ["places"];
 
 const CounselorBookingForm = ({ counselorId }: { counselorId: string }) => {
     const { toast } = useToast();
@@ -266,7 +242,13 @@ export function CounselorConsultation() {
   const [bookingCounselor, setBookingCounselor] = useState<string | null>(null);
   const [isSearchingNearby, setIsSearchingNearby] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
-  const [professionalsFound, setProfessionalsFound] = useState(false);
+  const [professionals, setProfessionals] = useState<google.maps.places.PlaceResult[]>([]);
+  const [map, setMap] = useState<google.maps.Map | null>(null);
+
+  const { isLoaded, loadError } = useJsApiLoader({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    libraries,
+  });
 
   const getBasePath = () => {
     if (pathname.startsWith('/love-and-self')) return '/love-and-self';
@@ -284,26 +266,48 @@ export function CounselorConsultation() {
       });
       return;
     }
+    if (!isLoaded) {
+      toast({ title: 'Map is not loaded yet. Please wait.' });
+      return;
+    }
 
     setIsSearchingNearby(true);
     setSearchError(null);
-    setProfessionalsFound(false);
+    setProfessionals([]);
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        // In a real app, you would use position.coords.latitude and position.coords.longitude
-        // to query a backend for nearby professionals.
-        console.log('Latitude:', position.coords.latitude, 'Longitude:', position.coords.longitude);
+        const userLocation = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        };
         
-        // Simulate a successful search
-        setTimeout(() => {
-            toast({
-                title: 'Search Complete',
-                description: 'Found professionals in your area.',
-            });
-            setProfessionalsFound(true);
+        const placesService = new google.maps.places.PlacesService(document.createElement('div'));
+        
+        const request: google.maps.places.PlaceSearchRequest = {
+            location: userLocation,
+            radius: 5000, // 5km
+            type: 'psychologist',
+            keyword: 'psychologist'
+        };
+
+        placesService.nearbySearch(request, (results, status) => {
+            if (status === google.maps.places.PlacesServiceStatus.OK && results) {
+                setProfessionals(results);
+                toast({
+                    title: 'Search Complete',
+                    description: `Found ${results.length} professionals in your area.`,
+                });
+            } else {
+                 setSearchError('Could not find nearby professionals. Please try again later.');
+                 toast({
+                    title: 'Search Failed',
+                    description: 'Could not find nearby professionals.',
+                    variant: 'destructive'
+                });
+            }
             setIsSearchingNearby(false);
-        }, 1500);
+        });
 
       },
       (error) => {
@@ -414,14 +418,16 @@ export function CounselorConsultation() {
                         I agree to use my location to find nearby professionals.
                     </label>
                     </div>
-                    <Button onClick={handleGeolocation} className="w-full md:w-auto" disabled={isSearchingNearby}>
+                    <Button onClick={handleGeolocation} className="w-full md:w-auto" disabled={isSearchingNearby || !isLoaded}>
                         {isSearchingNearby ? (
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                         ) : (
                             <Search className="mr-2" />
                         )}
-                        Find Near Me
+                        {isLoaded ? 'Find Near Me' : 'Loading Maps...'}
                     </Button>
+                    
+                    {loadError && <Alert variant="destructive"><AlertTitle>Map Error</AlertTitle><AlertDescription>Could not load Google Maps. Please check your API key and network connection.</AlertDescription></Alert>}
 
                     {searchError && (
                         <Alert variant="destructive">
@@ -430,27 +436,36 @@ export function CounselorConsultation() {
                         </Alert>
                     )}
 
-                    {professionalsFound && (
+                    {professionals.length > 0 && (
                          <div className="space-y-4 animate-in fade-in-50 duration-500">
-                            {nearbyProfessionals.map(prof => (
-                                <Card key={prof.id}>
+                            {professionals.map(prof => (
+                                 <a key={prof.place_id} href={`https://www.google.com/maps/search/?api=1&query=Google&query_place_id=${prof.place_id}`} target="_blank" rel="noopener noreferrer" className="block">
+                                <Card className="hover:border-primary transition-colors">
                                     <CardHeader className="flex flex-row items-center justify-between">
                                         <div className="flex items-center gap-4">
-                                            <Avatar className="w-12 h-12">
-                                                <AvatarImage src={prof.avatar} />
-                                                <AvatarFallback>{prof.name.charAt(0)}</AvatarFallback>
-                                            </Avatar>
+                                            {prof.photos && prof.photos[0] ? (
+                                                <Image src={prof.photos[0].getUrl()} alt={prof.name || 'Professional'} width={48} height={48} className="w-12 h-12 rounded-md object-cover" />
+                                            ) : (
+                                                 <Avatar className="w-12 h-12">
+                                                    <AvatarFallback>{prof.name?.charAt(0)}</AvatarFallback>
+                                                </Avatar>
+                                            )}
+                                           
                                             <div>
                                                 <CardTitle className="text-lg">{prof.name}</CardTitle>
-                                                <CardDescription>{prof.specialty}</CardDescription>
+                                                <CardDescription>{prof.vicinity}</CardDescription>
                                             </div>
                                         </div>
-                                        <div className="text-right">
-                                            <p className="text-sm font-semibold">{prof.distance}</p>
-                                            <p className="text-xs text-muted-foreground">{prof.address}</p>
-                                        </div>
+                                        {prof.rating && (
+                                            <div className="text-right flex items-center gap-1">
+                                                <Star className="w-4 h-4 text-yellow-500 fill-yellow-500"/>
+                                                <span className="font-bold">{prof.rating}</span>
+                                                <span className="text-xs text-muted-foreground">({prof.user_ratings_total})</span>
+                                            </div>
+                                        )}
                                     </CardHeader>
                                 </Card>
+                                 </a>
                             ))}
                         </div>
                     )}
